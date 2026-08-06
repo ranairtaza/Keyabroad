@@ -1,0 +1,149 @@
+"use client";
+
+import React from "react";
+import { motion } from "framer-motion";
+import Link from "next/link";
+import { ArrowRight, GraduationCap, Globe, Users } from "lucide-react";
+import Hover3DWrapper from "./Hover3DWrapper";
+import MagneticButton from "./MagneticButton";
+import AnimatedCounter from "./AnimatedCounter";
+
+export default function AnimatedHero() {
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.2,
+      },
+    },
+  };
+
+  const itemVariants: any = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } },
+  };
+
+  const floatingAnimation: any = {
+    y: ["-10px", "10px"],
+    transition: {
+      duration: 3,
+      repeat: Infinity,
+      repeatType: "reverse",
+      ease: "easeInOut",
+    },
+  };
+
+  return (
+    <section className="relative w-full min-h-[calc(100vh-5rem)] flex items-center justify-center overflow-hidden bg-slate-900 text-white">
+      {/* Background Gradient & Effects */}
+      <div className="absolute inset-0 z-0">
+        <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] bg-primary/40 rounded-full blur-[120px] mix-blend-screen animate-pulse" />
+        <div className="absolute bottom-[-20%] right-[-10%] w-[60%] h-[60%] bg-blue-600/30 rounded-full blur-[150px] mix-blend-screen" />
+      </div>
+
+      <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col lg:flex-row items-center justify-between gap-12">
+        
+        {/* Left Column - Text Content */}
+        <div 
+          className="flex-1 text-center lg:text-left mt-16 lg:mt-0 animate-in fade-in duration-1000 slide-in-from-bottom-4"
+        >
+          <div className="inline-flex items-center gap-4 px-6 py-3 rounded-full bg-slate-800 border border-slate-700 backdrop-blur-md mb-6 shadow-xl">
+            <span className="relative flex h-3 w-3 mr-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+            </span>
+            <span className="text-sm font-bold text-blue-50 tracking-wide pr-2">🏆 &nbsp; 98% Visa Success Rate &nbsp;|&nbsp; Fall 2026 Intakes Open</span>
+          </div>
+
+          <h1 className="text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight mb-6 leading-[1.1]">
+            Your Dream University. <br className="hidden lg:block" />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-primary">Zero Stress.</span>
+          </h1>
+          
+          <p className="text-xl md:text-2xl text-slate-300 mb-10 max-w-2xl mx-auto lg:mx-0 leading-relaxed font-medium">
+            We don't just process applications; we engineer success. Join thousands of students who have secured admissions and massive scholarships at top global universities.
+          </p>
+          
+          <motion.div variants={itemVariants} className="flex flex-col sm:flex-row justify-center lg:justify-start w-full px-4 sm:px-0 mt-8">
+            <div className="w-full sm:w-auto sm:pr-8 mb-4 sm:mb-0">
+              <MagneticButton className="w-full sm:w-auto">
+                <Hover3DWrapper intensity="subtle" className="w-full">
+                  <Link 
+                    href="#contact" 
+                    className="w-full px-8 py-4 bg-primary text-white font-semibold rounded-full hover:bg-blue-600 transition-all shadow-[0_0_20px_rgba(37,99,235,0.4)] flex items-center justify-center group text-lg"
+                  >
+                    Start Your Journey 
+                    <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" size={20} />
+                  </Link>
+                </Hover3DWrapper>
+              </MagneticButton>
+            </div>
+            <div className="w-full sm:w-auto">
+              <MagneticButton className="w-full sm:w-auto">
+                <Hover3DWrapper intensity="subtle" className="w-full">
+                  <Link 
+                    href="/services" 
+                    className="w-full px-8 py-4 bg-white/10 text-white font-semibold rounded-full hover:bg-white/20 backdrop-blur-sm transition-all border border-white/20 flex items-center justify-center text-lg"
+                  >
+                    Explore Programs
+                  </Link>
+                </Hover3DWrapper>
+              </MagneticButton>
+            </div>
+          </motion.div>
+        </motion.div>
+
+        {/* Right Column - Floating Metrics */}
+        <div className="flex-1 relative h-[500px] w-full hidden md:block">
+          {/* Main central visual or abstract shape could go here, we'll use floating cards */}
+          <div className="absolute inset-0 flex items-center justify-center">
+            
+            {/* Card 1 */}
+            <motion.div 
+              animate={floatingAnimation}
+              className="absolute top-10 left-10 md:left-20 p-6 rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl w-64"
+            >
+              <div className="h-12 w-12 rounded-full bg-blue-500/20 flex items-center justify-center mb-4 text-blue-400">
+                <GraduationCap size={28} />
+              </div>
+              <h3 className="text-3xl font-bold text-white mb-1">
+                <AnimatedCounter to={5000} duration={1.2} />+
+              </h3>
+              <p className="text-blue-200 text-sm">Students Placed Worldwide</p>
+            </motion.div>
+
+            {/* Card 2 */}
+            <motion.div 
+              animate={{ ...floatingAnimation, transition: { ...floatingAnimation.transition, delay: 1 } }}
+              className="absolute bottom-20 right-10 md:right-20 p-6 rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl w-64"
+            >
+              <div className="h-12 w-12 rounded-full bg-green-500/20 flex items-center justify-center mb-4 text-green-400">
+                <Globe size={28} />
+              </div>
+              <h3 className="text-3xl font-bold text-white mb-1">
+                <AnimatedCounter to={17} duration={1.2} />+
+              </h3>
+              <p className="text-blue-200 text-sm">Destinations Covered</p>
+            </motion.div>
+
+            {/* Card 3 */}
+            <motion.div 
+              animate={{ ...floatingAnimation, transition: { ...floatingAnimation.transition, delay: 2 } }}
+              className="absolute top-1/2 right-10 md:-right-10 -translate-y-1/2 p-6 rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl w-56 z-20"
+            >
+              <div className="h-12 w-12 rounded-full bg-purple-500/20 flex items-center justify-center mb-4 text-purple-400">
+                <Users size={28} />
+              </div>
+              <h3 className="text-3xl font-bold text-white mb-1">
+                <AnimatedCounter to={98} duration={1.2} />%
+              </h3>
+              <p className="text-blue-200 text-sm">Visa Success Rate</p>
+            </motion.div>
+
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
