@@ -70,13 +70,20 @@ export default function Dashboard() {
         .select('*')
         .order('created_at', { ascending: false })
         .limit(5);
+        
+      const { data: recentActivities } = await supabase
+        .from('activity_logs')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(10);
 
       const leadsWithType = (recentLeads || []).map(l => ({ ...l, type: 'lead' }));
       const appsWithType = (recentAppointments || []).map(a => ({ ...a, type: 'appointment' }));
+      const actsWithType = (recentActivities || []).map(a => ({ ...a, type: 'activity' }));
 
-      const combined = [...leadsWithType, ...appsWithType]
+      const combined = [...leadsWithType, ...appsWithType, ...actsWithType]
         .sort((a, b) => new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime())
-        .slice(0, 5);
+        .slice(0, 10);
 
       setLiveActivity(combined);
 
@@ -212,7 +219,11 @@ export default function Dashboard() {
                         </div>
                         <div>
                           <p className="text-sm text-slate-700 dark:text-slate-200">
-                            <strong>{act.full_name || act.student_name || act.name || 'A Student'}</strong> {act.type === 'appointment' ? 'booked a new consultation appointment.' : `registered as a new lead for ${act.inquiry_type || act.purpose || act.language_test || 'consultation'}.`}
+                            {act.type === 'activity' ? (
+                              <><strong>{act.employee_name}</strong> {act.description}</>
+                            ) : (
+                              <><strong>{act.full_name || act.student_name || act.name || 'A Student'}</strong> {act.type === 'appointment' ? 'booked a new consultation appointment.' : `registered as a new lead for ${act.inquiry_type || act.purpose || act.language_test || 'consultation'}.`}</>
+                            )}
                           </p>
                           <span className="text-xs text-slate-500">{formatTimeAgo(act.created_at)}</span>
                         </div>

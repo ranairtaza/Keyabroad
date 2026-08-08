@@ -5,12 +5,14 @@ import { motion, AnimatePresence } from "framer-motion";
 import Hover3DWrapper from "@/components/Hover3DWrapper";
 import { supabase } from "@/lib/supabaseClient";
 import toast from "react-hot-toast";
-import { CheckCircle2 } from "lucide-react";
+import { CheckCircle2, Trash2 } from "lucide-react";
+import { useRole } from "@/components/RoleContext";
 
 export default function PipelinePage() {
   const [activeTab, setActiveTab] = useState<"admissions" | "language">("admissions");
   const [students, setStudents] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const { role } = useRole();
 
   // Columns definitions
   const admissionColumns = ["New", "Documents Pending", "Applied", "Offer Received", "Visa Processing", "Visa Approved"];
@@ -37,6 +39,17 @@ export default function PipelinePage() {
   useEffect(() => {
     fetchStudents();
   }, []);
+
+  const handleDelete = async (id: string) => {
+    if (role !== "owner") {
+      toast.error("Access Denied: Only Admin or Owner can delete records.");
+      return;
+    }
+    if (!window.confirm("Are you sure you want to permanently delete this record?")) return;
+    const { error } = await supabase.from('students').delete().eq('id', id);
+    if (error) toast.error(`Error deleting: ${error.message}`);
+    else { toast.success("Record deleted"); fetchStudents(); }
+  };
 
   const updateStage = async (studentId: string, type: "admissions_stage" | "language_stage", newStage: string) => {
     // Optimistic update
@@ -68,9 +81,9 @@ export default function PipelinePage() {
           ), { duration: 10000 });
         }
       } else {
-        toast.success("Stage updated!");
-      }
+        toast.success("Stage updated successfully!");
     }
+  }
   };
 
   // Filter students by active tab type
@@ -165,7 +178,10 @@ export default function PipelinePage() {
                         whileHover={{ scale: 1.02 }}
                         className="bg-slate-950 p-4 rounded-xl shadow-sm border border-slate-800 transition-shadow relative z-20 cursor-grab active:cursor-grabbing"
                       >
-                        <h4 className="font-bold text-white">{student.name}</h4>
+                        <div className="flex justify-between items-start">
+                          <h4 className="font-bold text-white">{student.name}</h4>
+                          <button onClick={() => handleDelete(student.id)} className="text-red-500/50 hover:text-red-500"><Trash2 size={14}/></button>
+                        </div>
                         <div className="mt-2 text-sm text-slate-400 flex flex-col gap-1">
                           <div className="flex justify-between">
                             <span>{student.target_destination || "N/A"}</span>
@@ -239,7 +255,10 @@ export default function PipelinePage() {
                         whileHover={{ scale: 1.02 }}
                         className="bg-slate-950 p-4 rounded-xl shadow-sm border border-slate-800 transition-shadow relative z-20 cursor-grab active:cursor-grabbing"
                       >
-                        <h4 className="font-bold text-white">{student.name}</h4>
+                        <div className="flex justify-between items-start">
+                          <h4 className="font-bold text-white">{student.name}</h4>
+                          <button onClick={() => handleDelete(student.id)} className="text-red-500/50 hover:text-red-500"><Trash2 size={14}/></button>
+                        </div>
                         <div className="mt-2 text-sm text-slate-400 flex flex-col gap-1">
                           <div className="flex justify-between items-center">
                             <span className="bg-slate-800 px-2 py-1 rounded text-xs font-medium text-secondary">{student.language_test || "N/A"}</span>

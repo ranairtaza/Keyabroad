@@ -31,11 +31,11 @@ export default function Navbar() {
             </div>
           </div>
           <div className="flex items-center gap-5">
-            <a href="https://www.instagram.com/keyabroad/" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-[#8dc63f] transition-colors"><FaInstagram size={16} /></a>
-            <a href="https://www.facebook.com/keyabroad/#" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-[#8dc63f] transition-colors"><FaFacebook size={16} /></a>
-            <a href="https://www.youtube.com/@KeyAbroad" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-[#8dc63f] transition-colors"><FaYoutube size={16} /></a>
-            <a href="https://www.linkedin.com/company/keyabroad/?originalSubdomain=pk" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-[#8dc63f] transition-colors"><FaLinkedin size={16} /></a>
-            <a href="https://www.tiktok.com/@keyabroad" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-[#8dc63f] transition-colors"><FaTiktok size={16} /></a>
+            <a href="https://www.instagram.com/keyabroad/" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-[#8dc63f] transition-colors" aria-label="Instagram"><FaInstagram size={16} /></a>
+            <a href="https://www.facebook.com/keyabroad/#" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-[#8dc63f] transition-colors" aria-label="Facebook"><FaFacebook size={16} /></a>
+            <a href="https://www.youtube.com/@KeyAbroad" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-[#8dc63f] transition-colors" aria-label="YouTube"><FaYoutube size={16} /></a>
+            <a href="https://www.linkedin.com/company/keyabroad/?originalSubdomain=pk" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-[#8dc63f] transition-colors" aria-label="LinkedIn"><FaLinkedin size={16} /></a>
+            <a href="https://www.tiktok.com/@keyabroad" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-[#8dc63f] transition-colors" aria-label="TikTok"><FaTiktok size={16} /></a>
           </div>
         </div>
       </div>

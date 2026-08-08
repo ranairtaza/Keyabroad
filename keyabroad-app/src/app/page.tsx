@@ -8,7 +8,7 @@ import AnimatedHero from "@/components/AnimatedHero";
 // Lazy load heavy components that are below the fold to boost mobile FCP/LCP
 const DestinationSlider = dynamic(() => import("@/components/DestinationSlider"), { ssr: true });
 const ExperienceSection = dynamic(() => import("@/components/ExperienceSection"), { ssr: true });
-const EnquiryFormWizard = dynamic(() => import("@/components/EnquiryFormWizard"), { ssr: false });
+const EnquiryFormWizard = dynamic(() => import("@/components/EnquiryFormWizard"));
 const Reviews = dynamic(() => import("@/components/Reviews"), { ssr: true });
 
 export default function Home() {

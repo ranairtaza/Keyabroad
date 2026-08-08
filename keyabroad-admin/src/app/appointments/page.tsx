@@ -1,9 +1,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Calendar, Clock, User, Phone, CheckCircle2, XCircle, Search, CalendarDays } from "lucide-react";
+import { Calendar, Clock, User, Phone, CheckCircle2, XCircle, Search, CalendarDays, Trash2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { supabase } from "@/lib/supabaseClient";
+import { useRole } from "@/components/RoleContext";
 import toast from "react-hot-toast";
 
 interface Appointment {
@@ -21,9 +22,8 @@ export default function AppointmentsPage() {
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
-  const [filter, setFilter] = useState("all"); // 'all', 'today', 'upcoming'
-
-
+  const [filter, setFilter] = useState("upcoming");
+  const { role } = useRole();
 
   const fetchAppointments = async () => {
     setLoading(true);
@@ -56,6 +56,17 @@ export default function AppointmentsPage() {
       toast.success(`Appointment marked as ${newStatus}`);
       fetchAppointments();
     }
+  };
+
+  const handleDelete = async (id: string) => {
+    if (role !== "owner") {
+      toast.error("Access Denied: Only Admin or Owner can delete records.");
+      return;
+    }
+    if (!window.confirm("Are you sure you want to permanently delete this appointment?")) return;
+    const { error } = await supabase.from('appointments').delete().eq('id', id);
+    if (error) toast.error(`Error deleting: ${error.message}`);
+    else { toast.success("Appointment deleted"); fetchAppointments(); }
   };
 
   const today = new Date().toISOString().split('T')[0];
@@ -131,9 +142,14 @@ export default function AppointmentsPage() {
                   </div>
                 )}
                 
-                <h4 className="font-bold text-white text-lg flex items-center gap-2 mb-4">
-                  <User size={18} className="text-slate-400" /> {apt.student_name}
-                </h4>
+                <div className="flex justify-between items-start mb-4">
+                  <h4 className="font-bold text-white text-lg flex items-center gap-2">
+                    <User size={18} className="text-slate-400" /> {apt.student_name}
+                  </h4>
+                  <button onClick={() => handleDelete(apt.id)} className="text-red-500/50 hover:text-red-500 z-20 relative">
+                    <Trash2 size={16} />
+                  </button>
+                </div>
 
                 <div className="space-y-3 mb-6 relative z-10">
                   <div className="flex items-center gap-3 text-sm text-slate-300 bg-slate-950 p-2.5 rounded-lg border border-slate-800">

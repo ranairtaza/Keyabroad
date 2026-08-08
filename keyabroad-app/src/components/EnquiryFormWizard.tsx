@@ -207,23 +207,23 @@ export default function EnquiryFormWizard() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div>
                         <label className="block text-sm font-semibold text-slate-700 mb-1">Full Name *</label>
-                        <input type="text" className="w-full text-slate-900 placeholder:text-slate-400 px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none" value={formData.full_name} onChange={e => setFormData({ ...formData, full_name: e.target.value })} placeholder="Ali Khan" />
+                        <input type="text" className="w-full text-slate-900 placeholder:text-slate-400 px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none" value={formData.full_name} onChange={e => setFormData({ ...formData, full_name: e.target.value })} placeholder="Ali Khan" aria-label="Full Name" />
                       </div>
                       <div>
                         <label className="block text-sm font-semibold text-slate-700 mb-1">Date of Birth</label>
-                        <input type="date" className="w-full text-slate-900 placeholder:text-slate-400 px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none" value={formData.dob} onChange={e => setFormData({ ...formData, dob: e.target.value })} />
+                        <input type="date" className="w-full text-slate-900 placeholder:text-slate-400 px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none" value={formData.dob} onChange={e => setFormData({ ...formData, dob: e.target.value })} aria-label="Date of Birth" />
                       </div>
                       <div>
                         <label className="block text-sm font-semibold text-slate-700 mb-1">Mobile / WhatsApp *</label>
-                        <input type="tel" className="w-full text-slate-900 placeholder:text-slate-400 px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none" value={formData.mobile} onChange={e => setFormData({ ...formData, mobile: e.target.value })} placeholder="0300 1234567" />
+                        <input type="tel" className="w-full text-slate-900 placeholder:text-slate-400 px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none" value={formData.mobile} onChange={e => setFormData({ ...formData, mobile: e.target.value })} placeholder="0300 1234567" aria-label="Mobile Number" />
                       </div>
                       <div>
                         <label className="block text-sm font-semibold text-slate-700 mb-1">Email</label>
-                        <input type="email" className="w-full text-slate-900 placeholder:text-slate-400 px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none" value={formData.email} onChange={e => setFormData({ ...formData, email: e.target.value })} placeholder="ali@example.com" />
+                        <input type="email" className="w-full text-slate-900 placeholder:text-slate-400 px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none" value={formData.email} onChange={e => setFormData({ ...formData, email: e.target.value })} placeholder="ali@example.com" aria-label="Email Address" />
                       </div>
                       <div>
                         <label className="block text-sm font-semibold text-slate-700 mb-1">City</label>
-                        <input type="text" className="w-full text-slate-900 placeholder:text-slate-400 px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none" value={formData.city} onChange={e => setFormData({ ...formData, city: e.target.value })} placeholder="Lahore" />
+                        <input type="text" className="w-full text-slate-900 placeholder:text-slate-400 px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none" value={formData.city} onChange={e => setFormData({ ...formData, city: e.target.value })} placeholder="Lahore" aria-label="City" />
                       </div>
                       <div className="flex flex-col justify-center">
                         <label className="block text-sm font-semibold text-slate-700 mb-3">Passport Available?</label>

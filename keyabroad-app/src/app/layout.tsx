@@ -5,7 +5,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import dynamic from 'next/dynamic';
 import PageTracker from "@/components/PageTracker";
-const AIChatbot = dynamic(() => import("@/components/AIChatbot"), { ssr: false });
+const AIChatbot = dynamic(() => import("@/components/AIChatbot"));
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/next";
 

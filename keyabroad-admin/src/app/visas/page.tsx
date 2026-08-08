@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { DragDropContext, Droppable, Draggable, DropResult } from "@hello-pangea/dnd";
+import { useRole } from "@/components/RoleContext";
 import { Search, Plus, Plane, Calendar, User, FileText, CheckCircle2, Trash2 } from "lucide-react";
 import toast from "react-hot-toast";
 
@@ -24,34 +25,26 @@ type ColumnsState = {
 const initialColumns: ColumnsState = {
   "doc-prep": {
     title: "Document Prep",
-    items: [
-      { id: "v1", student: "Ali Raza", destination: "UK", course: "MSc Computer Science", date: "Sep 2026 Intake" },
-      { id: "v2", student: "Sarah Jones", destination: "Canada", course: "MBA", date: "Sep 2026 Intake" },
-    ]
+    items: []
   },
   "applied": {
     title: "Visa Applied",
-    items: [
-      { id: "v3", student: "Ahmed Khan", destination: "Australia", course: "BSc Engineering", date: "Feb 2026 Intake" },
-    ]
+    items: []
   },
   "interview": {
     title: "Interview Scheduled",
-    items: [
-      { id: "v4", student: "Fatima Noor", destination: "USA", course: "BSc Finance", date: "Oct 15, 10:00 AM" },
-    ]
+    items: []
   },
   "approved": {
     title: "Visa Approved 🎉",
-    items: [
-      { id: "v5", student: "Hassan Ali", destination: "Germany", course: "MSc Data Science", date: "Oct 1, 2025" },
-    ]
+    items: []
   }
 };
 
 export default function VisasPage() {
   const [columns, setColumns] = useState<ColumnsState>(initialColumns);
   const [search, setSearch] = useState("");
+  const { role } = useRole();
 
   const onDragEnd = (result: DropResult) => {
     if (!result.destination) return;
@@ -87,6 +80,11 @@ export default function VisasPage() {
   };
 
   const handleDelete = (columnId: string, itemId: string) => {
+    if (role !== "owner") {
+      toast.error("Access Denied: Only Admin or Owner can delete records.");
+      return;
+    }
+    if (!window.confirm("Are you sure you want to permanently delete this record?")) return;
     const column = columns[columnId];
     const newItems = column.items.filter(item => item.id !== itemId);
     setColumns({

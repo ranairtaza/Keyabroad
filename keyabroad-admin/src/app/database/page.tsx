@@ -1,10 +1,12 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { Search, Filter, Mail, Phone, MapPin, Book, Calendar, ChevronDown, Upload, X, FileSpreadsheet, CheckCircle2, FileText, Plus } from "lucide-react";
+import { Search, Filter, Mail, Phone, MapPin, Book, Calendar, ChevronDown, Upload, X, FileSpreadsheet, CheckCircle2, FileText, Plus, Trash2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import toast from "react-hot-toast";
 import { supabase } from "@/lib/supabaseClient";
+import StudentProfileModal from '@/components/StudentProfileModal';
+import { useRole } from "@/components/RoleContext";
 
 interface StudentRecord {
   id: string;
@@ -36,12 +38,15 @@ export default function StudentDatabasePage() {
   const [countryFilter, setCountryFilter] = useState("All");
   const [languageFilter, setLanguageFilter] = useState("All");
   const [isLoading, setIsLoading] = useState(true);
+  const { role } = useRole();
   
   // Add Student Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+
+  // Profile / Edit Modal State
+  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+  const [selectedStudentForProfile, setSelectedStudentForProfile] = useState<StudentRecord | null>(null);
 
   // Follow-up Modal State
   const [isFollowUpModalOpen, setIsFollowUpModalOpen] = useState(false);
@@ -84,6 +89,17 @@ export default function StudentDatabasePage() {
     setIsLoading(false);
   };
 
+  const handleDelete = async (id: string) => {
+    if (role !== "owner") {
+      toast.error("Access Denied: Only Admin or Owner can delete records.");
+      return;
+    }
+    if (!window.confirm("Are you sure you want to permanently delete this record? This cannot be undone.")) return;
+    const { error } = await supabase.from('students').delete().eq('id', id);
+    if (error) toast.error(`Error deleting: ${error.message}`);
+    else { toast.success("Record deleted"); fetchStudents(); }
+  };
+
   useEffect(() => {
     fetchStudents();
   }, []);
@@ -104,49 +120,11 @@ export default function StudentDatabasePage() {
   const uniqueCountries = ["All", ...ALL_DESTINATIONS];
   const uniqueLanguages = ["All", ...ALL_LANGUAGES];
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      const filesArray = Array.from(e.target.files);
-      setSelectedFiles(prev => [...prev, ...filesArray]);
-    }
-  };
-
-  const removeFile = (index: number) => {
-    setSelectedFiles(prev => prev.filter((_, i) => i !== index));
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
     
     try {
-      let file_urls: string[] = [];
-
-      // Upload files if any
-      if (selectedFiles.length > 0) {
-        for (const file of selectedFiles) {
-          const fileExt = file.name.split('.').pop();
-          const fileName = `${formData.ticket_number}_${Math.random().toString(36).substring(2, 9)}.${fileExt}`;
-          const filePath = `${fileName}`;
-
-          const { error: uploadError, data } = await supabase.storage
-            .from('student_files')
-            .upload(filePath, file);
-
-          if (uploadError) {
-            console.error('Upload error:', uploadError);
-            toast.error(`Failed to upload ${file.name}: ${uploadError.message}`);
-            continue;
-          }
-
-          const { data: publicUrlData } = supabase.storage
-            .from('student_files')
-            .getPublicUrl(filePath);
-
-          file_urls.push(publicUrlData.publicUrl);
-        }
-      }
-
       // Insert Student
       const { error: insertError, data: newStudent } = await supabase
         .from('students')
@@ -161,13 +139,20 @@ export default function StudentDatabasePage() {
           test_date_time: formData.test_date_time ? new Date(formData.test_date_time).toISOString() : null,
           pipeline_type: formData.pipeline_type,
           university_applied: formData.university_applied || null,
-          target_score: formData.target_score || null,
-          file_urls: file_urls
+          target_score: formData.target_score || null
         }])
         .select()
         .single();
 
       if (insertError) throw insertError;
+
+      // Log creation activity
+      await supabase.from('activity_logs').insert([{
+        action_type: 'NEW_STUDENT',
+        description: `Added new student record`,
+        student_id: newStudent.id,
+        employee_name: 'Admin'
+      }]);
 
       // Handle Initial Fee if provided
       if (formData.initial_fee && Number(formData.initial_fee) > 0 && newStudent) {
@@ -204,7 +189,6 @@ export default function StudentDatabasePage() {
         initial_fee: "",
         initial_fee_months: "1"
       });
-      setSelectedFiles([]);
 
     } catch (error: any) {
       toast.error(`Error: ${error.message}`);
@@ -379,15 +363,32 @@ export default function StudentDatabasePage() {
                       )}
                     </td>
                     <td className="p-4">
-                      <button
-                        onClick={() => {
-                          setSelectedStudentForFollowUp(student);
-                          setIsFollowUpModalOpen(true);
-                        }}
-                        className="flex items-center gap-1 bg-orange-500/10 text-orange-500 hover:bg-orange-500 hover:text-white px-3 py-1.5 rounded-lg border border-orange-500/30 hover:border-orange-500 transition-colors text-xs font-bold"
-                      >
-                        <Calendar size={12} /> Set Follow-up
-                      </button>
+                      <div className="flex flex-col gap-2">
+                        <button
+                          onClick={() => {
+                            setSelectedStudentForProfile(student);
+                            setIsProfileModalOpen(true);
+                          }}
+                          className="flex items-center justify-center gap-1 bg-indigo-500/10 text-indigo-400 hover:bg-indigo-500 hover:text-white px-3 py-1.5 rounded-lg border border-indigo-500/30 hover:border-indigo-500 transition-colors text-xs font-bold"
+                        >
+                          Edit / Timeline
+                        </button>
+                        <button
+                          onClick={() => {
+                            setSelectedStudentForFollowUp(student);
+                            setIsFollowUpModalOpen(true);
+                          }}
+                          className="flex items-center justify-center gap-1 bg-orange-500/10 text-orange-500 hover:bg-orange-500 hover:text-white px-3 py-1.5 rounded-lg border border-orange-500/30 hover:border-orange-500 transition-colors text-xs font-bold"
+                        >
+                          <Calendar size={12} /> Follow-up
+                        </button>
+                        <button
+                          onClick={() => handleDelete(student.id)}
+                          className="flex items-center justify-center gap-1 bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white px-3 py-1.5 rounded-lg border border-red-500/30 hover:border-red-500 transition-colors text-xs font-bold"
+                        >
+                          <Trash2 size={12} /> Delete
+                        </button>
+                      </div>
                     </td>
                   </motion.tr>
                 ))
@@ -588,34 +589,6 @@ export default function StudentDatabasePage() {
                   </div>
                 </div>
 
-                <div className="space-y-2 pt-2 border-t border-slate-800">
-                  <label className="text-sm font-medium text-slate-300">Import Application Files</label>
-                  <div className="border-2 border-dashed border-slate-700 rounded-xl p-4 hover:border-slate-500 transition-colors text-center relative cursor-pointer">
-                    <input 
-                      type="file" 
-                      multiple 
-                      onChange={handleFileChange}
-                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                    />
-                    <Upload className="mx-auto text-slate-500 mb-2" size={24} />
-                    <p className="text-sm text-slate-400">Click or drag files here to attach to this student record</p>
-                  </div>
-                  
-                  {selectedFiles.length > 0 && (
-                    <div className="mt-4 flex flex-wrap gap-2">
-                      {selectedFiles.map((f, i) => (
-                        <div key={i} className="flex items-center gap-2 bg-slate-800 text-sm text-slate-200 px-3 py-1.5 rounded-lg border border-slate-700">
-                          <FileText size={14} className="text-primary" />
-                          <span className="truncate max-w-[150px]">{f.name}</span>
-                          <button type="button" onClick={() => removeFile(i)} className="text-red-400 hover:text-red-300 ml-1">
-                            <X size={14} />
-                          </button>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-
                 <div className="pt-4 mt-2 border-t border-slate-800 flex justify-end gap-3 sticky bottom-0 bg-slate-900 pb-2">
                   <button type="button" onClick={() => setIsModalOpen(false)} className="px-6 py-2 rounded-lg text-slate-300 font-medium hover:bg-slate-800 transition-colors">
                     Cancel
@@ -634,6 +607,12 @@ export default function StudentDatabasePage() {
         )}
       </AnimatePresence>
 
+      <StudentProfileModal
+        isOpen={isProfileModalOpen}
+        onClose={() => setIsProfileModalOpen(false)}
+        student={selectedStudentForProfile}
+        onUpdate={fetchStudents}
+      />
     </div>
   );
 }

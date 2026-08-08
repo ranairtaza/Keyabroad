@@ -1,23 +1,26 @@
 "use client";
 
-import { useRef, useEffect } from "react";
-import { useInView, animate, motion, useMotionValue, useTransform } from "framer-motion";
+import { useEffect, useState } from "react";
 
 const AnimatedCounter = ({ from = 0, to, duration = 2 }: { from?: number; to: number; duration?: number }) => {
-  const ref = useRef<HTMLSpanElement>(null);
-  const inView = useInView(ref, { once: true, margin: "-50px" });
-  
-  const count = useMotionValue(from);
-  const rounded = useTransform(count, (latest) => Math.round(latest));
+  const [count, setCount] = useState(from);
 
   useEffect(() => {
-    if (inView) {
-      const animation = animate(count, to, { duration: duration, ease: "easeOut" });
-      return animation.stop;
-    }
-  }, [count, to, duration, inView]);
+    let startTimestamp: number | null = null;
+    const step = (timestamp: number) => {
+      if (!startTimestamp) startTimestamp = timestamp;
+      const progress = Math.min((timestamp - startTimestamp) / (duration * 1000), 1);
+      // easeOutExpo
+      const easeProgress = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress);
+      setCount(Math.floor(easeProgress * (to - from) + from));
+      if (progress < 1) {
+        window.requestAnimationFrame(step);
+      }
+    };
+    window.requestAnimationFrame(step);
+  }, [from, to, duration]);
 
-  return <motion.span ref={ref}>{rounded}</motion.span>;
+  return <span>{count}</span>;
 };
 
 export default AnimatedCounter;

@@ -22,19 +22,19 @@ export default function Footer() {
               Open the door to success. Your trusted partner for overseas education, admissions, and visas.
             </p>
             <div className="flex gap-4">
-              <a href="https://www.instagram.com/keyabroad/" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:text-white hover:bg-secondary transition-all">
+              <a href="https://www.instagram.com/keyabroad/" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:text-white hover:bg-secondary transition-all" aria-label="Instagram">
                 <FaInstagram size={18} />
               </a>
-              <a href="https://www.facebook.com/keyabroad/#" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:text-white hover:bg-secondary transition-all">
+              <a href="https://www.facebook.com/keyabroad/#" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:text-white hover:bg-secondary transition-all" aria-label="Facebook">
                 <FaFacebook size={18} />
               </a>
-              <a href="https://www.youtube.com/@KeyAbroad" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:text-white hover:bg-secondary transition-all">
+              <a href="https://www.youtube.com/@KeyAbroad" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:text-white hover:bg-secondary transition-all" aria-label="YouTube">
                 <FaYoutube size={18} />
               </a>
-              <a href="https://www.linkedin.com/company/keyabroad/?originalSubdomain=pk" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:text-white hover:bg-secondary transition-all">
+              <a href="https://www.linkedin.com/company/keyabroad/?originalSubdomain=pk" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:text-white hover:bg-secondary transition-all" aria-label="LinkedIn">
                 <FaLinkedin size={18} />
               </a>
-              <a href="https://www.tiktok.com/@keyabroad" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:text-white hover:bg-secondary transition-all">
+              <a href="https://www.tiktok.com/@keyabroad" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:text-white hover:bg-secondary transition-all" aria-label="TikTok">
                 <FaTiktok size={18} />
               </a>
             </div>

@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { motion, Variants, AnimatePresence } from "framer-motion";
 import Hover3DWrapper from "@/components/Hover3DWrapper";
 import { useRole } from "@/components/RoleContext";
-import { Lock, X, Save, Plus, Download, FileSpreadsheet, CheckSquare } from "lucide-react";
+import { Lock, X, Save, Plus, Download, FileSpreadsheet, CheckSquare, Trash2 } from "lucide-react";
 import toast from "react-hot-toast";
 import { createClient } from "@/utils/supabase/client";
 import jsPDF from "jspdf";
@@ -243,6 +243,17 @@ export default function LeadsPage() {
     setIsAddingLead(false);
   };
 
+  const handleDelete = async (id: string) => {
+    if (role !== "owner") {
+      toast.error("Access Denied: Only Admin or Owner can delete leads.");
+      return;
+    }
+    if (!window.confirm("Are you sure you want to permanently delete this lead?")) return;
+    const { error } = await supabase.from('enquiries').delete().eq('id', id);
+    if (error) toast.error(`Error deleting: ${error.message}`);
+    else { toast.success("Lead deleted"); fetchLeads(); }
+  };
+
   const exportPDF = () => {
     const doc = new jsPDF();
     doc.text("Leads Database Report", 14, 15);
@@ -435,6 +446,12 @@ export default function LeadsPage() {
                           className={`font-medium relative z-20 ${role === "owner" ? "text-primary hover:underline" : "text-slate-600 cursor-not-allowed"}`}
                         >
                           View/Edit
+                        </button>
+                        <button 
+                          onClick={() => handleDelete(lead.id)}
+                          className="font-medium relative z-20 text-red-500 hover:text-red-400"
+                        >
+                          <Trash2 size={16} />
                         </button>
                       </td>
                     </motion.tr>

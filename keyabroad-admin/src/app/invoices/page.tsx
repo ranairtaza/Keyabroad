@@ -14,6 +14,13 @@ type Invoice = {
   amount: number;
   type: string;
   status: string;
+  course?: string;
+  payment_method?: string;
+  paid_amount?: number;
+  remaining_amount?: number;
+  course_ending?: string;
+  deadline?: string;
+  received_by?: string;
 };
 
 export default function InvoicesPage() {
@@ -28,7 +35,14 @@ export default function InvoicesPage() {
     date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
     amount: "",
     type: "Processing Fee",
-    status: "Unpaid"
+    status: "Unpaid",
+    course: "IELTS",
+    payment_method: "Cash",
+    paid_amount: "",
+    remaining_amount: "",
+    course_ending: "",
+    deadline: "",
+    received_by: ""
   });
 
   const supabase = createClient();
@@ -48,7 +62,9 @@ export default function InvoicesPage() {
     e.preventDefault();
     const payload = {
       ...newInvoice,
-      amount: parseFloat(newInvoice.amount) || 0
+      amount: parseFloat(newInvoice.amount) || 0,
+      paid_amount: parseFloat(newInvoice.paid_amount) || 0,
+      remaining_amount: parseFloat(newInvoice.remaining_amount) || 0,
     };
     
     const { data, error } = await supabase.from('invoices').insert([payload]).select();
@@ -64,7 +80,14 @@ export default function InvoicesPage() {
         date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
         amount: "",
         type: "Processing Fee",
-        status: "Unpaid"
+        status: "Unpaid",
+        course: "IELTS",
+        payment_method: "Cash",
+        paid_amount: "",
+        remaining_amount: "",
+        course_ending: "",
+        deadline: "",
+        received_by: ""
       });
     }
   };
@@ -79,12 +102,98 @@ export default function InvoicesPage() {
 
   const handleGenerate = (invoice: Invoice) => {
     const doc = new jsPDF();
-    doc.text(`Invoice: ${invoice.invoice_number}`, 14, 15);
-    doc.text(`Student: ${invoice.student}`, 14, 25);
-    doc.text(`Date: ${invoice.date}`, 14, 35);
-    doc.text(`Amount: Rs ${invoice.amount}`, 14, 45);
-    doc.text(`Type: ${invoice.type}`, 14, 55);
-    doc.text(`Status: ${invoice.status}`, 14, 65);
+    
+    const drawReceipt = (baseY: number) => {
+      // Logo and Header
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(24);
+      doc.setTextColor(30, 41, 59);
+      doc.text("KeyAbroad", 105, baseY + 20, { align: "center" });
+      
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(10);
+      doc.text("Open the door to success", 105, baseY + 26, { align: "center" });
+      
+      doc.setFont("times", "bold");
+      doc.setFontSize(18);
+      doc.text("Receipt", 105, baseY + 38, { align: "center" });
+
+      // Body text settings
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(11);
+      
+      const leftX = 20;
+      const rightX = 115;
+      
+      // Left Column
+      doc.text("Date: ", leftX, baseY + 55);
+      doc.setFont("helvetica", "bold");
+      doc.text(invoice.date, leftX + 11, baseY + 55);
+      
+      doc.setFont("helvetica", "normal");
+      doc.text("Received From: ", leftX, baseY + 65);
+      doc.setFont("helvetica", "bold");
+      doc.text(invoice.student, leftX + 29, baseY + 65);
+      
+      doc.setFont("helvetica", "normal");
+      doc.text("Course: ", leftX, baseY + 72);
+      doc.setFont("helvetica", "bold");
+      doc.text(invoice.course || "N/A", leftX + 16, baseY + 72);
+      
+      doc.setFont("helvetica", "normal");
+      doc.text("Received by: ", leftX, baseY + 79);
+      doc.setFont("helvetica", "bold");
+      doc.text(invoice.received_by || "N/A", leftX + 24, baseY + 79);
+      
+      doc.setFont("helvetica", "normal");
+      doc.text("Course Ending: ", leftX, baseY + 92);
+      doc.text(invoice.course_ending || "N/A", leftX + 29, baseY + 92);
+      
+      doc.text("Signature: _______________________", leftX, baseY + 115);
+      
+      // Right Column
+      doc.setFont("helvetica", "normal");
+      doc.text("Total Amount: ", rightX, baseY + 55);
+      doc.setFont("helvetica", "bold");
+      doc.text(`${invoice.amount.toLocaleString()} Payment`, rightX + 26, baseY + 55);
+      
+      doc.setFont("helvetica", "normal");
+      doc.text("Method: ", rightX, baseY + 65);
+      doc.setFont("helvetica", "bold");
+      doc.text(invoice.payment_method || "N/A", rightX + 16, baseY + 65);
+      
+      doc.setFont("helvetica", "normal");
+      doc.text("Paid Amount: ", rightX, baseY + 72);
+      doc.setFont("helvetica", "bold");
+      doc.text(invoice.paid_amount ? invoice.paid_amount.toLocaleString() : "N/A", rightX + 25, baseY + 72);
+      
+      doc.setFont("helvetica", "normal");
+      doc.text("Remaining Amount: ", rightX, baseY + 79);
+      doc.setFont("helvetica", "bold");
+      doc.text(invoice.remaining_amount ? invoice.remaining_amount.toLocaleString() : "Nil", rightX + 35, baseY + 79);
+      
+      doc.setFont("helvetica", "normal");
+      doc.text("Deadline: ", rightX, baseY + 92);
+      doc.setFont("helvetica", "bold");
+      doc.text(invoice.deadline || "Nil", rightX + 18, baseY + 92);
+      
+      // Footer
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(10);
+      doc.text("Thank you for choosing KeyAbroad!", 105, baseY + 130, { align: "center" });
+    };
+
+    // Draw first receipt
+    drawReceipt(0);
+    
+    // Draw separator line
+    doc.setLineDashPattern([2, 2], 0);
+    doc.line(10, 145, 200, 145);
+    doc.setLineDashPattern([], 0); // reset
+    
+    // Draw second receipt
+    drawReceipt(145);
+
     doc.save(`${invoice.invoice_number}.pdf`);
     toast.success("Downloaded PDF Invoice");
   };
@@ -259,37 +368,68 @@ export default function InvoicesPage() {
             </div>
             
             <form onSubmit={handleAddInvoice} className="p-6 space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Invoice Number</label>
-                <input type="text" readOnly value={newInvoice.invoice_number} className="w-full bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-slate-500" />
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Student Name</label>
-                <input required type="text" value={newInvoice.student} onChange={e => setNewInvoice({...newInvoice, student: e.target.value})} className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg px-3 py-2 text-slate-900 dark:text-white focus:outline-none focus:border-primary" placeholder="e.g. John Doe" />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Amount (Rs)</label>
-                <input required type="number" min="0" value={newInvoice.amount} onChange={e => setNewInvoice({...newInvoice, amount: e.target.value})} className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg px-3 py-2 text-slate-900 dark:text-white focus:outline-none focus:border-primary" placeholder="e.g. 50000" />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Fee Type</label>
-                <select value={newInvoice.type} onChange={e => setNewInvoice({...newInvoice, type: e.target.value})} className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg px-3 py-2 text-slate-900 dark:text-white focus:outline-none focus:border-primary">
-                  <option value="Processing Fee">Processing Fee</option>
-                  <option value="Visa Consultation">Visa Consultation</option>
-                  <option value="University Deposit">University Deposit</option>
-                  <option value="Tuition Fee">Tuition Fee</option>
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Status</label>
-                <select value={newInvoice.status} onChange={e => setNewInvoice({...newInvoice, status: e.target.value})} className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg px-3 py-2 text-slate-900 dark:text-white focus:outline-none focus:border-primary">
-                  <option value="Unpaid">Unpaid</option>
-                  <option value="Paid">Paid</option>
-                </select>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Invoice Number</label>
+                  <input type="text" readOnly value={newInvoice.invoice_number} className="w-full bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-slate-500" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Student Name</label>
+                  <input required type="text" value={newInvoice.student} onChange={e => setNewInvoice({...newInvoice, student: e.target.value})} className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg px-3 py-2 text-slate-900 dark:text-white focus:outline-none focus:border-primary" placeholder="e.g. John Doe" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Course</label>
+                  <input type="text" value={newInvoice.course} onChange={e => setNewInvoice({...newInvoice, course: e.target.value})} className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg px-3 py-2 text-slate-900 dark:text-white focus:outline-none focus:border-primary" placeholder="e.g. IELTS" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Payment Method</label>
+                  <select value={newInvoice.payment_method} onChange={e => setNewInvoice({...newInvoice, payment_method: e.target.value})} className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg px-3 py-2 text-slate-900 dark:text-white focus:outline-none focus:border-primary">
+                    <option value="Cash">Cash</option>
+                    <option value="Online">Online</option>
+                    <option value="Bank Transfer">Bank Transfer</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Total Amount (Rs)</label>
+                  <input required type="number" min="0" value={newInvoice.amount} onChange={e => setNewInvoice({...newInvoice, amount: e.target.value})} className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg px-3 py-2 text-slate-900 dark:text-white focus:outline-none focus:border-primary" placeholder="e.g. 50000" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Paid Amount (Rs)</label>
+                  <input type="number" min="0" value={newInvoice.paid_amount} onChange={e => setNewInvoice({...newInvoice, paid_amount: e.target.value})} className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg px-3 py-2 text-slate-900 dark:text-white focus:outline-none focus:border-primary" placeholder="e.g. 10000" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Remaining Amount (Rs)</label>
+                  <input type="number" min="0" value={newInvoice.remaining_amount} onChange={e => setNewInvoice({...newInvoice, remaining_amount: e.target.value})} className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg px-3 py-2 text-slate-900 dark:text-white focus:outline-none focus:border-primary" placeholder="e.g. 0" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Received By</label>
+                  <input type="text" value={newInvoice.received_by} onChange={e => setNewInvoice({...newInvoice, received_by: e.target.value})} className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg px-3 py-2 text-slate-900 dark:text-white focus:outline-none focus:border-primary" placeholder="e.g. Ramsha" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Course Ending</label>
+                  <input type="text" value={newInvoice.course_ending} onChange={e => setNewInvoice({...newInvoice, course_ending: e.target.value})} className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg px-3 py-2 text-slate-900 dark:text-white focus:outline-none focus:border-primary" placeholder="e.g. 17-Aug-2026" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Deadline</label>
+                  <input type="text" value={newInvoice.deadline} onChange={e => setNewInvoice({...newInvoice, deadline: e.target.value})} className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg px-3 py-2 text-slate-900 dark:text-white focus:outline-none focus:border-primary" placeholder="e.g. Nil" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Fee Type</label>
+                  <select value={newInvoice.type} onChange={e => setNewInvoice({...newInvoice, type: e.target.value})} className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg px-3 py-2 text-slate-900 dark:text-white focus:outline-none focus:border-primary">
+                    <option value="Processing Fee">Processing Fee</option>
+                    <option value="Visa Consultation">Visa Consultation</option>
+                    <option value="University Deposit">University Deposit</option>
+                    <option value="Tuition Fee">Tuition Fee</option>
+                    <option value="Language Course">Language Course</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Status</label>
+                  <select value={newInvoice.status} onChange={e => setNewInvoice({...newInvoice, status: e.target.value})} className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg px-3 py-2 text-slate-900 dark:text-white focus:outline-none focus:border-primary">
+                    <option value="Unpaid">Unpaid</option>
+                    <option value="Paid">Paid</option>
+                  </select>
+                </div>
               </div>
               
               <div className="pt-4 flex justify-end gap-3">

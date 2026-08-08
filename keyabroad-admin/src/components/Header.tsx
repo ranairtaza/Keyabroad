@@ -1,7 +1,8 @@
 "use client";
 
 import { useRole } from "./RoleContext";
-import { UserCircle, Settings, User, LogOut, Bell, Check } from "lucide-react";
+import { useSidebar } from "./SidebarContext";
+import { UserCircle, Settings, User, LogOut, Bell, Check, Menu } from "lucide-react";
 import Image from "next/image";
 import { useState, useRef, useEffect } from "react";
 import { createClient } from "@/utils/supabase/client";
@@ -9,6 +10,7 @@ import toast from "react-hot-toast";
 
 export default function Header() {
   const { currentUser, logout } = useRole();
+  const { toggleSidebar } = useSidebar();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [notifications, setNotifications] = useState<any[]>([]);
@@ -99,9 +101,18 @@ export default function Header() {
   const unreadCount = notifications.filter(n => !n.is_read).length;
 
   return (
-    <header className="flex justify-end items-center gap-4 bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 px-6 py-4 rounded-xl shadow-lg mb-6 z-40 relative transition-colors duration-300">
+    <header className="flex justify-between md:justify-end items-center gap-2 sm:gap-4 bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 px-4 sm:px-6 py-3 sm:py-4 rounded-xl shadow-lg mb-6 z-40 relative transition-colors duration-300">
       
-      {/* Notifications Dropdown */}
+      {/* Mobile Menu Toggle */}
+      <button 
+        onClick={toggleSidebar}
+        className="md:hidden p-2 text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition-colors focus:outline-none"
+      >
+        <Menu size={24} />
+      </button>
+
+      <div className="flex items-center gap-4">
+        {/* Notifications Dropdown */}
       <div className="relative" ref={notificationsRef}>
         <button 
           onClick={() => setNotificationsOpen(!notificationsOpen)}
@@ -114,7 +125,7 @@ export default function Header() {
         </button>
 
         {notificationsOpen && (
-          <div className="absolute right-0 mt-2 w-80 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-2xl overflow-hidden z-50 transition-colors duration-300 flex flex-col max-h-96">
+          <div className="fixed top-[70px] inset-x-4 sm:absolute sm:inset-auto sm:right-0 sm:mt-2 sm:w-80 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-2xl overflow-hidden z-50 transition-colors duration-300 flex flex-col max-h-[80vh] sm:max-h-96">
             <div className="px-4 py-3 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center bg-slate-50 dark:bg-slate-800 shrink-0">
               <h3 className="font-bold text-slate-900 dark:text-white text-sm">Notifications</h3>
               {unreadCount > 0 && <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full font-medium">{unreadCount} new</span>}
@@ -193,6 +204,7 @@ export default function Header() {
             </button>
           </div>
         )}
+      </div>
       </div>
     </header>
   );
