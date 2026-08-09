@@ -100,6 +100,9 @@ export default function Dashboard() {
       }
     }
     fetchData();
+
+    const interval = setInterval(fetchData, 15000);
+    return () => clearInterval(interval);
   }, []);
 
   const container: any = {

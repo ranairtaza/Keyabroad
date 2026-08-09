@@ -38,6 +38,8 @@ export default function PipelinePage() {
 
   useEffect(() => {
     fetchStudents();
+    const interval = setInterval(fetchStudents, 15000);
+    return () => clearInterval(interval);
   }, []);
 
   const handleDelete = async (id: string) => {

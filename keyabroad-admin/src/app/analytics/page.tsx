@@ -36,6 +36,8 @@ export default function AnalyticsPage() {
 
   useEffect(() => {
     fetchAnalyticsData();
+    const interval = setInterval(fetchAnalyticsData, 15000);
+    return () => clearInterval(interval);
   }, []);
 
   const fetchAnalyticsData = async () => {

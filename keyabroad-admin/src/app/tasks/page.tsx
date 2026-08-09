@@ -97,6 +97,13 @@ export default function TasksPage() {
     fetchData();
     // Ping automation lazy checker
     fetch("/api/automations/check-tasks", { method: "POST" }).catch(console.error);
+
+    // Auto-refresh polling every 15 seconds
+    const intervalId = setInterval(() => {
+      fetchData();
+    }, 15000);
+
+    return () => clearInterval(intervalId);
   }, []);
 
   const handleAddTask = async (e: React.FormEvent) => {
@@ -186,8 +193,10 @@ export default function TasksPage() {
     const task = lists[table].find((t: any) => t.id === taskId);
     const assignee = task?.assignee || task?.counselor_name;
 
-    if (assignee && assignee !== currentUser?.name && !["owner", "admin", "manager"].includes(role || "")) {
-      toast.error("Access Denied: You can only complete tasks assigned to you.");
+    const isAuthorized = ["owner", "admin"].includes(role || "") || !!currentUser?.designation?.toLowerCase().includes("ceo");
+    
+    if (assignee && assignee !== currentUser?.name && !isAuthorized) {
+      toast.error("Access Denied: Only the assigned person, Admin, or CEO can mark this task as completed.");
       return;
     }
 
@@ -616,7 +625,9 @@ export default function TasksPage() {
 
           const allTasks = [
             ...registrationTasks.map(t => ({ ...t, type: 'reg' })), 
-            ...walkInTasks.map(t => ({ ...t, type: 'walkin' }))
+            ...walkInTasks.map(t => ({ ...t, type: 'walkin' })),
+            ...officeTasks.map(t => ({ ...t, type: 'office' })),
+            ...followUpTasks.map(t => ({ ...t, type: 'followup' }))
           ];
 
           const stats = {
@@ -647,11 +658,11 @@ export default function TasksPage() {
             };
 
             // Check if task belongs to today
-            if (created >= today || (completed && completed >= today)) addToPeriod(stats.today);
+            if (!isDone || created >= today || (completed && completed >= today)) addToPeriod(stats.today);
             // Check if task belongs to this week
-            if (created >= weekStart || (completed && completed >= weekStart)) addToPeriod(stats.week);
+            if (!isDone || created >= weekStart || (completed && completed >= weekStart)) addToPeriod(stats.week);
             // Check if task belongs to this month
-            if (created >= monthStart || (completed && completed >= monthStart)) addToPeriod(stats.month);
+            if (!isDone || created >= monthStart || (completed && completed >= monthStart)) addToPeriod(stats.month);
           });
 
           // Helper to get top employee for a period

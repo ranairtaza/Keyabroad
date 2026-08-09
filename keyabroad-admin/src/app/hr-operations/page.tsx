@@ -18,6 +18,13 @@ export default function HROperationsPage() {
 
   useEffect(() => {
     fetchHRData();
+
+    // Auto-refresh polling every 15 seconds
+    const intervalId = setInterval(() => {
+      fetchHRData();
+    }, 15000);
+
+    return () => clearInterval(intervalId);
   }, [selectedEmployee]);
 
   const fetchHRData = async () => {

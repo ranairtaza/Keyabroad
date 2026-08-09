@@ -56,6 +56,8 @@ export default function InvoicesPage() {
 
   useEffect(() => {
     fetchInvoices();
+    const interval = setInterval(fetchInvoices, 15000);
+    return () => clearInterval(interval);
   }, []);
 
   const handleAddInvoice = async (e: React.FormEvent) => {

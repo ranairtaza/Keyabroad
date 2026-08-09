@@ -22,6 +22,8 @@ interface StudentRecord {
   university_applied: string | null;
   target_score: string | null;
   file_urls: string[];
+  countries?: string;
+  qualifications?: string;
 }
 
 const ALL_DESTINATIONS = [
@@ -102,6 +104,8 @@ export default function StudentDatabasePage() {
 
   useEffect(() => {
     fetchStudents();
+    const interval = setInterval(fetchStudents, 15000);
+    return () => clearInterval(interval);
   }, []);
 
   const filteredStudents = students.filter(student => {
@@ -334,13 +338,13 @@ export default function StudentDatabasePage() {
                     </td>
                     <td className="p-4">
                       <div className="inline-flex items-center gap-2 bg-blue-900/20 text-blue-400 px-3 py-1.5 rounded-lg border border-blue-900/30">
-                        <MapPin size={16} /> <span className="font-semibold">{student.target_destination}</span>
+                        <MapPin size={16} /> <span className="font-semibold">{student.target_destination || student.countries || '-'}</span>
                       </div>
                     </td>
                     <td className="p-4">
                       <div className="inline-flex flex-col items-start gap-1">
                         <div className="inline-flex items-center gap-2 bg-emerald-900/20 text-emerald-400 px-3 py-1.5 rounded-lg border border-emerald-900/30">
-                          <Book size={16} /> <span className="font-semibold">{student.language_test}</span>
+                          <Book size={16} /> <span className="font-semibold">{student.language_test || student.qualifications || '-'}</span>
                         </div>
                         {student.test_date_time && (
                           <div className="text-xs text-slate-500 flex items-center gap-1 mt-1">

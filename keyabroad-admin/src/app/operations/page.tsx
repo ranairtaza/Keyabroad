@@ -85,6 +85,13 @@ export default function OperationsPage() {
     fetchWalkIns();
     fetchAttendance();
     fetchWorkLogs();
+
+    const interval = setInterval(() => {
+      fetchWalkIns();
+      fetchAttendance();
+      fetchWorkLogs();
+    }, 15000);
+    return () => clearInterval(interval);
   }, []);
 
   const handleRestrictedAction = (actionName: string) => {

@@ -57,6 +57,12 @@ export default function LeadsPage() {
   useEffect(() => {
     fetchLeads();
     fetchProfiles();
+
+    const interval = setInterval(() => {
+      fetchLeads();
+      fetchProfiles();
+    }, 15000);
+
     
     // Load custom checklist items
     const savedItems = localStorage.getItem("keyabroad_custom_checklist");

@@ -140,12 +140,18 @@ export default function AttendancePage() {
 
   useEffect(() => {
     fetchMonthlyLogs(selectedMonth, selectedYear);
+    const interval = setInterval(() => fetchMonthlyLogs(selectedMonth, selectedYear), 15000);
+    return () => clearInterval(interval);
   }, [selectedMonth, selectedYear]);
 
   useEffect(() => {
     if (activeTab === 'manage') {
       fetchManageLogs(manageDate);
     }
+    const interval = setInterval(() => {
+      if (activeTab === 'manage') fetchManageLogs(manageDate);
+    }, 15000);
+    return () => clearInterval(interval);
   }, [activeTab, manageDate]);
 
   const handleMarkAttendance = async (status: "present" | "leave") => {
