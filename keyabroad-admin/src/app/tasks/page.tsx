@@ -6,6 +6,8 @@ import { useRole } from "@/components/RoleContext";
 import { CheckCircle, Clock, Book, User, Phone, Mail, FileText, Plus, X, Trash2, Undo, Users, BarChart3, Ticket, Calendar } from "lucide-react";
 import toast from "react-hot-toast";
 import { supabase } from "@/lib/supabaseClient";
+import { AddTaskModal } from "./components/TaskModals";
+import { ActivityLeaderboard } from "./components/TaskTables";
 
 type TaskStatus = "pending" | "done";
 
@@ -567,47 +569,7 @@ export default function TasksPage() {
 
         {/* TAB 3: ACTIVITY LEADERBOARD */}
         {activeTab === "activity" && (
-          <motion.div key="activity" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}>
-            <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
-              <div className="p-6 border-b border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50">
-                <h3 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2"><BarChart3 size={24} className="text-primary"/> Employee Performance Leaderboard</h3>
-                <p className="text-sm text-slate-500 mt-1">Track which employees are closing the most leads and walk-ins.</p>
-              </div>
-              <div className="p-0">
-                <table className="w-full text-left border-collapse">
-                  <thead>
-                    <tr className="bg-slate-50 dark:bg-slate-700/50 border-b border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 text-sm">
-                      <th className="p-4 font-semibold">Rank</th>
-                      <th className="p-4 font-semibold">Employee Name</th>
-                      <th className="p-4 font-semibold text-center">Language Leads</th>
-                      <th className="p-4 font-semibold text-center">Walk-In Consultations</th>
-                      <th className="p-4 font-semibold text-center text-primary">Total Score</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {calculateActivity().map(([name, stats], index) => (
-                      <tr key={name} className="border-b border-slate-100 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-colors">
-                        <td className="p-4">
-                          <span className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm ${index === 0 ? 'bg-yellow-100 text-yellow-700 border border-yellow-200' : index === 1 ? 'bg-slate-200 text-slate-600 border border-slate-300' : index === 2 ? 'bg-orange-100 text-orange-700 border border-orange-200' : 'bg-slate-50 text-slate-500'}`}>
-                            #{index + 1}
-                          </span>
-                        </td>
-                        <td className="p-4 font-bold text-slate-900 dark:text-white">{name}</td>
-                        <td className="p-4 text-center font-medium text-slate-600 dark:text-slate-300">{stats.regs}</td>
-                        <td className="p-4 text-center font-medium text-slate-600 dark:text-slate-300">{stats.walkIns}</td>
-                        <td className="p-4 text-center">
-                          <span className="bg-primary/10 text-primary px-3 py-1 rounded-full font-black text-lg">{stats.total}</span>
-                        </td>
-                      </tr>
-                    ))}
-                    {calculateActivity().length === 0 && (
-                      <tr><td colSpan={5} className="p-8 text-center text-slate-500">No activity recorded yet. Start completing tasks!</td></tr>
-                    )}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </motion.div>
+          <ActivityLeaderboard calculateActivity={calculateActivity} />
         )}
 
         {/* TAB 4: DAILY OFFICE TASKS */}
@@ -888,104 +850,16 @@ export default function TasksPage() {
       </AnimatePresence>
       
       {/* Task Modal code remains similar, omitted for brevity but included in output */}
-      <AnimatePresence>
-        {isTaskModalOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm">
-            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} className="bg-white dark:bg-slate-800 rounded-2xl shadow-xl w-full max-w-md overflow-hidden max-h-[90vh] overflow-y-auto custom-scrollbar">
-              <div className="p-6 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center bg-slate-50 dark:bg-slate-800">
-                <h3 className="text-xl font-bold text-slate-900 dark:text-white">Assign New Task</h3>
-                <button onClick={() => setIsTaskModalOpen(false)} className="text-slate-400 hover:text-slate-700 dark:hover:text-slate-300"><X size={20} /></button>
-              </div>
-              <form onSubmit={handleAddTask} className="p-6 space-y-4">
-                
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Task Type</label>
-                  <select required value={taskType} onChange={e => setTaskType(e.target.value as any)} className="w-full px-3 py-2 bg-slate-100 dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-primary outline-none font-bold text-slate-900 dark:text-white">
-                    <option value="language_lead">Language Lead</option>
-                    <option value="walk_in">Walk-in Lead</option>
-                    <option value="follow_up">Follow-up Call</option>
-                    <option value="office_task">General Office Task</option>
-                    <option value="other">Other</option>
-                  </select>
-                </div>
-
-                {taskType !== "office_task" && taskType !== "other" && (
-                  <>
-                    <div>
-                      <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Student / Lead Name</label>
-                      <input required type="text" value={newTask.studentName} onChange={e => setNewTask({...newTask, studentName: e.target.value})} className="w-full px-3 py-2 bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-primary outline-none" />
-                    </div>
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Phone</label>
-                        <input type="text" value={newTask.phone} onChange={e => setNewTask({...newTask, phone: e.target.value})} className="w-full px-3 py-2 bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-primary outline-none" />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Email (Optional)</label>
-                        <input type="email" value={newTask.email} onChange={e => setNewTask({...newTask, email: e.target.value})} className="w-full px-3 py-2 bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-primary outline-none" />
-                      </div>
-                    </div>
-                  </>
-                )}
-
-                {taskType === "language_lead" && (
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Test Type</label>
-                      <select required value={newTask.test} onChange={e => setNewTask({...newTask, test: e.target.value})} className="w-full px-3 py-2 bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-primary outline-none">
-                        <option value="">Select</option>
-                        <option value="IELTS">IELTS</option>
-                        <option value="PTE">PTE</option>
-                        <option value="TOEFL">TOEFL</option>
-                        <option value="Duolingo">Duolingo</option>
-                      </select>
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Target Score</label>
-                      <input type="text" value={newTask.targetScore} onChange={e => setNewTask({...newTask, targetScore: e.target.value})} className="w-full px-3 py-2 bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-primary outline-none" />
-                    </div>
-                  </div>
-                )}
-
-                {taskType === "walk_in" && (
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">City</label>
-                      <input type="text" value={newTask.city} onChange={e => setNewTask({...newTask, city: e.target.value})} className="w-full px-3 py-2 bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-primary outline-none" />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Destination</label>
-                      <input type="text" value={newTask.destinations} onChange={e => setNewTask({...newTask, destinations: e.target.value})} className="w-full px-3 py-2 bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-primary outline-none" placeholder="e.g. UK, Aus" />
-                    </div>
-                  </div>
-                )}
-
-                {(taskType === "follow_up" || taskType === "office_task" || taskType === "other") && (
-                  <>
-                    <div>
-                      <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Due Date / Call Date</label>
-                      <input required type="date" value={newTask.date} onChange={e => setNewTask({...newTask, date: e.target.value})} className="w-full px-3 py-2 bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-primary outline-none" />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Task Description / Notes</label>
-                      <textarea required rows={3} value={newTask.notes} onChange={e => setNewTask({...newTask, notes: e.target.value})} className="w-full px-3 py-2 bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-primary outline-none resize-none" placeholder="Enter details..." />
-                    </div>
-                  </>
-                )}
-
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Assign To Employee</label>
-                  <select required value={newTask.assignee} onChange={e => setNewTask({...newTask, assignee: e.target.value})} className="w-full px-3 py-2 bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-primary outline-none">
-                    <option value="">Select Employee</option>
-                    {employees.map(emp => <option key={emp.name} value={emp.name}>{emp.name} ({emp.role})</option>)}
-                  </select>
-                </div>
-                <div className="pt-4"><button type="submit" className="w-full py-3 bg-primary hover:bg-blue-600 text-white font-bold rounded-xl transition-all">Assign Task</button></div>
-              </form>
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
+      <AddTaskModal 
+        isOpen={isTaskModalOpen}
+        onClose={() => setIsTaskModalOpen(false)}
+        taskType={taskType}
+        setTaskType={setTaskType}
+        newTask={newTask}
+        setNewTask={setNewTask}
+        onSubmit={handleAddTask}
+        employees={employees}
+      />
     </div>
   );
 }
