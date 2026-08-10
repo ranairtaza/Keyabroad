@@ -125,6 +125,10 @@ export default function TeamDirectoryPage() {
       return;
     }
 
+    // First delete their attendance records to completely remove them from attendance sheets
+    await supabase.from('employee_attendance').delete().eq('employee_id', emp.id);
+
+    // Then permanently delete them from the team directory
     const { error } = await supabase
       .from('team_members')
       .delete()

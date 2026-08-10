@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import Sidebar from "@/components/Sidebar";
@@ -26,6 +27,25 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <Script
+          strategy="afterInteractive"
+          src="https://www.googletagmanager.com/gtag/js?id=G-HXY2EHQNDX"
+        />
+        <Script
+          id="gtag-init"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+
+              gtag('config', 'G-HXY2EHQNDX');
+            `,
+          }}
+        />
+      </head>
       <body suppressHydrationWarning className={`${inter.className} bg-slate-50 dark:bg-slate-900 flex h-screen overflow-hidden text-slate-900 dark:text-slate-50 transition-colors duration-300`}>
         <ThemeProvider>
           <RoleProvider>

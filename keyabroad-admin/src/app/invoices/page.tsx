@@ -99,8 +99,19 @@ export default function InvoicesPage() {
     inv.invoice_number.toLowerCase().includes(search.toLowerCase())
   );
 
-  const totalRevenue = invoices.filter(i => i.status === "Paid").reduce((acc, curr) => acc + curr.amount, 0);
-  const totalPending = invoices.filter(i => i.status === "Unpaid").reduce((acc, curr) => acc + curr.amount, 0);
+  const totalRevenue = invoices.reduce((acc, curr) => {
+    if (curr.paid_amount) {
+      return acc + curr.paid_amount;
+    }
+    return curr.status === "Paid" ? acc + curr.amount : acc;
+  }, 0);
+
+  const totalPending = invoices.reduce((acc, curr) => {
+    if (curr.remaining_amount) {
+      return acc + curr.remaining_amount;
+    }
+    return curr.status === "Unpaid" ? acc + curr.amount : acc;
+  }, 0);
 
   const handleGenerate = (invoice: Invoice) => {
     const doc = new jsPDF();

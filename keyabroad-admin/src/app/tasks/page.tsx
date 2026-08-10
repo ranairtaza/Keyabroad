@@ -21,8 +21,8 @@ interface RegistrationTask {
   status: TaskStatus;
   created_at: string;
   completed_at?: string;
-  completed_by?: string;
-  assignee?: string;
+  priority?: string;
+  deadline?: string;
 }
 
 interface FollowUpTask {
@@ -36,6 +36,8 @@ interface FollowUpTask {
   created_at: string;
   completed_at?: string;
   completed_by?: string;
+  priority?: string;
+  deadline?: string;
 }
 
 interface WalkInTask {
@@ -50,8 +52,8 @@ interface WalkInTask {
   status: TaskStatus;
   created_at: string;
   completed_at?: string;
-  completed_by?: string;
-  assignee?: string;
+  priority?: string;
+  deadline?: string;
 }
 
 export default function TasksPage() {
@@ -66,7 +68,7 @@ export default function TasksPage() {
     test: "", targetScore: "", // language lead
     city: "", destinations: "", // walk in
     notes: "", date: "", // follow up / office task
-    assignee: "" 
+    assignee: "", priority: "Medium"
   });
   
   const [registrationTasks, setRegistrationTasks] = useState<RegistrationTask[]>([]);
@@ -126,6 +128,8 @@ export default function TasksPage() {
         test: newTask.test,
         target_score: newTask.targetScore,
         assignee: newTask.assignee,
+        priority: newTask.priority || 'Medium',
+        deadline: newTask.date || null,
         status: "pending"
       }]);
       error = err;
@@ -139,6 +143,8 @@ export default function TasksPage() {
         city: newTask.city,
         destinations: [newTask.destinations],
         assignee: newTask.assignee,
+        priority: newTask.priority || 'Medium',
+        deadline: newTask.date || null,
         status: "pending"
       }]);
       error = err;
@@ -150,7 +156,9 @@ export default function TasksPage() {
         email: newTask.email,
         counselor_name: newTask.assignee,
         notes: newTask.notes,
-        follow_up_date: newTask.date,
+        follow_up_date: newTask.date, // keep original field for compatibility
+        priority: newTask.priority || 'Medium',
+        deadline: newTask.date || null,
         status: "pending"
       }]);
       error = err;
@@ -158,8 +166,10 @@ export default function TasksPage() {
     } else if (taskType === "office_task" || taskType === "other") {
       const { error: err } = await supabase.from('office_tasks').insert([{
         description: newTask.notes,
-        due_date: newTask.date,
+        due_date: newTask.date, // keep original field for compatibility
         assignee: newTask.assignee,
+        priority: newTask.priority || 'Medium',
+        deadline: newTask.date || null,
         status: "pending"
       }]);
       error = err;
@@ -179,7 +189,7 @@ export default function TasksPage() {
 
     toast.success(successMsg);
     setIsTaskModalOpen(false);
-    setNewTask({ studentName: "", phone: "", email: "", test: "", targetScore: "", city: "", destinations: "", notes: "", date: "", assignee: "" });
+    setNewTask({ studentName: "", phone: "", email: "", test: "", targetScore: "", city: "", destinations: "", notes: "", date: "", assignee: "", priority: "Medium" });
     fetchData();
   };
 
@@ -400,6 +410,18 @@ export default function TasksPage() {
                     </div>
                     {task.assignee && (
                       <p className="text-xs text-slate-500 mt-2">Assigned to: <span className="font-semibold text-primary">{task.assignee}</span></p>
+                    )}
+                    {task.priority && (
+                      <div className="mt-2 flex gap-2">
+                        <span className={`text-xs font-bold px-2 py-1 rounded ${task.priority === 'High' ? 'bg-red-100 text-red-600 animate-pulse' : task.priority === 'Medium' ? 'bg-yellow-100 text-yellow-700' : 'bg-green-100 text-green-700'}`}>
+                          {task.priority} Priority
+                        </span>
+                        {task.deadline && (
+                          <span className="text-xs font-bold px-2 py-1 rounded bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-300 flex items-center gap-1">
+                            Due: {new Date(task.deadline).toLocaleString()}
+                          </span>
+                        )}
+                      </div>
                     )}
                   </div>
                   <button onClick={() => handleMarkDone('registrations', task.id)} className="w-full py-3 bg-primary/10 hover:bg-primary text-primary hover:text-white font-bold rounded-xl transition-all flex items-center justify-center gap-2">
@@ -807,6 +829,18 @@ export default function TasksPage() {
                         {task.assignee && (
                           <p className="text-xs text-slate-500 mt-2">Assigned to: <span className="font-semibold text-primary">{task.assignee}</span></p>
                         )}
+                    {task.priority && (
+                      <div className="mt-2 flex gap-2">
+                        <span className={`text-xs font-bold px-2 py-1 rounded ${task.priority === 'High' ? 'bg-red-100 text-red-600 animate-pulse' : task.priority === 'Medium' ? 'bg-yellow-100 text-yellow-700' : 'bg-green-100 text-green-700'}`}>
+                          {task.priority} Priority
+                        </span>
+                        {task.deadline && (
+                          <span className="text-xs font-bold px-2 py-1 rounded bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-300 flex items-center gap-1">
+                            Due: {new Date(task.deadline).toLocaleString()}
+                          </span>
+                        )}
+                      </div>
+                    )}
                       </div>
                       <button onClick={() => handleMarkDone('office_tasks', task.id)} className="w-full py-3 bg-primary/10 hover:bg-primary text-primary hover:text-white font-bold rounded-xl transition-all flex items-center justify-center gap-2 relative z-10">
                         <CheckCircle size={18} /> Mark as Completed

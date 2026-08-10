@@ -144,20 +144,87 @@ export function RoleProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (!currentUser || !currentUser.name) return;
 
+    // Request system notification permissions
+    if (typeof window !== 'undefined' && 'Notification' in window && Notification.permission !== 'granted' && Notification.permission !== 'denied') {
+      Notification.requestPermission();
+    }
+
     // We use a ref to prevent duplicate toasts for the same payload
     let lastNotifiedId = "";
 
     const handleTaskEvent = (payload: any) => {
       const newRow = payload.new;
-      if (newRow && newRow.assignee === currentUser.name) {
+      // Many tables use 'assignee' or 'assigned_to', let's check both just in case
+      const assigneeName = newRow.assignee || newRow.assigned_to;
+      
+      if (newRow && assigneeName === currentUser.name) {
         // Basic deduplication to avoid double-firing
         if (lastNotifiedId !== newRow.id) {
           lastNotifiedId = newRow.id;
           
+          let title = '';
+          let body = '';
+          let icon = '';
+          const isHighPriority = newRow.priority === 'High';
+          
           if (payload.table === 'registrations') {
-            toast.success(`New Lead Assigned: ${newRow.student_name}`, { duration: 6000, icon: '📋' });
+            title = 'New Lead Assigned';
+            body = `Lead: ${newRow.student_name || newRow.name || 'New Student'}`;
+            icon = '📋';
           } else if (payload.table === 'enquiries') {
-            toast.success(`Walk-In Ticket Assigned: ${newRow.full_name}`, { duration: 6000, icon: '🎫' });
+            title = 'Walk-In Ticket Assigned';
+            body = `Walk-In: ${newRow.full_name || newRow.name || 'New Client'}`;
+            icon = '🎫';
+          } else if (payload.table === 'office_tasks') {
+            title = 'New Office Task Assigned';
+            body = `Task: ${newRow.title || newRow.description || 'New Task'}`;
+            icon = '📝';
+          } else if (payload.table === 'follow_ups') {
+            title = 'New Follow-Up Assigned';
+            body = `Follow-Up: ${newRow.student_name || newRow.name || 'New Student'}`;
+            icon = '📞';
+          }
+
+          if (title) {
+            // Show in-app toast (urgent style if high priority)
+            if (isHighPriority) {
+              toast.error(`URGENT: ${title} - ${body}`, { duration: 15000, icon: '🚨' });
+            } else {
+              toast.success(`${title} - ${body}`, { duration: 6000, icon });
+            }
+            
+            // Show system-level notification for when tab is in background
+            if (typeof window !== 'undefined' && 'Notification' in window && Notification.permission === 'granted') {
+              try {
+                const notification = new Notification(isHighPriority ? '🚨 URGENT: KeyAbroad Task Assigned' : 'KeyAbroad Task Assigned', {
+                  body: isHighPriority ? `URGENT\n${title}\n${body}` : `${title}\n${body}`,
+                  icon: '/icon.png', // Assuming icon.png is in the public folder
+                  requireInteraction: isHighPriority // ALWAYS keep it on screen for High Priority
+                });
+                
+                // Focus the window when clicked
+                notification.onclick = function() {
+                  window.focus();
+                  this.close();
+                };
+              } catch (e) {
+                console.error("Failed to show system notification", e);
+              }
+            }
+
+            // Extreme Notification: Send an email if high priority
+            if (isHighPriority && currentUser.email) {
+              fetch('/api/notify', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  to_email: currentUser.email,
+                  subject: `🚨 URGENT TASK ASSIGNED: ${title}`,
+                  message: `You have been assigned a High Priority task: ${body}. Please check your KeyAbroad Dashboard immediately.`,
+                  type: 'urgent_task'
+                })
+              }).catch(err => console.error("Failed to send urgent email", err));
+            }
           }
         }
       }
@@ -167,11 +234,111 @@ export function RoleProvider({ children }: { children: React.ReactNode }) {
       .channel('task-notifications')
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'registrations' }, handleTaskEvent)
       .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'enquiries' }, handleTaskEvent)
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'office_tasks' }, handleTaskEvent)
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'follow_ups' }, handleTaskEvent)
       .subscribe();
 
     return () => {
       supabase.removeChannel(taskSubscription);
     };
+  }, [currentUser]);
+
+  // Automated Background Reminder Poller
+  useEffect(() => {
+    if (!currentUser || !currentUser.name) return;
+    
+    const checkReminders = async () => {
+      try {
+        const tables = ['office_tasks', 'follow_ups', 'registrations', 'enquiries'];
+        const now = new Date();
+        const fifteenMinutesFromNow = new Date(now.getTime() + 15 * 60000);
+        
+        let allPendingTasks: any[] = [];
+        
+        for (const table of tables) {
+          const { data, error } = await supabase
+            .from(table)
+            .select('*')
+            .eq('status', 'pending');
+            
+          if (data && !error) {
+            allPendingTasks = [...allPendingTasks, ...data.map(t => ({...t, _table: table}))];
+          }
+        }
+        
+        const myTasks = allPendingTasks.filter(t => (t.assignee === currentUser.name || t.counselor_name === currentUser.name || t.assigned_to === currentUser.name));
+        const remindedTasks = JSON.parse(sessionStorage.getItem('remindedTasksMap') || '{}');
+        
+        myTasks.forEach(task => {
+          const deadline = task.deadline || task.due_date || task.follow_up_date;
+          if (!deadline) return;
+          
+          const deadlineDate = new Date(deadline);
+          const diffMinutes = Math.floor((deadlineDate.getTime() - now.getTime()) / 60000);
+          
+          let reminderLevel: string | null = null;
+          if (diffMinutes <= 15 && diffMinutes > 10) reminderLevel = '15m';
+          else if (diffMinutes <= 10 && diffMinutes > 5) reminderLevel = '10m';
+          else if (diffMinutes <= 5 && diffMinutes >= 0) reminderLevel = '5m';
+          else if (diffMinutes < 0 && diffMinutes >= -60) reminderLevel = 'overdue'; // Only remind once when overdue (within an hour)
+          
+          if (reminderLevel) {
+            const taskMemory = remindedTasks[task.id] || [];
+            if (!taskMemory.includes(reminderLevel)) {
+              
+              // Mark this level as reminded
+              taskMemory.push(reminderLevel);
+              remindedTasks[task.id] = taskMemory;
+              sessionStorage.setItem('remindedTasksMap', JSON.stringify(remindedTasks));
+              
+              let title = '⏰ Upcoming Task Reminder';
+              if (reminderLevel === 'overdue') title = '🚨 OVERDUE TASK';
+              else title = `⏰ Task Due in ${reminderLevel.replace('m', ' Minutes')}`;
+
+              const body = `Due: ${deadlineDate.toLocaleString()}\nTask: ${task.student_name || task.full_name || task.title || task.description || 'Pending task'}`;
+              
+              // In-app alert
+              toast.error(`${title} - ${body}`, { duration: 15000, icon: '⏰' });
+              
+              // Desktop alert
+              if (typeof window !== 'undefined' && 'Notification' in window && Notification.permission === 'granted') {
+                const notification = new Notification(title, {
+                  body: body,
+                  icon: '/icon.png',
+                  requireInteraction: true
+                });
+                notification.onclick = function() {
+                  window.focus();
+                  this.close();
+                };
+              }
+              
+              // Email alert
+              if (currentUser.email) {
+                fetch('/api/notify', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({
+                    to_email: currentUser.email,
+                    subject: title,
+                    message: `Reminder: ${body}. Please check your KeyAbroad Dashboard.`,
+                    type: 'task_reminder'
+                  })
+                }).catch(err => console.error("Failed to send reminder email", err));
+              }
+            }
+          }
+        });
+      } catch (err) {
+        console.error("Reminder check failed:", err);
+      }
+    };
+    
+    // Check immediately, then every 60 seconds
+    checkReminders();
+    const intervalId = setInterval(checkReminders, 60000);
+    
+    return () => clearInterval(intervalId);
   }, [currentUser]);
 
   const login = (user: User) => {

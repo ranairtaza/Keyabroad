@@ -109,6 +109,15 @@ export function AddTaskModal({
           )}
 
           <div>
+            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Priority Level</label>
+            <select required value={newTask.priority} onChange={e => setNewTask({...newTask, priority: e.target.value})} className="w-full px-3 py-2 bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-primary outline-none font-bold">
+              <option value="High" className="text-red-500 font-bold">High (Urgent)</option>
+              <option value="Medium" className="text-yellow-600 font-bold">Medium</option>
+              <option value="Low" className="text-green-500 font-bold">Low</option>
+            </select>
+          </div>
+
+          <div>
             <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Assign To Employee</label>
             <select required value={newTask.assignee} onChange={e => setNewTask({...newTask, assignee: e.target.value})} className="w-full px-3 py-2 bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-primary outline-none">
               <option value="">Select Employee</option>
