@@ -1,0 +1,84 @@
+
+> admin@0.1.0 build
+> next build
+
+⚠ Warning: Next.js inferred your workspace root, but it may not be correct.
+ We detected multiple lockfiles and selected the directory of C:\Users\DeLL\OneDrive\Desktop\Keyabroad\package-lock.json as the root directory.
+ To silence this warning, set `turbopack.root` in your Next.js config, or consider removing one of the lockfiles if it's not needed.
+   See https://nextjs.org/docs/app/api-reference/config/next-config-js/turbopack#root-directory for more information.
+ Detected additional lockfiles: 
+   * C:\Users\DeLL\OneDrive\Desktop\Keyabroad\apps\admin\package-lock.json
+
+▲ Next.js 16.2.10 (Turbopack)
+- Environments: .env.local
+
+⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+  Creating an optimized production build ...
+✓ Compiled successfully in 53s
+  Running TypeScript ...
+  Finished TypeScript in 67s ...
+  Collecting page data using 7 workers ...
+  Generating static pages using 7 workers (0/47) ...
+  Generating static pages using 7 workers (11/47) 
+  Generating static pages using 7 workers (23/47) 
+  Generating static pages using 7 workers (35/47) 
+✓ Generating static pages using 7 workers (47/47) in 6.5s
+  Finalizing page optimization ...
+
+Route (app)
+┌ ○ /
+├ ○ /_not-found
+├ ○ /analytics
+├ ○ /analytics/team
+├ ƒ /api/automations/check-tasks
+├ ƒ /api/automations/mark-absent
+├ ƒ /api/automations/webhook
+├ ƒ /api/create-employee
+├ ƒ /api/notify
+├ ƒ /api/notify/in-app
+├ ƒ /api/notify/list
+├ ƒ /api/notify/read
+├ ƒ /api/ocr
+├ ƒ /api/tasks/create
+├ ƒ /api/tasks/delete
+├ ƒ /api/tasks/list
+├ ƒ /api/tasks/update
+├ ƒ /api/time
+├ ○ /appointments
+├ ○ /attendance
+├ ○ /automations
+├ ○ /blogs
+├ ○ /campaigns
+├ ○ /course-matcher
+├ ○ /crm/audit
+├ ○ /crm/leads
+├ ○ /crm/tasks
+├ ○ /database
+├ ƒ /embed/reviews
+├ ○ /feedback
+├ ƒ /feedback/[id]
+├ ○ /fees
+├ ○ /hr-operations
+├ ○ /icon.png
+├ ○ /integrations
+├ ○ /invoices
+├ ○ /leads
+├ ○ /login
+├ ○ /master-records
+├ ○ /operations
+├ ○ /pipeline
+├ ƒ /receipt/[id]
+├ ○ /reviews
+├ ○ /settings
+├ ○ /tasks
+├ ○ /team
+├ ○ /universities
+├ ○ /universities/create
+└ ○ /visas
+
+
+ƒ Proxy (Middleware)
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+

@@ -1,6 +1,22 @@
 {
+  "name": "keyabroad-monorepo",
+  "packageManager": "npm@11.13.0",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "lint": "turbo run lint",
+    "test": "turbo run test"
+  },
   "dependencies": {
     "@imgly/background-removal-node": "^1.4.5",
     "jimp": "^1.6.1"
+  },
+  "devDependencies": {
+    "turbo": "^2.1.0"
   }
 }
