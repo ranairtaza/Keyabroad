@@ -1,0 +1,15 @@
+-- 010_test_suite.sql
+-- DEPRECATED: This is the old simple manual test file.
+-- 
+-- ⚠️  DO NOT RUN THIS FILE.
+--
+-- Use 010_security_test_suite.sql instead.
+-- That file is the comprehensive, machine-verifiable test suite that:
+--   - Creates real auth identities
+--   - Tests all roles with actual JWT context
+--   - Produces machine-verifiable PASS/FAIL assertions
+--   - Automatically rolls back all fixtures
+--   - Finishes with: ALL SECURITY TESTS PASSED
+--
+-- To run the correct suite, open and execute:
+--   migrations/010_security_test_suite.sql

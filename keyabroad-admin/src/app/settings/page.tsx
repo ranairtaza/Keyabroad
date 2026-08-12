@@ -7,10 +7,11 @@ import toast from "react-hot-toast";
 import { useRole } from "@/components/RoleContext";
 import { useTheme } from "@/components/ThemeContext";
 import Image from "next/image";
-import { supabase } from "@/lib/supabaseClient";
+import { createClient } from "@/utils/supabase/client";
 import ImageCropperModal from "@/components/ImageCropperModal";
 
 export default function SettingsPage() {
+  const supabase = createClient();
   const { role, currentUser, updateUser } = useRole();
   const [activeTab, setActiveTab] = useState("profile");
   const { theme, setTheme } = useTheme();

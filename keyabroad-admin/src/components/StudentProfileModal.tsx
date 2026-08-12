@@ -188,7 +188,18 @@ export default function StudentProfileModal({ isOpen, onClose, student, onUpdate
           <div className="p-6 border-b border-slate-700/50 flex justify-between items-center bg-slate-800/50">
             <div>
               <h2 className="text-xl font-bold text-white">{student.name}</h2>
-              <p className="text-slate-400 text-sm">Ticket: {student.ticket_number}</p>
+              <div className="flex items-center gap-3">
+                <p className="text-slate-400 text-sm">Ticket: {student.ticket_number}</p>
+                  <button 
+                    onClick={() => {
+                      navigator.clipboard.writeText(`https://admin.keyabroad.com/feedback`);
+                      toast.success("Universal Feedback link copied to clipboard!");
+                    }}
+                  className="bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500 hover:text-white px-2 py-0.5 rounded text-xs transition-colors flex items-center gap-1"
+                >
+                  <MessageSquare size={12} /> Copy Feedback Link
+                </button>
+              </div>
             </div>
             <button onClick={onClose} className="p-2 hover:bg-slate-700 rounded-full text-slate-400 hover:text-white transition-colors">
               <X className="w-5 h-5" />

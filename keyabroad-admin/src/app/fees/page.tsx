@@ -6,7 +6,7 @@ import Hover3DWrapper from "@/components/Hover3DWrapper";
 import { supabase } from "@/lib/supabaseClient";
 import { useRole } from "@/components/RoleContext";
 import toast from "react-hot-toast";
-import { DollarSign, AlertCircle, Calendar, Plus, X, Search, TrendingUp, Download } from "lucide-react";
+import { DollarSign, AlertCircle, Calendar, Plus, X, Search, TrendingUp, Download, Trash2 } from "lucide-react";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 import RevenueChart from "@/components/RevenueChart";
@@ -24,6 +24,7 @@ export default function FeesPage() {
   const [amountPaid, setAmountPaid] = useState("");
   const [monthsCovered, setMonthsCovered] = useState("1");
   const [paymentDate, setPaymentDate] = useState(new Date().toISOString().split('T')[0]);
+  const [deadlineDate, setDeadlineDate] = useState("");
 
   const { role, currentUser } = useRole();
   const isAccountant = currentUser?.designation?.toLowerCase().includes("accountant");
@@ -59,8 +60,10 @@ export default function FeesPage() {
       if (!selectedStudentId) throw new Error("Please select a student");
       
       const pDate = new Date(paymentDate);
-      const nextDue = new Date(pDate);
-      nextDue.setMonth(nextDue.getMonth() + parseInt(monthsCovered));
+      const nextDue = deadlineDate ? new Date(deadlineDate) : new Date(pDate);
+      if (!deadlineDate) {
+        nextDue.setMonth(nextDue.getMonth() + parseInt(monthsCovered));
+      }
 
       const { error } = await supabase.from('fee_logs').insert([{
         student_id: selectedStudentId,
@@ -79,6 +82,7 @@ export default function FeesPage() {
       setSelectedStudentId("");
       setAmountPaid("");
       setMonthsCovered("1");
+      setDeadlineDate("");
       
       fetchData(); // refresh
     } catch (err: any) {
@@ -86,6 +90,17 @@ export default function FeesPage() {
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const handleDeleteLog = async (id: string) => {
+    if (role !== "owner") {
+      toast.error("Access Denied: Only Admin or Owner can delete fee records.");
+      return;
+    }
+    if (!window.confirm("Are you sure you want to permanently delete this payment log?")) return;
+    const { error } = await supabase.from('fee_logs').delete().eq('id', id);
+    if (error) toast.error(`Error deleting: ${error.message}`);
+    else { toast.success("Payment record deleted"); fetchData(); }
   };
 
   // Calculations
@@ -283,12 +298,21 @@ export default function FeesPage() {
                       <td className="p-4 text-slate-300">{log.months_covered} Month(s)</td>
                       <td className="p-4 text-slate-400">{new Date(log.payment_date).toLocaleDateString()}</td>
                       <td className="p-4 text-right">
-                        <button 
-                          onClick={() => window.open(`/receipt/${log.id}`, '_blank')}
-                          className="bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded text-xs font-medium border border-slate-700 transition-colors"
-                        >
-                          Generate Slip
-                        </button>
+                        <div className="flex items-center justify-end gap-2">
+                          <button 
+                            onClick={() => window.open(`/receipt/${log.id}`, '_blank')}
+                            className="bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded text-xs font-medium border border-slate-700 transition-colors"
+                          >
+                            Generate Slip
+                          </button>
+                          <button 
+                            onClick={() => handleDeleteLog(log.id)}
+                            className="text-red-500/50 hover:text-red-500 bg-red-500/10 hover:bg-red-500/20 p-1.5 rounded transition-colors"
+                            title="Delete Payment"
+                          >
+                            <Trash2 size={16} />
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))}
@@ -377,12 +401,15 @@ export default function FeesPage() {
                         </td>
                         <td className="p-4 font-bold text-slate-300">Rs {log.amount_paid.toLocaleString()}</td>
                         <td className="p-4 text-right">
-                          <button 
-                            onClick={() => window.open(`/receipt/${log.id}`, '_blank')}
-                            className="text-primary hover:underline font-medium"
-                          >
-                            View Slip
-                          </button>
+                          <div className="flex items-center justify-end gap-3">
+                            <button 
+                              onClick={() => window.open(`/receipt/${log.id}`, '_blank')}
+                              className="text-primary hover:underline font-medium"
+                            >
+                              View Slip
+                            </button>
+                            <button onClick={() => handleDeleteLog(log.id)} className="text-red-500/50 hover:text-red-500"><Trash2 size={16}/></button>
+                          </div>
                         </td>
                       </tr>
                     ))}
@@ -425,19 +452,19 @@ export default function FeesPage() {
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm text-slate-300 mb-1">Months Covered</label>
-                  <input 
-                    type="number" required min="1" max="12"
-                    value={monthsCovered} onChange={e => setMonthsCovered(e.target.value)}
-                    className="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-white"
-                  />
-                </div>
-                <div>
                   <label className="block text-sm text-slate-300 mb-1">Payment Date</label>
                   <input 
                     type="date" required
                     value={paymentDate} onChange={e => setPaymentDate(e.target.value)}
-                    className="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-white"
+                    className="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-white [color-scheme:dark]"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm text-slate-300 mb-1">Next Deadline Date</label>
+                  <input 
+                    type="date" required
+                    value={deadlineDate} onChange={e => setDeadlineDate(e.target.value)}
+                    className="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-white [color-scheme:dark]"
                   />
                 </div>
               </div>

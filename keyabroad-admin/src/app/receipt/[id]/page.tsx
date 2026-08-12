@@ -38,100 +38,111 @@ export default function ReceiptPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-100 py-12 px-4 print:bg-white print:py-0 print:px-0">
+    <div className="min-h-screen bg-slate-100 py-12 px-4 print:bg-white print:py-0 print:px-0 flex flex-col items-center">
       {/* Action Bar (Hidden when printing) */}
-      <div className="max-w-3xl mx-auto mb-6 flex justify-between items-center print:hidden">
+      <div className="w-full max-w-4xl mb-6 flex justify-between items-center print:hidden">
         <Link href="/fees" className="flex items-center gap-2 text-slate-600 hover:text-slate-900 transition-colors bg-white px-4 py-2 rounded-lg border shadow-sm font-medium">
           <ArrowLeft size={18} /> Back to Fees
         </Link>
-        <div className="flex gap-3">
-          <button 
-            onClick={() => window.print()}
-            className="flex items-center gap-2 bg-primary hover:bg-blue-600 text-white px-6 py-2 rounded-lg font-bold shadow-md transition-all"
-          >
-            <Printer size={18} /> Print Receipt
-          </button>
-        </div>
+        <button 
+          onClick={() => window.print()}
+          className="flex items-center gap-2 bg-primary hover:bg-blue-600 text-white px-6 py-2 rounded-lg font-bold shadow-md transition-all"
+        >
+          <Printer size={18} /> Print Receipt
+        </button>
       </div>
 
       {/* Receipt Paper */}
-      <div className="max-w-3xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden print:shadow-none print:rounded-none">
-        {/* Header */}
-        <div className="bg-slate-900 p-8 text-white flex justify-between items-start print:bg-white print:text-black print:border-b-4 print:border-slate-900">
-          <div>
-            <div className="flex items-center gap-2 mb-4">
-              <div className="w-10 h-10 bg-primary rounded flex items-center justify-center font-black text-xl">K</div>
-              <h1 className="text-2xl font-black tracking-tight">KeyAbroad</h1>
-            </div>
-            <p className="text-slate-400 print:text-slate-600 text-sm">123 Education Lane<br/>Lahore, Pakistan<br/>contact@keyabroad.com</p>
+      <div className="w-full max-w-4xl bg-white p-12 shadow-xl print:shadow-none text-black font-sans relative">
+        {/* Logo and Header */}
+        <div className="text-center mb-8">
+          {/* Replace this img src with your actual logo file in the public folder */}
+          <img src="/logo.png" alt="KeyAbroad Logo" className="mx-auto h-24 object-contain" onError={(e) => {
+             // Fallback text if logo.png doesn't exist yet
+             (e.target as HTMLImageElement).style.display = 'none';
+             document.getElementById('fallback-logo')?.classList.remove('hidden');
+          }} />
+          <div id="fallback-logo" className="hidden">
+             <h1 className="text-4xl font-black tracking-tighter flex items-center justify-center gap-1">
+               KeyAbr<span className="text-blue-500">o</span>ad
+             </h1>
+             <p className="text-sm font-semibold tracking-wide">Open the door to success</p>
           </div>
-          <div className="text-right">
-            <h2 className="text-3xl font-bold text-slate-200 print:text-slate-900 mb-1">RECEIPT</h2>
-            <p className="text-slate-400 print:text-slate-500 font-medium">#{log.id.toString().padStart(6, '0')}</p>
-            <p className="text-slate-400 print:text-slate-500 font-medium mt-2">Date: {new Date(log.payment_date).toLocaleDateString()}</p>
-          </div>
+          <h2 className="text-3xl font-serif font-bold mt-6 mb-8">Receipt</h2>
         </div>
 
-        {/* Body */}
-        <div className="p-8">
-          <div className="flex justify-between mb-12">
-            <div>
-              <p className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-2">Billed To</p>
-              <p className="text-lg font-bold text-slate-900">{log.students?.name}</p>
-              <p className="text-slate-600">Ticket ID: {log.students?.ticket_number}</p>
-              <p className="text-slate-600">{log.students?.email}</p>
-            </div>
-          </div>
-
-          <table className="w-full text-left mb-12">
-            <thead>
-              <tr className="border-b-2 border-slate-200">
-                <th className="py-3 text-sm font-bold text-slate-400 uppercase tracking-wider">Description</th>
-                <th className="py-3 text-sm font-bold text-slate-400 uppercase tracking-wider text-right">Amount</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr className="border-b border-slate-100">
-                <td className="py-4">
-                  <p className="font-bold text-slate-900">Visa Processing & Consultation Fees</p>
-                  <p className="text-sm text-slate-500">Coverage for {log.months_covered} month(s)</p>
-                </td>
-                <td className="py-4 text-right font-bold text-slate-900">Rs {log.amount_paid.toLocaleString()}</td>
-              </tr>
-            </tbody>
-          </table>
-
-          <div className="flex justify-end mb-16">
-            <div className="w-64">
-              <div className="flex justify-between py-3 border-b border-slate-200">
-                <span className="font-medium text-slate-600">Subtotal</span>
-                <span className="font-bold text-slate-900">Rs {log.amount_paid.toLocaleString()}</span>
-              </div>
-              <div className="flex justify-between py-3">
-                <span className="font-bold text-slate-900 text-lg">Total Paid</span>
-                <span className="font-black text-green-600 text-xl">Rs {log.amount_paid.toLocaleString()}</span>
-              </div>
-            </div>
-          </div>
-
-          <div className="flex justify-between items-end">
-            <div>
-              <p className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-2">Payment Info</p>
-              <p className="text-slate-600 font-medium">Status: <span className="text-green-600 font-bold bg-green-50 px-2 py-0.5 rounded">Paid</span></p>
+        {/* Info Grid */}
+        <div className="grid grid-cols-2 gap-x-12 gap-y-4 text-base mt-8">
+          {/* Left Column */}
+          <div className="space-y-4">
+            <div className="flex gap-2">
+              <span className="text-gray-600">Date:</span>
+              <span className="font-bold">{new Date(log.payment_date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
             </div>
             
-            <div className="text-center w-48">
-              <div className="border-b-2 border-slate-800 mb-2 pb-2">
-                <span className="font-brush text-2xl text-slate-800 italic">KeyAbroad Authorized</span>
+            <div className="mt-6 space-y-1">
+              <div className="flex gap-2">
+                <span className="text-gray-600">Received From:</span>
+                <span className="font-bold">{log.students?.name}</span>
               </div>
-              <p className="text-xs text-slate-500 font-medium uppercase tracking-wider">Authorized Signature</p>
+              <div className="flex gap-2">
+                <span className="text-gray-600">Course:</span>
+                <span className="font-bold">IELTS</span> {/* Assuming IELTS or can be dynamic if available */}
+              </div>
+              <div className="flex gap-2">
+                <span className="text-gray-600">Received by:</span>
+                <span className="font-bold">Admin</span>
+              </div>
+            </div>
+
+            <div className="mt-6">
+               <div className="flex gap-2">
+                 <span className="text-gray-600">Course Ending:</span>
+                 <span className="font-bold">{new Date(log.next_due_date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }).replace(/ /g, '-')}</span>
+               </div>
+            </div>
+          </div>
+
+          {/* Right Column */}
+          <div className="space-y-4">
+            <div className="flex gap-2">
+              <span className="text-gray-600">Total Amount:</span>
+              <span className="font-bold">{log.amount_paid.toLocaleString()} Payment</span>
+            </div>
+
+            <div className="mt-6 space-y-1">
+              <div className="flex gap-2">
+                <span className="text-gray-600">Method:</span>
+                <span className="font-bold">Cash</span>
+              </div>
+              <div className="flex gap-2">
+                <span className="text-gray-600">Paid Amount:</span>
+                <span className="font-bold">{log.amount_paid.toLocaleString()}</span>
+              </div>
+              <div className="flex gap-2">
+                <span className="text-gray-600">Remaining Amount:</span>
+                <span className="font-bold">Nil</span>
+              </div>
+            </div>
+
+            <div className="mt-6">
+              <div className="flex gap-2">
+                <span className="text-gray-600">Deadline:</span>
+                <span className="font-bold">Nil</span>
+              </div>
             </div>
           </div>
         </div>
-        
+
+        {/* Signature Line */}
+        <div className="mt-16 flex items-end">
+          <span className="text-gray-600 mr-2">Signature:</span>
+          <div className="border-b border-gray-400 w-64 h-4"></div>
+        </div>
+
         {/* Footer */}
-        <div className="bg-slate-50 p-6 text-center text-sm text-slate-500 border-t border-slate-100 print:bg-white print:border-none">
-          Thank you for trusting KeyAbroad with your future!
+        <div className="mt-16 text-center font-bold text-gray-900 pb-16 border-b border-dotted border-gray-400">
+          Thank you for choosing KeyAbroad!
         </div>
       </div>
     </div>

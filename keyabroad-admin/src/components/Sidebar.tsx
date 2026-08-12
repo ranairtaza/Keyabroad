@@ -11,6 +11,8 @@ export default function Sidebar() {
   const { logout, role, currentUser } = useRole();
   const { isSidebarOpen, setIsSidebarOpen } = useSidebar();
 
+  if (pathname.startsWith("/login") || pathname.startsWith("/feedback") || pathname.startsWith("/receipt") || pathname.startsWith("/embed")) return null;
+
   const isAccountant = currentUser?.designation?.toLowerCase().includes("accountant");
   const isIntern = currentUser?.designation?.toLowerCase().includes("intern");
   const canViewFees = role === "owner" || isAccountant;

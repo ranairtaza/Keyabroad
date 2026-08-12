@@ -1,12 +1,15 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, use } from "react";
 import { supabase } from "@/lib/supabaseClient";
 import toast from "react-hot-toast";
 import { Star, CheckCircle2 } from "lucide-react";
 import { motion } from "framer-motion";
 
-export default function FeedbackPage({ params }: { params: { id: string } }) {
+export default function FeedbackPage({ params }: { params: Promise<{ id: string }> }) {
+  const unwrappedParams = use(params);
+  const id = unwrappedParams.id;
+  
   const [student, setStudent] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [submitted, setSubmitted] = useState(false);
@@ -18,18 +21,22 @@ export default function FeedbackPage({ params }: { params: { id: string } }) {
 
   useEffect(() => {
     async function loadStudent() {
-      if (!params.id) return;
-      const { data } = await supabase
+      if (!id) return;
+      const { data, error } = await supabase
         .from('students')
         .select('name')
-        .eq('id', params.id)
+        .eq('id', id)
         .single();
+      
+      if (error) {
+        console.error("Supabase Error:", error);
+      }
       
       if (data) setStudent(data);
       setLoading(false);
     }
     loadStudent();
-  }, [params.id]);
+  }, [id]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -40,7 +47,7 @@ export default function FeedbackPage({ params }: { params: { id: string } }) {
     setIsSubmitting(true);
     
     const { error } = await supabase.from('student_feedbacks').insert([{
-      student_id: params.id,
+      student_id: id,
       rating,
       review_text: reviewText
     }]);

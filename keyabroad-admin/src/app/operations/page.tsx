@@ -47,7 +47,7 @@ export default function OperationsPage() {
       
     const { data: todayAttendance } = await supabase
       .from('employee_attendance')
-      .select('employee_id, created_at')
+      .select('employee_id, created_at, status')
       .eq('date', today);
 
     if (teamMembers) {
@@ -56,8 +56,9 @@ export default function OperationsPage() {
         return {
           id: member.id,
           name: member.name,
-          isPresent: !!record,
-          checkInTime: record ? new Date(record.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : null
+          isPresent: record && record.status === 'present',
+          isLeave: record && record.status === 'leave',
+          checkInTime: record && record.status === 'present' ? new Date(record.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : null
         };
       });
       setAttendance(attendanceData);
@@ -226,6 +227,8 @@ export default function OperationsPage() {
                           <span className="text-slate-900 dark:text-white font-medium block">{emp.name}</span>
                           {emp.isPresent ? (
                             <span className="text-green-600 font-medium text-xs">Present - Checked in {emp.checkInTime}</span>
+                          ) : emp.isLeave ? (
+                            <span className="text-amber-500 font-medium text-xs">On Leave</span>
                           ) : (
                             <span className="text-red-500 font-medium text-xs">Absent</span>
                           )}

@@ -1,0 +1,18 @@
+{
+  "sourceRecords": 17,
+  "recordsValid": 17,
+  "recordsIncomplete": 910,
+  "recordsInvalid": 0,
+  "countriesToInsert": 17,
+  "universitiesToInsert": 146,
+  "programsToInsert": 910,
+  "featuresToInsert": 69,
+  "duplicatesDetected": 0,
+  "manualReviewRequired": 0,
+  "recordsWithUnknownDegreeLevel": 910,
+  "recordsWithMissingTuition": 910,
+  "recordsWithMissingDuration": 910,
+  "recordsWithMissingIntake": 910,
+  "recordsWithMissingRequirements": 910,
+  "warnings": []
+}

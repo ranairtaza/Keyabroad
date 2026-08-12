@@ -43,10 +43,17 @@ export default function AnalyticsPage() {
   const fetchAnalyticsData = async () => {
     setIsLoading(true);
     try {
-      // Fetch datasets
+      // Fetch datasets for graphs (limit 10000 to avoid default 1000 row truncation which breaks recent graphs)
       const [visitsRes, enquiriesRes] = await Promise.all([
-        supabase.from('website_visits').select('created_at'),
-        supabase.from('enquiries').select('full_name, created_at, inquiry_type')
+        supabase.from('website_visits').select('created_at').order('created_at', { ascending: false }).limit(10000),
+        supabase.from('enquiries').select('full_name, created_at, inquiry_type').order('created_at', { ascending: false }).limit(10000)
+      ]);
+      
+      // Fetch exact counts for total stats (bypasses the 1000 row max limit)
+      const [exactVisits, exactWalkIns, exactLeads] = await Promise.all([
+        supabase.from('website_visits').select('*', { count: 'exact', head: true }),
+        supabase.from('enquiries').select('*', { count: 'exact', head: true }).ilike('inquiry_type', '%walk%'),
+        supabase.from('enquiries').select('*', { count: 'exact', head: true }).not('inquiry_type', 'ilike', '%walk%')
       ]);
 
       const visits = visitsRes.data || [];
@@ -55,10 +62,11 @@ export default function AnalyticsPage() {
       const walkIns = enquiries.filter(e => (e.inquiry_type || '').toLowerCase().includes('walk'));
       const leads = enquiries.filter(e => !(e.inquiry_type || '').toLowerCase().includes('walk'));
 
-      // Update Total Stats
-      const totalVisits = visits.length;
-      const totalLeads = leads.length;
-      const totalWalkIns = walkIns.length;
+      // Update Total Stats using exact counts
+      const totalVisits = exactVisits.count || visits.length;
+      const totalWalkIns = exactWalkIns.count || walkIns.length;
+      const totalLeads = exactLeads.count || leads.length;
+      
       const conv = totalVisits > 0 ? ((totalLeads + totalWalkIns) / totalVisits * 100).toFixed(1) : 0;
       setTotalStats({ visits: totalVisits, leads: totalLeads, walkIns: totalWalkIns, conversion: Number(conv) });
 

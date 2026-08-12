@@ -372,15 +372,16 @@ export default function InvoicesPage() {
       {/* Generate Invoice Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-white dark:bg-slate-900 rounded-2xl w-full max-w-md shadow-2xl overflow-hidden border border-slate-200 dark:border-slate-800">
-            <div className="p-6 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-950/50">
+          <div className="bg-white dark:bg-slate-900 rounded-2xl w-full max-w-md shadow-2xl flex flex-col border border-slate-200 dark:border-slate-800 max-h-[90vh]">
+            <div className="p-6 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-950/50 flex-shrink-0">
               <h2 className="text-xl font-bold text-slate-900 dark:text-white">Generate Invoice</h2>
               <button onClick={() => setIsModalOpen(false)} className="text-slate-400 hover:text-slate-600">
                 <X size={20} />
               </button>
             </div>
             
-            <form onSubmit={handleAddInvoice} className="p-6 space-y-4">
+            <div className="overflow-y-auto flex-1 custom-scrollbar">
+              <form onSubmit={handleAddInvoice} className="p-6 space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Invoice Number</label>
@@ -454,6 +455,7 @@ export default function InvoicesPage() {
                 </button>
               </div>
             </form>
+            </div>
           </div>
         </div>
       )}

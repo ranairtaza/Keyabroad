@@ -7,10 +7,15 @@ import Image from "next/image";
 import { useState, useRef, useEffect } from "react";
 import { createClient } from "@/utils/supabase/client";
 import toast from "react-hot-toast";
+import { usePathname } from "next/navigation";
 
 export default function Header() {
+  const pathname = usePathname();
   const { currentUser, logout } = useRole();
   const { toggleSidebar } = useSidebar();
+
+  if (pathname.startsWith("/login") || pathname.startsWith("/feedback") || pathname.startsWith("/receipt") || pathname.startsWith("/embed")) return null;
+
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [notifications, setNotifications] = useState<any[]>([]);
@@ -42,57 +47,62 @@ export default function Header() {
   useEffect(() => {
     if (!currentUser) return;
 
-    const fetchNotifications = async () => {
-      const recipients = [currentUser.name, 'Admin'];
-      const { data } = await supabase
-        .from('notifications')
-        .select('*')
-        .in('recipient', recipients)
-        .order('created_at', { ascending: false })
-        .limit(10);
-      if (data) setNotifications(data);
-    };
-    
-    fetchNotifications();
-
-    const channel = supabase
-      .channel('schema-db-changes')
-      .on(
-        'postgres_changes',
-        { event: 'INSERT', schema: 'public', table: 'notifications' },
-        (payload) => {
-          if (payload.new.recipient === currentUser.name || payload.new.recipient === 'Admin') {
-            setNotifications((prev) => [payload.new, ...prev]);
-            
-            // Show toast notification
-            toast.success(payload.new.message, { duration: 5000, icon: '🔔' });
-            
-            // Play ping sound
-            try {
-              const audio = new Audio('/ping.mp3');
-              audio.play().catch(e => console.log('Audio play prevented by browser policy'));
-            } catch (e) {
-              // ignore
-            }
-            
-            // Show native desktop notification
-            if (typeof window !== "undefined" && "Notification" in window && Notification.permission === "granted") {
-              new Notification("KeyAbroad Task Update", {
-                body: payload.new.message,
+    const fetchNotifications = async (showToast = false) => {
+      try {
+        const recipients = [currentUser.name, 'Admin'];
+        const res = await fetch('/api/notify/list', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ recipients })
+        });
+        const { notifications: data } = await res.json();
+        
+        if (data) {
+          setNotifications(prev => {
+            if (showToast && data.length > 0) {
+              const newNotifs = data.filter((n: any) => !prev.find(p => p.id === n.id));
+              newNotifs.forEach((newNotif: any) => {
+                toast.success(newNotif.message, { duration: 5000, icon: '🔔' });
+                try {
+                  const audio = new Audio('/ping.mp3');
+                  audio.play().catch(() => {});
+                } catch (e) {}
+                if (typeof window !== "undefined" && "Notification" in window && Notification.permission === "granted") {
+                  const notification = new Notification("KeyAbroad Task Update", { 
+                    body: newNotif.message,
+                    icon: '/icon.png',
+                    requireInteraction: true
+                  });
+                  notification.onclick = function() {
+                    window.focus();
+                    this.close();
+                  };
+                }
               });
             }
-          }
+            return data;
+          });
         }
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
+      } catch (err) {
+        console.error("Failed to fetch notifications", err);
+      }
     };
+    
+    // Initial fetch
+    fetchNotifications(false);
+
+    // Poll every 10 seconds to bypass RLS realtime limitations
+    const interval = setInterval(() => fetchNotifications(true), 10000);
+
+    return () => clearInterval(interval);
   }, [currentUser]);
 
   const markAsRead = async (id: string) => {
-    await supabase.from('notifications').update({ is_read: true }).eq('id', id);
+    await fetch('/api/notify/read', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id })
+    });
     setNotifications(notifications.map(n => n.id === id ? { ...n, is_read: true } : n));
   };
 

@@ -1,139 +1,206 @@
 import Link from "next/link";
-import Script from "next/script";
 import Image from "next/image";
+import { ArrowRight, Globe2, GraduationCap, Search, Sparkles, Building2, MapPin, CheckCircle2, ChevronRight, Calculator } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import dynamic from 'next/dynamic';
-import { ArrowRight, BadgeCheck } from "lucide-react";
-import AnimatedHero from "@/components/AnimatedHero";
 
-// Lazy load heavy components that are below the fold to boost mobile FCP/LCP
 const DestinationSlider = dynamic(() => import("@/components/DestinationSlider"), { ssr: true });
-const ExperienceSection = dynamic(() => import("@/components/ExperienceSection"), { ssr: true });
-const EnquiryFormWizard = dynamic(() => import("@/components/EnquiryFormWizard"));
 const Reviews = dynamic(() => import("@/components/Reviews"), { ssr: true });
 
 export default function Home() {
   return (
-    <div className="flex flex-col w-full">
-      {/* Hero Section */}
-      <AnimatedHero />
-
-      {/* Destination Slider */}
-      <DestinationSlider />
-
-      {/* Experience Section */}
-      <ExperienceSection />
-
-      {/* Registration Section */}
-      <section className="py-24 bg-slate-50 relative overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="mb-12 text-center max-w-3xl mx-auto">
-            <span className="text-secondary font-semibold uppercase tracking-wider text-sm mb-2 block">Take the First Step</span>
-            <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">Start Your Assessment</h2>
-            <p className="text-slate-600 text-lg">Provide your details to our expert counsellors for a personalized roadmap.</p>
-          </div>
-          
-          <div className="grid lg:grid-cols-2 gap-16 items-start">
-            <div className="relative z-10 w-full flex flex-col h-full">
-              <div className="mb-8 hidden lg:block">
-                <h3 className="text-2xl font-bold text-slate-900 mb-4">Submit Your Details</h3>
-                <p className="text-slate-600">
-                  Fill out our comprehensive wizard to let us know your study abroad preferences.
-                </p>
-              </div>
-              <EnquiryFormWizard />
-            </div>
-
-            <div className="flex flex-col h-full">
-              <div className="mb-8 hidden lg:block">
-                <h3 className="text-2xl font-bold text-slate-900 mb-4">Or Visit Our Office</h3>
-                <p className="text-slate-600">
-                  Come by our Faisalabad branch to speak with our educational experts in person.
-                </p>
-              </div>
-              
-              {/* Map Embed */}
-              <div className="flex-grow w-full min-h-[400px] lg:min-h-[600px] rounded-[2rem] overflow-hidden shadow-2xl border border-slate-200">
-                <iframe 
-                  src="https://maps.google.com/maps?q=KeyAbroad,+Canal+Road,+Faisalabad&t=&z=15&ie=UTF8&iwloc=&output=embed" 
-                  width="100%" 
-                  height="100%" 
-                  style={{ border: 0 }} 
-                  allowFullScreen 
-                  loading="lazy" 
-                  referrerPolicy="no-referrer-when-downgrade"
-                  title="KeyAbroad Office Location"
-                ></iframe>
-              </div>
-            </div>
-          </div>
+    <div className="flex flex-col w-full min-h-screen">
+      
+      {/* 1. HERO SECTION & AI CTA */}
+      <section className="relative overflow-hidden bg-slate-900 text-white pt-24 pb-32 lg:pt-36 lg:pb-40">
+        <div className="absolute inset-0 z-0 opacity-20">
+          <Image 
+            src="https://images.unsplash.com/photo-1523050854058-8df90110c9f1?q=80&w=2070" 
+            alt="University campus" 
+            fill 
+            className="object-cover"
+            priority
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/80 to-slate-900/40" />
         </div>
-      </section>
-
-      {/* ICEF Certificate Section */}
-      <section className="py-20 bg-slate-50 flex flex-col items-center justify-center text-center relative z-10 border-t border-slate-200 shadow-sm">
-        <div className="max-w-4xl mx-auto px-4">
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-slate-900 mb-10 flex flex-wrap items-center justify-center gap-2 md:gap-3 leading-tight">
-            <span>
-              KeyAbroad Recognized <br className="hidden md:block" />
-              with Esteemed ICEF Agency Status
-            </span>
-            <BadgeCheck className="text-blue-500 w-8 h-8 md:w-10 md:h-10 shrink-0 inline-block fill-blue-50 -mt-2" />
-          </h2>
-          
-          <div className="flex justify-center mb-16 md:mb-24 transform scale-125 md:scale-150 origin-top">
-            <a href="https://accreditations.icef.com/certificate?id=8ec6706d-0b31-450a-b41c-5d0916227cf3" target="_blank" rel="noopener noreferrer">
-              <div className="relative h-[120px] w-[300px] cursor-pointer drop-shadow-md hover:drop-shadow-xl transition-all">
-                <Image 
-                  src="https://icef-api-production.s3.eu-central-1.amazonaws.com/ias_material/001bG0000051BucQAE_badge.png" 
-                  alt="ICEF Agency Status" 
-                  fill
-                  className="object-contain"
-                  unoptimized={false}
-                />
-              </div>
-            </a>
-          </div>
-
-          <p className="text-slate-500 text-sm md:text-base max-w-4xl mx-auto leading-relaxed font-medium mb-10">
-            Recognized globally as a hallmark of excellence and superior professional standards, the ICEF 
-            Agency Status (IAS) awarded to KeyAbroad is a testament to our <br className="hidden md:block" />
-            dedication, approach and position within the international education industry.
+        
+        <div className="container relative z-10 mx-auto px-4 text-center max-w-5xl">
+          <Badge variant="outline" className="text-emerald-400 border-emerald-400/30 mb-6 py-1.5 px-4 bg-emerald-400/10">
+            <Sparkles className="w-4 h-4 mr-2 inline" />
+            Admissions open for Fall 2026
+          </Badge>
+          <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold font-heading mb-6 tracking-tight">
+            Your Global Future <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-blue-400">Starts Here</span>
+          </h1>
+          <p className="text-lg md:text-2xl text-slate-300 mb-10 max-w-3xl mx-auto font-light leading-relaxed">
+            KeyAbroad is your premium partner for studying in the UK, USA, Australia, and Canada. 
+            From university shortlisting to visa success, we manage it all.
           </p>
-
-          {/* ICEF Logo Representation */}
-          <div className="flex items-center justify-center gap-2">
-            <div className="grid grid-cols-2 gap-1 text-[#5babb2]">
-              <div className="w-4 h-4 bg-current rounded-tl-full"></div>
-              <div className="w-4 h-4 bg-current rounded-tr-full"></div>
-              <div className="w-4 h-4 bg-current rounded-bl-full"></div>
-              <div className="w-4 h-4 bg-current rounded-br-full"></div>
-            </div>
-            <span className="text-3xl font-semibold text-[#183253] tracking-tighter">icef</span>
+          
+          <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
+            <Button size="lg" className="w-full sm:w-auto text-lg h-14 px-8 rounded-full shadow-lg shadow-primary/25" asChild>
+              <Link href="/eligibility">
+                Check Eligibility <ArrowRight className="ml-2 w-5 h-5" />
+              </Link>
+            </Button>
+            <Button size="lg" variant="outline" className="w-full sm:w-auto text-lg h-14 px-8 rounded-full bg-white/5 border-white/20 hover:bg-white/10 text-white" asChild>
+              <Link href="/ai-advisor">
+                <Sparkles className="mr-2 w-5 h-5 text-blue-400" /> Consult AI Advisor
+              </Link>
+            </Button>
           </div>
         </div>
       </section>
 
-      {/* Reviews Section */}
+      {/* 2. UNIVERSITY SEARCH */}
+      <section className="relative z-20 -mt-12 container mx-auto px-4">
+        <Card className="shadow-2xl border-0 ring-1 ring-slate-200 p-2 md:p-4 bg-white/95 backdrop-blur rounded-2xl max-w-4xl mx-auto">
+          <div className="flex flex-col md:flex-row gap-3">
+            <div className="relative flex-grow">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5" />
+              <Input 
+                placeholder="Search universities or programs..." 
+                className="pl-12 h-14 text-lg bg-slate-50 border-transparent focus-visible:ring-primary/20 rounded-xl"
+              />
+            </div>
+            <Button size="lg" className="h-14 px-8 rounded-xl shrink-0">Search</Button>
+          </div>
+        </Card>
+      </section>
+
+      {/* 3. VERIFIED STATISTICS */}
+      <section className="py-20 bg-white">
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 divide-x divide-slate-100">
+            {[
+              { label: "Visa Success Rate", value: "98%" },
+              { label: "Partner Universities", value: "500+" },
+              { label: "Students Placed", value: "10,000+" },
+              { label: "Scholarships Secured", value: "$5M+" },
+            ].map((stat, i) => (
+              <div key={i} className="text-center px-4">
+                <div className="text-4xl md:text-5xl font-bold text-slate-900 mb-2 font-heading">{stat.value}</div>
+                <div className="text-slate-500 font-medium">{stat.label}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 4. DESTINATIONS */}
+      <section className="py-24 bg-slate-50">
+        <div className="container mx-auto px-4">
+          <div className="flex justify-between items-end mb-12">
+            <div>
+              <h2 className="text-3xl md:text-4xl font-bold font-heading text-slate-900 mb-4">Top Study Destinations</h2>
+              <p className="text-slate-600 text-lg max-w-2xl">Explore opportunities in the world's most prestigious education hubs.</p>
+            </div>
+            <Button variant="ghost" className="hidden md:flex" asChild>
+              <Link href="/destinations">View All <ArrowRight className="ml-2 w-4 h-4" /></Link>
+            </Button>
+          </div>
+          <DestinationSlider />
+        </div>
+      </section>
+
+      {/* 5. WHY KEYABROAD / APPLICATION PROCESS */}
+      <section className="py-24 bg-white overflow-hidden">
+        <div className="container mx-auto px-4 max-w-6xl">
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
+            <div>
+              <Badge className="mb-6 bg-blue-100 text-blue-700 hover:bg-blue-200">The KeyAbroad Advantage</Badge>
+              <h2 className="text-3xl md:text-4xl font-bold font-heading text-slate-900 mb-6 leading-tight">
+                A seamless journey from application to arrival.
+              </h2>
+              <div className="space-y-8 mt-10">
+                {[
+                  { title: "Profile Evaluation", desc: "Our AI and human experts analyze your academic history to find the perfect match." },
+                  { title: "Application Processing", desc: "We handle the complex paperwork, SOPs, and university communications." },
+                  { title: "Visa & Pre-Departure", desc: "Dedicated visa officers ensure your application is flawless, followed by travel support." }
+                ].map((step, i) => (
+                  <div key={i} className="flex gap-4">
+                    <div className="w-12 h-12 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0 font-bold text-lg">
+                      {i + 1}
+                    </div>
+                    <div>
+                      <h3 className="text-xl font-bold text-slate-900 mb-2">{step.title}</h3>
+                      <p className="text-slate-600 leading-relaxed">{step.desc}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="relative">
+              <div className="absolute inset-0 bg-gradient-to-tr from-primary/20 to-emerald-400/20 rounded-[3rem] transform rotate-3" />
+              <Image 
+                src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=2071"
+                alt="Students studying"
+                width={600}
+                height={700}
+                className="rounded-[3rem] relative z-10 object-cover shadow-2xl"
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 6. UTILITIES (Calculator, IELTS) */}
+      <section className="py-24 bg-slate-900 text-white">
+        <div className="container mx-auto px-4 max-w-6xl">
+          <div className="grid md:grid-cols-2 gap-8">
+            <Card className="bg-slate-800 border-slate-700 text-white p-6 md:p-8">
+              <Calculator className="w-12 h-12 text-blue-400 mb-6" />
+              <h3 className="text-2xl font-bold mb-4 font-heading">Cost Calculator</h3>
+              <p className="text-slate-400 mb-8 leading-relaxed">
+                Estimate your tuition, living expenses, and potential scholarships in less than a minute.
+              </p>
+              <Button variant="secondary" className="w-full sm:w-auto" asChild>
+                <Link href="/cost-calculator">Calculate Costs</Link>
+              </Button>
+            </Card>
+            <Card className="bg-slate-800 border-slate-700 text-white p-6 md:p-8">
+              <GraduationCap className="w-12 h-12 text-emerald-400 mb-6" />
+              <h3 className="text-2xl font-bold mb-4 font-heading">Test Preparation</h3>
+              <p className="text-slate-400 mb-8 leading-relaxed">
+                Join our certified IELTS and PTE preparation classes to achieve your desired band score.
+              </p>
+              <Button variant="secondary" className="w-full sm:w-auto" asChild>
+                <Link href="/ielts">Explore Classes</Link>
+              </Button>
+            </Card>
+          </div>
+        </div>
+      </section>
+
+      {/* 7. REVIEWS */}
       <Reviews />
 
-      {/* Contact Banner */}
-      <section id="contact" className="py-20 bg-primary text-white">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold mb-6">Ready to start your journey?</h2>
-          <p className="text-blue-100 text-lg mb-10">
-            Get in touch with our expert counsellors today and take the first step towards your international education.
+      {/* 8. FINAL CTA */}
+      <section className="py-32 relative overflow-hidden bg-primary">
+        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1541339907198-e08756dedf3f?q=80&w=2070')] bg-cover bg-center opacity-10 mix-blend-overlay" />
+        <div className="container mx-auto px-4 text-center relative z-10 max-w-4xl">
+          <h2 className="text-4xl md:text-5xl font-bold font-heading text-white mb-6">
+            Ready to study abroad?
+          </h2>
+          <p className="text-xl text-blue-100 mb-10 max-w-2xl mx-auto">
+            Book a free consultation with our expert counselors or chat with us on WhatsApp for immediate assistance.
           </p>
-          <div className="flex flex-col sm:flex-row justify-center gap-6">
-            <a href="https://wa.me/923217777897" target="_blank" rel="noopener noreferrer" className="px-8 py-4 bg-white text-primary font-bold rounded-full hover:bg-slate-50 transition-colors shadow-lg flex items-center justify-center gap-2">
-              <svg viewBox="0 0 24 24" className="w-6 h-6 fill-current" xmlns="http://www.w3.org/2000/svg"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.888-.788-1.489-1.761-1.663-2.06-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
-              Chat on WhatsApp
-            </a>
-            <a href="mailto:admissions@keyabroad.com" className="px-8 py-4 bg-primary text-white font-bold rounded-full hover:bg-blue-600 transition-colors border-2 border-white/20">
-              Email Admissions
-            </a>
+          <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
+            <Button size="lg" variant="secondary" className="w-full sm:w-auto h-14 px-8 text-lg rounded-full" asChild>
+              <Link href="/contact">Book Consultation</Link>
+            </Button>
+            <Button size="lg" variant="outline" className="w-full sm:w-auto h-14 px-8 text-lg rounded-full bg-white/10 text-white border-white/20 hover:bg-white/20" asChild>
+              <a href="https://wa.me/923217777897" target="_blank" rel="noopener noreferrer">
+                Talk on WhatsApp
+              </a>
+            </Button>
           </div>
         </div>
       </section>
+
     </div>
   );
 }

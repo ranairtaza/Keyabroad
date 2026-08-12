@@ -1,222 +1,158 @@
-import Image from "next/image";
-import Link from "next/link";
-import { notFound } from "next/navigation";
-import { ArrowLeft, GraduationCap, MapPin, CheckCircle2, BookOpen } from "lucide-react";
-import { destinations } from "@/data/destinations";
+import { getPublishedCountryBySlug } from '@/lib/data/countries';
+import { notFound } from 'next/navigation';
+import Image from 'next/image';
+import Link from 'next/link';
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { GraduationCap, CheckCircle2, Building2 } from 'lucide-react';
+import { EmptyState } from '@/components/shared/EmptyState';
+import { Metadata } from 'next';
 
-import fs from 'fs';
-import path from 'path';
+export const revalidate = 3600;
 
-export default async function DestinationPage({ params }: { params: Promise<{ country: string }> }) {
+interface PageProps {
+  params: Promise<{
+    country: string;
+  }>;
+}
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const resolvedParams = await params;
-  const destination = destinations.find(d => d.id === resolvedParams.country);
+  const country = await getPublishedCountryBySlug(resolvedParams.country);
+  
+  if (!country) return { title: 'Destination Not Found' };
 
-  if (!destination) {
+  return {
+    title: `Study in ${country.name} | KeyAbroad`,
+    description: country.description || `Discover excellent academic opportunities and vibrant culture in ${country.name}.`,
+  };
+}
+
+export default async function CountryPage({ params }: PageProps) {
+  const resolvedParams = await params;
+  const slug = resolvedParams.country;
+  
+  const country = await getPublishedCountryBySlug(slug);
+
+  if (!country) {
     notFound();
   }
 
-  // Check if custom waving flag exists
-  let flagImgName = `${destination.id}-waving-flag.png`;
-  if (destination.id === 'new-zealand' || destination.id === 'turkey') {
-    flagImgName = `${destination.id}-transparent.png`;
-  }
-  
-  const publicDir = path.join(process.cwd(), 'public', 'destinations');
-  const hasCustomFlag = fs.existsSync(path.join(publicDir, flagImgName));
-
   return (
-    <div className="flex flex-col w-full bg-slate-50 min-h-screen">
-      {/* Banner */}
-      <div className="relative w-full h-[450px] md:h-[550px] bg-slate-900">
-        <Image
-          src={destination.image}
-          alt={`Study in ${destination.name}`}
-          fill
-          className="object-cover"
-          priority
-        />
-        <div className="absolute inset-0 bg-black/50" />
-        <div className="absolute inset-0 flex flex-col justify-center max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <Link href="/#destinations" className="inline-flex items-center text-white/80 hover:text-white mb-6 w-fit transition-colors">
-            <ArrowLeft className="mr-2" size={20} />
-            Back to Destinations
-          </Link>
-          <div className="flex items-center text-primary mb-4">
-            <MapPin className="mr-2" />
-            <span className="font-semibold uppercase tracking-wider">Destination Guide</span>
-          </div>
-          <div className="flex items-center gap-4 mb-6 relative z-20">
-            {destination.flagCode && (
-              <img 
-                src={`https://flagcdn.com/w80/${destination.flagCode.toLowerCase()}.png`} 
-                srcSet={`https://flagcdn.com/w160/${destination.flagCode.toLowerCase()}.png 2x`}
-                width="64" 
-                alt={`${destination.name} flag`}
-                className="rounded-md shadow-lg"
-              />
-            )}
-            <h1 className="text-4xl md:text-6xl font-bold text-white">
-              Study in {destination.name}
-            </h1>
-          </div>
-        </div>
-
-        {/* Waving Flag or Fallback */}
-        <div className={`absolute top-0 left-0 w-[250px] h-[180px] md:w-[450px] md:h-[350px] opacity-90 z-0 pointer-events-none drop-shadow-2xl ${destination.wavingFlagStyle || ''}`}>
-          {hasCustomFlag ? (
-            <img 
-              src={`/destinations/${flagImgName}`}
-              alt={`${destination.name} waving flag`}
-              className="w-full h-full object-contain object-left-top"
-            />
-          ) : (
-            destination.flagCode && (
-              <div className="w-[120px] h-[80px] md:w-[200px] md:h-[130px] opacity-60">
-                <img 
-                  src={`https://flagcdn.com/w320/${destination.flagCode.toLowerCase()}.png`}
-                  alt={`${destination.name} corner flag`}
-                  className="w-full h-full object-cover rounded-br-[40px] shadow-[10px_10px_30px_rgba(0,0,0,0.5)] border-b-2 border-r-2 border-white/20"
+    <div className="flex flex-col w-full min-h-screen bg-slate-50 pb-16">
+      {/* Hero Section */}
+      <section className="relative h-[60vh] min-h-[500px] w-full bg-[#0a1930] flex items-center">
+        {country.image_url && (
+          <Image
+            src={country.image_url}
+            alt={country.name}
+            fill
+            className="object-cover opacity-40 mix-blend-overlay"
+            priority
+          />
+        )}
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0a1930] via-transparent to-transparent" />
+        
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full text-center md:text-left">
+          <div className="flex flex-col md:flex-row items-center gap-6">
+            {country.flag_code && (
+              <div className="h-16 w-24 md:h-24 md:w-36 rounded-lg overflow-hidden shadow-2xl border-4 border-white/10 shrink-0">
+                <Image
+                  src={`https://flagcdn.com/w160/${country.flag_code.toLowerCase()}.png`}
+                  alt={`${country.name} flag`}
+                  width={144}
+                  height={96}
+                  className="object-cover h-full w-full"
                 />
               </div>
-            )
-          )}
-        </div>
-      </div>
-
-      {/* Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 w-full">
-        <div className="grid md:grid-cols-3 gap-12">
-          {/* Main Content */}
-          <div className="md:col-span-2 space-y-12">
-            <section className="bg-white p-8 rounded-2xl shadow-sm border border-slate-100">
-              <h2 className="text-2xl font-bold text-slate-900 mb-6 border-b border-slate-100 pb-4">
-                About Studying in {destination.name}
-              </h2>
-              <p className="text-slate-600 text-lg leading-relaxed">
-                {destination.about}
+            )}
+            <div>
+              <h1 className="text-4xl md:text-6xl font-bold text-white mb-4">
+                Study in {country.name}
+              </h1>
+              <p className="text-xl text-blue-100 max-w-2xl">
+                {country.description || `Discover excellent academic opportunities and vibrant culture in ${country.name}.`}
               </p>
-            </section>
-
-            <section className="bg-white p-8 rounded-2xl shadow-sm border border-slate-100">
-              <div className="flex items-center mb-6 border-b border-slate-100 pb-4">
-                <GraduationCap className="text-primary mr-3" size={28} />
-                <h2 className="text-2xl font-bold text-slate-900">
-                  Top Universities in {destination.name}
-                </h2>
-              </div>
-              <ul className="grid sm:grid-cols-2 gap-4">
-                {destination.universities.map((uni, idx) => (
-                  <li key={idx} className="flex items-start p-4 bg-slate-50 rounded-lg border border-slate-100 hover:border-primary/30 transition-colors group">
-                    <span className="flex-shrink-0 w-8 h-8 bg-primary/10 text-primary rounded-full flex items-center justify-center font-bold mr-3 group-hover:bg-primary group-hover:text-white transition-colors">
-                      {idx + 1}
-                    </span>
-                    <a href={uni.url} target="_blank" rel="noopener noreferrer" className="font-semibold text-slate-700 mt-1 hover:text-primary transition-colors flex items-center gap-1">
-                      {uni.name}
-                      {uni.url !== "#" && (
-                        <svg className="w-4 h-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
-                      )}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </section>
-
-            <section className="bg-white p-8 rounded-2xl shadow-sm border border-slate-100">
-              <div className="flex items-center mb-6 border-b border-slate-100 pb-4">
-                <BookOpen className="text-primary mr-3" size={28} />
-                <h2 className="text-2xl font-bold text-slate-900">
-                  Available Courses
-                </h2>
-              </div>
-              <ul className="flex flex-wrap gap-3">
-                {destination.courses?.map((course, idx) => (
-                  <li key={idx} className="bg-slate-100 text-slate-700 px-4 py-2 rounded-full font-medium text-sm">
-                    {course}
-                  </li>
-                ))}
-              </ul>
-            </section>
-
-            <section className="bg-white p-8 rounded-2xl shadow-sm border border-slate-100">
-              <div className="flex items-center mb-6 border-b border-slate-100 pb-4">
-                <CheckCircle2 className="text-primary mr-3" size={28} />
-                <h2 className="text-2xl font-bold text-slate-900">
-                  Why choose {destination.name}?
-                </h2>
-              </div>
-              <ul className="space-y-4">
-                {destination.whyChoose?.map((reason, idx) => (
-                  <li key={idx} className="flex items-start">
-                    <CheckCircle2 className="text-green-500 mr-3 shrink-0 mt-0.5" size={20} />
-                    <span className="text-slate-700 font-medium">{reason}</span>
-                  </li>
-                ))}
-              </ul>
-            </section>
-
-            {/* Why Choose KeyAbroad Section */}
-            <section className="bg-primary/5 p-8 rounded-2xl shadow-sm border border-primary/20">
-              <div className="flex items-center mb-6 border-b border-primary/20 pb-4">
-                <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center mr-4">
-                  <svg className="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
-                </div>
-                <h2 className="text-2xl font-bold text-slate-900">
-                  Why apply through KeyAbroad?
-                </h2>
-              </div>
-              <p className="text-slate-600 mb-6 leading-relaxed font-medium">
-                We don't just process applications; we craft success stories. Choosing KeyAbroad means having a dedicated team of experts holding your hand from the first consultation to your first day on campus.
-              </p>
-              <div className="grid sm:grid-cols-2 gap-4">
-                <div className="bg-white p-4 rounded-xl border border-slate-100 flex items-start gap-3 shadow-sm">
-                  <CheckCircle2 className="text-secondary shrink-0 mt-0.5" size={18} />
-                  <div>
-                    <strong className="block text-slate-800 text-sm mb-1">High Visa Success Rate</strong>
-                    <span className="text-slate-500 text-xs">Our meticulous process ensures maximum approval chances.</span>
-                  </div>
-                </div>
-                <div className="bg-white p-4 rounded-xl border border-slate-100 flex items-start gap-3 shadow-sm">
-                  <CheckCircle2 className="text-secondary shrink-0 mt-0.5" size={18} />
-                  <div>
-                    <strong className="block text-slate-800 text-sm mb-1">Direct University Tie-ups</strong>
-                    <span className="text-slate-500 text-xs">We hold official partnerships with top institutions.</span>
-                  </div>
-                </div>
-                <div className="bg-white p-4 rounded-xl border border-slate-100 flex items-start gap-3 shadow-sm">
-                  <CheckCircle2 className="text-secondary shrink-0 mt-0.5" size={18} />
-                  <div>
-                    <strong className="block text-slate-800 text-sm mb-1">Scholarship Assistance</strong>
-                    <span className="text-slate-500 text-xs">We help you secure partial to full scholarships.</span>
-                  </div>
-                </div>
-                <div className="bg-white p-4 rounded-xl border border-slate-100 flex items-start gap-3 shadow-sm">
-                  <CheckCircle2 className="text-secondary shrink-0 mt-0.5" size={18} />
-                  <div>
-                    <strong className="block text-slate-800 text-sm mb-1">End-to-End Support</strong>
-                    <span className="text-slate-500 text-xs">From IELTS prep to post-arrival assistance.</span>
-                  </div>
-                </div>
-              </div>
-            </section>
-          </div>
-
-          {/* Sidebar */}
-          <div className="space-y-8">
-            <div className="bg-primary text-white p-8 rounded-2xl shadow-lg text-center sticky top-28">
-              <h3 className="text-2xl font-bold mb-4">Start Your Application</h3>
-              <p className="text-blue-100 mb-8">
-                Ready to study in {destination.name}? Our expert counselors will guide you through the entire process.
-              </p>
-              <Link
-                href="/#contact"
-                className="inline-block w-full py-4 bg-white text-primary font-bold rounded-full hover:bg-slate-50 transition-colors shadow-md"
-              >
-                Apply Now
-              </Link>
             </div>
           </div>
         </div>
-      </div>
+      </section>
+
+      {/* Main Content */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 w-full flex flex-col lg:flex-row gap-12">
+        
+        {/* Left Column (Why Choose) */}
+        <div className="lg:w-1/3">
+          <div className="sticky top-24 bg-white rounded-2xl shadow-sm border border-slate-200 p-8">
+            <h2 className="text-2xl font-bold text-slate-900 mb-6 flex items-center gap-2">
+              <CheckCircle2 className="h-6 w-6 text-blue-600" />
+              Why Choose {country.name}?
+            </h2>
+            
+            {country.country_features && country.country_features.length > 0 ? (
+              <ul className="space-y-4">
+                {country.country_features.map((item: any, i: number) => (
+                  <li key={i} className="flex items-start gap-3">
+                    <div className="mt-1 h-2 w-2 rounded-full bg-blue-600 shrink-0" />
+                    <span className="text-slate-700">{item.feature}</span>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="text-slate-500 italic">
+                A world-class education destination with globally recognized degrees.
+              </p>
+            )}
+            
+            <Button size="lg" className="w-full mt-8 bg-blue-600 hover:bg-blue-700 text-white shadow-md">
+              Check Eligibility
+            </Button>
+          </div>
+        </div>
+
+        {/* Right Column (Universities) */}
+        <div className="lg:w-2/3">
+          <div className="flex items-center justify-between mb-8">
+            <h2 className="text-3xl font-bold text-slate-900">Partner Universities</h2>
+            <Badge variant="secondary" className="px-3 py-1 text-sm bg-blue-50 text-blue-700 hover:bg-blue-100">
+              <Building2 className="h-4 w-4 mr-2" />
+              {country.universities?.length || 0} Institutions
+            </Badge>
+          </div>
+          
+          {country.universities && country.universities.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {country.universities.map((uni: any) => (
+                <Link key={uni.id} href={`/universities/${uni.slug}`}>
+                  <Card className="h-full transition-colors hover:border-blue-300 hover:bg-blue-50/50">
+                    <CardContent className="p-6 flex items-center gap-4">
+                      <div className="h-12 w-12 rounded-full bg-slate-100 flex items-center justify-center shrink-0 overflow-hidden border border-slate-200">
+                        {uni.logo_url ? (
+                          <img src={uni.logo_url} alt={uni.name} className="h-8 w-8 object-contain" />
+                        ) : (
+                          <GraduationCap className="h-6 w-6 text-slate-400" />
+                        )}
+                      </div>
+                      <div>
+                        <h3 className="font-semibold text-slate-900 line-clamp-1">{uni.name}</h3>
+                        <p className="text-sm text-slate-500">View Programs &rarr;</p>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </Link>
+              ))}
+            </div>
+          ) : (
+            <EmptyState 
+              title="Universities are being verified"
+              description={`We are actively adding our partner institutions in ${country.name}. Check back soon!`}
+              iconType="university"
+            />
+          )}
+        </div>
+
+      </section>
     </div>
   );
 }

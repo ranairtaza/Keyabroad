@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useRole } from "@/components/RoleContext";
 import { CheckCircle, Clock, Book, User, Phone, Mail, FileText, Plus, X, Trash2, Undo, Users, BarChart3, Ticket, Calendar } from "lucide-react";
 import toast from "react-hot-toast";
-import { supabase } from "@/lib/supabaseClient";
+import { createClient } from "@/utils/supabase/client";
 import { AddTaskModal } from "./components/TaskModals";
 import { ActivityLeaderboard } from "./components/TaskTables";
 
@@ -21,6 +21,8 @@ interface RegistrationTask {
   status: TaskStatus;
   created_at: string;
   completed_at?: string;
+  completed_by?: string;
+  assignee?: string;
   priority?: string;
   deadline?: string;
 }
@@ -52,11 +54,14 @@ interface WalkInTask {
   status: TaskStatus;
   created_at: string;
   completed_at?: string;
+  completed_by?: string;
+  assignee?: string;
   priority?: string;
   deadline?: string;
 }
 
 export default function TasksPage() {
+  const supabase = createClient();
   const { role, currentUser } = useRole();
   const canDelete = ["owner", "admin"].includes(role || "") || !!currentUser?.designation?.toLowerCase().includes("admission officer") || !!currentUser?.designation?.toLowerCase().includes("ceo");
   const [activeTab, setActiveTab] = useState<"registrations" | "walk-ins" | "activity" | "office-tasks">("registrations");
@@ -80,19 +85,21 @@ export default function TasksPage() {
   const [isLoaded, setIsLoaded] = useState(false);
 
   const fetchData = async () => {
-    const [regRes, walkRes, empRes, followRes, officeRes] = await Promise.all([
+    const [regRes, walkRes, empRes, followRes] = await Promise.all([
       supabase.from('registrations').select('*').order('created_at', { ascending: false }),
       supabase.from('enquiries').select('*').order('created_at', { ascending: false }),
       supabase.from('team_members').select('name, role, email').eq('status', 'active'),
-      supabase.from('follow_ups').select('*').order('created_at', { ascending: false }),
-      supabase.from('office_tasks').select('*').order('created_at', { ascending: false })
+      supabase.from('follow_ups').select('*').order('created_at', { ascending: false })
     ]);
+    
+    // Fetch office_tasks securely through API to bypass restrictive RLS policies
+    const officeRes = await fetch('/api/tasks/list').then(res => res.json()).catch(() => ({ tasks: [] }));
     
     if (regRes.data) setRegistrationTasks(regRes.data);
     if (walkRes.data) setWalkInTasks(walkRes.data);
     if (empRes.data) setEmployees(empRes.data);
     if (followRes.data) setFollowUpTasks(followRes.data);
-    if (officeRes.data) setOfficeTasks(officeRes.data);
+    if (officeRes.tasks) setOfficeTasks(officeRes.tasks);
     
     setIsLoaded(true);
   };
@@ -121,58 +128,88 @@ export default function TasksPage() {
     let successMsg = "";
 
     if (taskType === "language_lead") {
-      const { error: err } = await supabase.from('registrations').insert([{
-        student_name: newTask.studentName,
-        phone: newTask.phone,
-        email: newTask.email,
-        test: newTask.test,
-        target_score: newTask.targetScore,
-        assignee: newTask.assignee,
-        priority: newTask.priority || 'Medium',
-        deadline: newTask.date || null,
-        status: "pending"
-      }]);
-      error = err;
+      const res = await fetch("/api/tasks/create", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          table: "registrations",
+          student_name: newTask.studentName,
+          phone: newTask.phone,
+          email: newTask.email,
+          test: newTask.test,
+          target_score: newTask.targetScore,
+          assignee: newTask.assignee,
+          priority: newTask.priority || 'Medium',
+          deadline: newTask.date || null,
+          status: "pending"
+        })
+      });
+      const data = await res.json();
+      if (!res.ok) error = new Error(data.error || "Failed to create task");
       successMsg = "Language Lead Assigned!";
     } else if (taskType === "walk_in") {
-      const { error: err } = await supabase.from('enquiries').insert([{
-        ticket_number: `WI-${Math.floor(Math.random() * 9000)}`,
-        full_name: newTask.studentName,
-        mobile: newTask.phone,
-        email: newTask.email,
-        city: newTask.city,
-        destinations: [newTask.destinations],
-        assignee: newTask.assignee,
-        priority: newTask.priority || 'Medium',
-        deadline: newTask.date || null,
-        status: "pending"
-      }]);
-      error = err;
+      const res = await fetch("/api/tasks/create", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          table: "enquiries",
+          ticket_number: `WI-${Math.floor(Math.random() * 9000)}`,
+          full_name: newTask.studentName,
+          mobile: newTask.phone,
+          email: newTask.email,
+          city: newTask.city,
+          destinations: [newTask.destinations],
+          assignee: newTask.assignee,
+          priority: newTask.priority || 'Medium',
+          deadline: newTask.date || null,
+          status: "pending"
+        })
+      });
+      const data = await res.json();
+      if (!res.ok) error = new Error(data.error || "Failed to create task");
       successMsg = "Walk-in Lead Assigned!";
     } else if (taskType === "follow_up") {
-      const { error: err } = await supabase.from('follow_ups').insert([{
-        student_name: newTask.studentName,
-        phone: newTask.phone,
-        email: newTask.email,
-        counselor_name: newTask.assignee,
-        notes: newTask.notes,
-        follow_up_date: newTask.date, // keep original field for compatibility
-        priority: newTask.priority || 'Medium',
-        deadline: newTask.date || null,
-        status: "pending"
-      }]);
-      error = err;
+      const res = await fetch("/api/tasks/create", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          table: "follow_ups",
+          student_name: newTask.studentName,
+          phone: newTask.phone,
+          email: newTask.email,
+          counselor_name: newTask.assignee,
+          notes: newTask.notes,
+          follow_up_date: newTask.date, // keep original field for compatibility
+          priority: newTask.priority || 'Medium',
+          deadline: newTask.date || null,
+          status: "pending"
+        })
+      });
+      const data = await res.json();
+      if (!res.ok) error = new Error(data.error || "Failed to create task");
       successMsg = "Follow-up Scheduled!";
     } else if (taskType === "office_task" || taskType === "other") {
-      const { error: err } = await supabase.from('office_tasks').insert([{
-        description: newTask.notes,
-        due_date: newTask.date, // keep original field for compatibility
-        assignee: newTask.assignee,
-        priority: newTask.priority || 'Medium',
-        deadline: newTask.date || null,
-        status: "pending"
-      }]);
-      error = err;
+      const res = await fetch("/api/tasks/create", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          table: "office_tasks",
+          description: newTask.notes,
+          due_date: newTask.date, // keep original field for compatibility
+          assignee: newTask.assignee,
+          priority: newTask.priority || 'Medium',
+          deadline: newTask.date || null,
+          status: "pending"
+        })
+      });
+      
+      const data = await res.json();
+      if (!res.ok) {
+        error = new Error(data.error || "Failed to create task");
+      } else {
+        error = null;
+      }
+      
       successMsg = "Office Task Assigned!";
     }
 
@@ -181,13 +218,27 @@ export default function TasksPage() {
       return;
     }
 
-    // Also send an instant notification to the employee
-    await supabase.from('notifications').insert([{
-      recipient: newTask.assignee,
-      message: `You have been assigned a new ${taskType.replace('_', ' ')}.`
-    }]);
+    // Also send an instant notification to the employee securely through API to bypass RLS
+    if (taskType !== "office_task" && taskType !== "other") {
+      await fetch('/api/notify/in-app', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          recipient: newTask.assignee,
+          message: `${currentUser?.name || 'Admin'} has assigned you a new ${taskType.replace('_', ' ')}.`
+        })
+      });
+    }
 
     toast.success(successMsg);
+    
+    // Log the assignment activity
+    await supabase.from('activity_logs').insert([{
+      action_type: 'TASK_ASSIGNED',
+      description: `${currentUser?.name || 'Admin'} assigned a new ${taskType.replace('_', ' ')} to ${newTask.assignee}.`,
+      employee_name: currentUser?.name || 'Admin'
+    }]);
+
     setIsTaskModalOpen(false);
     setNewTask({ studentName: "", phone: "", email: "", test: "", targetScore: "", city: "", destinations: "", notes: "", date: "", assignee: "", priority: "Medium" });
     fetchData();
@@ -207,19 +258,37 @@ export default function TasksPage() {
 
     const isAuthorized = ["owner", "admin"].includes(role || "") || !!currentUser?.designation?.toLowerCase().includes("ceo");
     
-    if (assignee && assignee !== currentUser?.name && !isAuthorized) {
+    const normalizeName = (name?: string) => name?.trim().toLowerCase().replace(/\s+/g, '') || '';
+    const isSameUser = normalizeName(assignee) === normalizeName(currentUser?.name);
+
+    if (assignee && !isSameUser && !isAuthorized) {
       toast.error("Access Denied: Only the assigned person, Admin, or CEO can mark this task as completed.");
       return;
     }
 
-    const { error } = await supabase
-      .from(table)
-      .update({ 
-        status: 'done', 
-        completed_at: new Date().toISOString(),
-        completed_by: completedBy 
-      })
-      .eq('id', taskId);
+    const updateData = { 
+      status: 'done', 
+      completed_at: new Date().toISOString(),
+      completed_by: completedBy 
+    };
+
+    let error = null;
+
+    if (table === 'office_tasks') {
+      const res = await fetch("/api/tasks/update", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ table, id: taskId, updateData })
+      });
+      const data = await res.json();
+      if (!res.ok) error = new Error(data.error || "Failed to update task");
+    } else {
+      const { error: err } = await supabase
+        .from(table)
+        .update(updateData)
+        .eq('id', taskId);
+      error = err;
+    }
 
     if (error) {
       toast.error("Failed to update status");
@@ -262,7 +331,14 @@ export default function TasksPage() {
     // Also send an instant notification to the employee
     await supabase.from('notifications').insert([{
       recipient: assignee,
-      message: `You have been assigned a new Walk-in Ticket.`
+      message: `${currentUser?.name || 'Admin'} has assigned you a new Walk-in Ticket.`
+    }]);
+
+    // Log the assignment activity
+    await supabase.from('activity_logs').insert([{
+      action_type: 'TASK_ASSIGNED',
+      description: `${currentUser?.name || 'Admin'} assigned a Walk-in Ticket to ${assignee}.`,
+      employee_name: currentUser?.name || 'Admin'
     }]);
 
     const employee = employees.find(e => e.name === assignee);
@@ -297,12 +373,32 @@ export default function TasksPage() {
     
     const task = lists[table].find((t: any) => t.id === taskId);
 
-    const { error } = await supabase.from(table).delete().eq('id', taskId);
+    let error = null;
+
+    if (table === 'office_tasks') {
+      const res = await fetch("/api/tasks/delete", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ table, id: taskId })
+      });
+      const data = await res.json();
+      if (!res.ok) error = new Error(data.error || "Failed to delete task");
+    } else {
+      const { error: err } = await supabase.from(table).delete().eq('id', taskId);
+      error = err;
+    }
 
     if (error) {
       toast.error("Failed to delete task");
       return;
     }
+    
+    // Log the deletion activity
+    await supabase.from('activity_logs').insert([{
+      action_type: 'TASK_DELETED',
+      description: `Deleted a ${table.replace('_', ' ')} task.`,
+      employee_name: currentUser?.name || 'Admin'
+    }]);
 
     toast.success("Task deleted successfully.");
     fetchData();

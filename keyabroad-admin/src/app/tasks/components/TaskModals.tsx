@@ -95,18 +95,14 @@ export function AddTaskModal({
             </div>
           )}
 
-          {(taskType === "follow_up" || taskType === "office_task" || taskType === "other") && (
-            <>
-              <div>
-                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Due Date / Call Date</label>
-                <input required type="date" value={newTask.date} onChange={e => setNewTask({...newTask, date: e.target.value})} className="w-full px-3 py-2 bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-primary outline-none" />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Task Description / Notes</label>
-                <textarea required rows={3} value={newTask.notes} onChange={e => setNewTask({...newTask, notes: e.target.value})} className="w-full px-3 py-2 bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-primary outline-none resize-none" placeholder="Enter details..." />
-              </div>
-            </>
-          )}
+          <div>
+            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Deadline Date & Time</label>
+            <input required type="datetime-local" value={newTask.date} onChange={e => setNewTask({...newTask, date: e.target.value})} className="w-full px-3 py-2 bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-primary outline-none" />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Task Description / Notes</label>
+            <textarea required rows={3} value={newTask.notes} onChange={e => setNewTask({...newTask, notes: e.target.value})} className="w-full px-3 py-2 bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-primary outline-none resize-none" placeholder="Enter details..." />
+          </div>
 
           <div>
             <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Priority Level</label>

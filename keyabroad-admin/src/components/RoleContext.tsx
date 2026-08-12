@@ -75,11 +75,11 @@ export function RoleProvider({ children }: { children: React.ReactNode }) {
             session.user.email === 'junaid@keyabroad.com' || 
             (tmRole && (tmRole.includes('admin') || tmRole.includes('ceo') || tmRole.includes('founder')));
 
-          setCurrentUser({
-            id: session.user.id,
-            name: profile?.full_name || tm?.name || session.user.email?.split('@')[0] || "User",
-            designation: designation || (isOwner ? "System Admin" : "Employee"),
-            image: profile?.avatar_url || tm?.image || "https://ui-avatars.com/api/?name=User&background=0D8ABC&color=fff",
+            setCurrentUser({
+              id: session.user.id,
+              name: tm?.name || profile?.full_name || session.user.email?.split('@')[0] || "User",
+              designation: designation || (isOwner ? "System Admin" : "Employee"),
+              image: profile?.avatar_url || tm?.image || "https://ui-avatars.com/api/?name=User&background=0D8ABC&color=fff",
             email: session.user.email || "",
             role: isOwner ? "owner" : "employee",
             phone: profile?.phone || ""
@@ -154,8 +154,8 @@ export function RoleProvider({ children }: { children: React.ReactNode }) {
 
     const handleTaskEvent = (payload: any) => {
       const newRow = payload.new;
-      // Many tables use 'assignee' or 'assigned_to', let's check both just in case
-      const assigneeName = newRow.assignee || newRow.assigned_to;
+      // Many tables use 'assignee' or 'assigned_to' or 'counselor_name'
+      const assigneeName = newRow.assignee || newRow.assigned_to || newRow.counselor_name;
       
       if (newRow && assigneeName === currentUser.name) {
         // Basic deduplication to avoid double-firing
@@ -199,7 +199,7 @@ export function RoleProvider({ children }: { children: React.ReactNode }) {
                 const notification = new Notification(isHighPriority ? '🚨 URGENT: KeyAbroad Task Assigned' : 'KeyAbroad Task Assigned', {
                   body: isHighPriority ? `URGENT\n${title}\n${body}` : `${title}\n${body}`,
                   icon: '/icon.png', // Assuming icon.png is in the public folder
-                  requireInteraction: isHighPriority // ALWAYS keep it on screen for High Priority
+                  requireInteraction: true // ALWAYS keep it on screen until user interacts
                 });
                 
                 // Focus the window when clicked

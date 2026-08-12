@@ -1,16 +1,28 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { supabase } from "@/lib/supabaseClient";
-import { Star, MessageSquare } from "lucide-react";
+import { createClient } from "@/utils/supabase/client";
+import { Star, MessageSquare, Trash2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import Hover3DWrapper from "@/components/Hover3DWrapper";
+import toast from "react-hot-toast";
 
 export default function ReviewsPage() {
   const [feedbacks, setFeedbacks] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const supabase = createClient();
 
-
+  const handleDelete = async (id: string) => {
+    if (confirm("Are you sure you want to delete this review?")) {
+      const { error } = await supabase.from('student_feedbacks').delete().eq('id', id);
+      if (error) {
+        toast.error("Failed to delete review");
+      } else {
+        toast.success("Review deleted successfully");
+        fetchFeedbacks();
+      }
+    }
+  };
 
   const fetchFeedbacks = async () => {
     setLoading(true);
@@ -76,9 +88,10 @@ export default function ReviewsPage() {
         <div className="md:col-span-2 bg-slate-900 border border-slate-800 rounded-2xl shadow-sm p-6 flex flex-col justify-center">
           <h3 className="font-bold text-white mb-2 flex items-center gap-2"><MessageSquare size={18} /> How it works</h3>
           <p className="text-slate-400 text-sm">
-            When you mark a student as <strong>"Completed"</strong> in the pipeline, you can send them their unique feedback link. 
-            For example: <code className="bg-slate-950 px-2 py-1 rounded text-primary">keyabroad.com/feedback/STU-ID</code>.
-            Once they submit their 5-star review, it will automatically appear here to be used as testimonials!
+            You can now share a single, universal feedback link with all your students!
+            Send them this link: <code className="bg-slate-950 px-2 py-1 rounded text-primary font-mono select-all">admin.keyabroad.com/feedback</code>.
+            When they visit the link, they will be asked to enter their registered <strong>Email Address</strong> or <strong>Ticket Number</strong> to securely link their review to their profile.
+            Once they submit their 5-star review, it will automatically appear here!
           </p>
         </div>
       </div>
@@ -105,8 +118,17 @@ export default function ReviewsPage() {
                       <h4 className="font-bold text-white text-lg">{f.students?.name}</h4>
                       <span className="text-xs text-slate-500">{f.students?.ticket_number} • {f.students?.target_destination}</span>
                     </div>
-                    <div className="flex bg-slate-950 p-1.5 rounded-lg border border-slate-800">
-                      {renderStars(f.rating)}
+                    <div className="flex flex-col items-end gap-2">
+                      <div className="flex bg-slate-950 p-1.5 rounded-lg border border-slate-800">
+                        {renderStars(f.rating)}
+                      </div>
+                      <button 
+                        onClick={() => handleDelete(f.id)}
+                        className="text-red-400 hover:text-red-500 hover:bg-red-500/10 p-1.5 rounded transition-colors"
+                        title="Delete Review"
+                      >
+                        <Trash2 size={16} />
+                      </button>
                     </div>
                   </div>
                   <p className="text-slate-300 text-sm italic flex-1">

@@ -1,28 +1,49 @@
 import type { Metadata } from "next";
 import Script from "next/script";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Inter, Outfit } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import dynamic from 'next/dynamic';
 import PageTracker from "@/components/PageTracker";
-const AIChatbot = dynamic(() => import("@/components/AIChatbot"));
+import { AIChatbot } from "@/components/ai/AIChatbot";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/next";
+import { ThemeProvider } from "next-themes";
+import { Toaster } from "@/components/ui/sonner";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const inter = Inter({
+  variable: "--font-sans",
   subsets: ["latin"],
+  display: 'swap',
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const outfit = Outfit({
+  variable: "--font-heading",
   subsets: ["latin"],
+  display: 'swap',
 });
 
 export const metadata: Metadata = {
-  title: "KeyAbroad | Open the door to success",
-  description: "Study abroad consultants. Your trusted partner for overseas education, admissions, and visas.",
+  title: {
+    template: '%s | KeyAbroad',
+    default: 'KeyAbroad | Study Abroad Consultants',
+  },
+  description: "Your trusted partner for overseas education, university admissions, scholarships, and student visas. Start your international journey with KeyAbroad.",
+  keywords: ["study abroad", "international education", "study overseas", "student visa", "study in UK", "study in USA"],
+  openGraph: {
+    title: "KeyAbroad | Study Abroad Consultants",
+    description: "Your trusted partner for overseas education, university admissions, scholarships, and student visas.",
+    url: "https://www.keyabroad.com",
+    siteName: "KeyAbroad",
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "KeyAbroad | Study Abroad Consultants",
+    description: "Your trusted partner for overseas education, university admissions, scholarships, and student visas.",
+  },
   icons: {
     icon: '/keyabroad.png',
     shortcut: '/keyabroad.png',
@@ -38,7 +59,8 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${inter.variable} ${outfit.variable} h-full antialiased`}
+      suppressHydrationWarning
     >
       <head>
         <Script
@@ -59,16 +81,24 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className="min-h-full flex flex-col" suppressHydrationWarning>
-        <PageTracker />
-        <Navbar />
-        <main className="flex-grow">
-          {children}
-        </main>
-        <Footer />
-        <AIChatbot />
-        <SpeedInsights />
-        <Analytics />
+      <body className="min-h-full flex flex-col font-sans" suppressHydrationWarning>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <PageTracker />
+          <Navbar />
+          <main className="flex-grow">
+            {children}
+          </main>
+          <Footer />
+          <AIChatbot />
+          <Toaster />
+          <SpeedInsights />
+          <Analytics />
+        </ThemeProvider>
       </body>
     </html>
   );

@@ -341,7 +341,7 @@ export default function MasterRecordsPage() {
     <div className="space-y-6 h-[calc(100vh-6rem)] flex flex-col">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 shrink-0">
         <div>
-          <h2 className="text-3xl font-bold text-slate-900 mb-2 flex items-center gap-2">
+          <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-2 flex items-center gap-2">
             <FileSpreadsheet className="text-emerald-600" /> Master Records
           </h2>
           <p className="text-slate-400">Google Sheets style layout for complete record management.</p>
@@ -354,7 +354,7 @@ export default function MasterRecordsPage() {
               type="date"
               value={startDate}
               onChange={(e) => setStartDate(e.target.value)}
-              className="px-3 py-2 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none text-sm"
+              className="px-3 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none text-sm text-slate-900 dark:text-white"
             />
           </div>
           <div className="flex items-center gap-2">
@@ -363,7 +363,7 @@ export default function MasterRecordsPage() {
               type="date"
               value={endDate}
               onChange={(e) => setEndDate(e.target.value)}
-              className="px-3 py-2 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none text-sm"
+              className="px-3 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none text-sm text-slate-900 dark:text-white"
             />
           </div>
 
@@ -374,7 +374,7 @@ export default function MasterRecordsPage() {
               placeholder="Search records..." 
               value={searchTerm}
               onChange={e => setSearchTerm(e.target.value)}
-              className="pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none w-64"
+              className="pl-10 pr-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none w-64 text-slate-900 dark:text-white"
             />
           </div>
           
@@ -418,9 +418,9 @@ export default function MasterRecordsPage() {
       </div>
 
       <div className="flex items-center justify-between shrink-0 px-1">
-        <h3 className="text-lg font-bold text-slate-800">Monthly Performance Snapshot</h3>
+        <h3 className="text-lg font-bold text-slate-800 dark:text-white">Monthly Performance Snapshot</h3>
         <select 
-          className="bg-white border border-slate-200 text-slate-700 px-3 py-1.5 rounded-lg text-sm font-medium focus:ring-2 focus:ring-emerald-500 outline-none shadow-sm cursor-pointer"
+          className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 px-3 py-1.5 rounded-lg text-sm font-medium focus:ring-2 focus:ring-emerald-500 outline-none shadow-sm cursor-pointer"
           value={selectedStatsMonth}
           onChange={e => setSelectedStatsMonth(e.target.value)}
         >
@@ -433,10 +433,10 @@ export default function MasterRecordsPage() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 shrink-0">
-        <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
+        <div className="bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center justify-between">
           <div>
             <p className="text-sm text-slate-500 font-medium">Selected Month Total</p>
-            <p className="text-2xl font-bold text-slate-900">{analyticsStats.currentTotal}</p>
+            <p className="text-2xl font-bold text-slate-900 dark:text-white">{analyticsStats.currentTotal}</p>
           </div>
           <div className={`flex items-center gap-1 text-sm font-medium ${analyticsStats.growth >= 0 ? 'text-emerald-600' : 'text-red-600'}`}>
             {analyticsStats.growth >= 0 ? <TrendingUp size={16} /> : <TrendingDown size={16} />}
@@ -444,35 +444,35 @@ export default function MasterRecordsPage() {
           </div>
         </div>
         
-        <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
+        <div className="bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center justify-between">
           <div>
             <p className="text-sm text-slate-500 font-medium">Study Abroad (Month)</p>
-            <p className="text-2xl font-bold text-indigo-600">{analyticsStats.currentStudyAbroad}</p>
+            <p className="text-2xl font-bold text-indigo-600 dark:text-indigo-400">{analyticsStats.currentStudyAbroad}</p>
           </div>
           <Globe className="text-indigo-200 w-8 h-8" />
         </div>
 
-        <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
+        <div className="bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center justify-between">
           <div>
             <p className="text-sm text-slate-500 font-medium">Languages (Month)</p>
-            <p className="text-2xl font-bold text-amber-600">{analyticsStats.currentLanguage}</p>
+            <p className="text-2xl font-bold text-amber-600 dark:text-amber-400">{analyticsStats.currentLanguage}</p>
           </div>
-          <BookOpen className="text-amber-200 w-8 h-8" />
+          <BookOpen className="text-amber-200 dark:text-amber-500/20 w-8 h-8" />
         </div>
         
-        <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
+        <div className="bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center justify-between">
           <div>
             <p className="text-sm text-slate-500 font-medium">Previous Month</p>
-            <p className="text-2xl font-bold text-slate-600">{analyticsStats.prevTotal}</p>
+            <p className="text-2xl font-bold text-slate-600 dark:text-slate-300">{analyticsStats.prevTotal}</p>
           </div>
-          <Calendar className="text-slate-200 w-8 h-8" />
+          <Calendar className="text-slate-200 dark:text-slate-700 w-8 h-8" />
         </div>
       </div>
 
-      <div className="flex-1 bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden flex flex-col">
+      <div className="flex-1 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl shadow-sm overflow-hidden flex flex-col">
         <div className="flex-1 overflow-auto custom-scrollbar">
           <table className="w-full text-left border-collapse min-w-[1500px]">
-            <thead className="bg-slate-50 sticky top-0 z-10 border-b border-slate-200">
+            <thead className="bg-slate-50 dark:bg-slate-800/50 sticky top-0 z-10 border-b border-slate-200 dark:border-slate-700">
               <tr>
                 <th className="px-4 py-3 text-xs font-semibold text-slate-600 uppercase tracking-wider whitespace-nowrap">
                   <input 
