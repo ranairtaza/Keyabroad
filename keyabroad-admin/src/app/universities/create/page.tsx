@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useRouter } from "next/navigation";
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import { createClient } from "@/utils/supabase/client";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -24,11 +24,11 @@ const universitySchema = z.object({
   status: z.enum(["draft", "published", "archived"]).default("draft"),
 });
 
-type UniversityFormValues = z.infer<typeof universitySchema>;
+type UniversityFormValues = z.input<typeof universitySchema>;
 
 export default function CreateUniversityPage() {
   const router = useRouter();
-  const supabase = createClientComponentClient();
+  const supabase = createClient();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -41,7 +41,7 @@ export default function CreateUniversityPage() {
       country_id: "", // In a real scenario, this would be a select dropdown fetched from the 'countries' table
       city: "",
       description: "",
-      status: "draft",
+      status: "draft" as "draft" | "published" | "archived",
     },
   });
 
