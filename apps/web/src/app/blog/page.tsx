@@ -1,7 +1,7 @@
 import React from 'react';
-import { supabase } from '@/lib/supabaseClient';
+import { supabase } from '@keyabroad/auth/legacy';
 import Link from 'next/link';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Card, CardContent, CardHeader } from '@keyabroad/ui/components/card';
 import { Calendar, User, BookOpen, FileText } from 'lucide-react';
 
 export const metadata = {

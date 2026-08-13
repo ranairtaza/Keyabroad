@@ -1,7 +1,7 @@
 import { getPublishedScholarshipById } from '@/lib/data/scholarships';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import { Button } from '@/components/ui/button';
+import { Button } from '@keyabroad/ui/components/button';
 import { Banknote, Building2, MapPin, CalendarClock, Globe } from 'lucide-react';
 import { Metadata } from 'next';
 

@@ -1,10 +1,10 @@
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowRight, Globe2, GraduationCap, Search, Sparkles, Building2, MapPin, CheckCircle2, ChevronRight, Calculator } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@keyabroad/ui/components/button";
+import { Input } from "@keyabroad/ui/components/input";
+import { Badge } from "@keyabroad/ui/components/badge";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@keyabroad/ui/components/card";
 import dynamic from 'next/dynamic';
 
 const DestinationSlider = dynamic(() => import("@/components/DestinationSlider"), { ssr: true });

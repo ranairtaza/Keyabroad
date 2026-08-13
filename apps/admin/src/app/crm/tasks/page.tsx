@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useEffect, useState } from 'react';
-import { supabase } from '@/lib/supabaseClient';
-import { Card, CardContent } from '@/components/ui/card';
+import { supabase } from '@keyabroad/auth/legacy';
+import { Card, CardContent } from '@keyabroad/ui/components/card';
 import { CheckCircle2, Circle } from 'lucide-react';
 
 export default function TasksPage() {

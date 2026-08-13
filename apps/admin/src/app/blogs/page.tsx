@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { supabase } from "@/lib/supabaseClient";
+import { supabase } from "@keyabroad/auth/legacy";
 import { Plus, Edit, Trash2, Globe, FileText, CheckCircle, XCircle } from "lucide-react";
 import toast from "react-hot-toast";
 import { useRole } from "@/components/RoleContext";

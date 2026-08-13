@@ -9,7 +9,7 @@ import {
 import { Users, Target, Clock, Trophy, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import Hover3DWrapper from "@/components/Hover3DWrapper";
-import { createClient } from "@/utils/supabase/client";
+import { createClient } from "@keyabroad/auth/client";
 
 export default function TeamPerformancePage() {
   const [teamData, setTeamData] = useState<any[]>([]);

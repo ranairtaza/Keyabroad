@@ -1,7 +1,7 @@
 "use client";
 
 import { useCompareStore } from '@/store/compare';
-import { Button } from '@/components/ui/button';
+import { Button } from '@keyabroad/ui/components/button';
 import { X, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 

@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useRole } from "@/components/RoleContext";
 import { Users, Activity, Phone, Search, Filter, Calendar, Clock, MessageSquare, Plus } from "lucide-react";
-import { supabase } from "@/lib/supabaseClient";
+import { supabase } from "@keyabroad/auth/legacy";
 import toast from "react-hot-toast";
 
 export default function HROperationsPage() {
@@ -15,17 +15,6 @@ export default function HROperationsPage() {
   
   const [selectedEmployee, setSelectedEmployee] = useState<string>("All");
   const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    fetchHRData();
-
-    // Auto-refresh polling every 15 seconds
-    const intervalId = setInterval(() => {
-      fetchHRData();
-    }, 15000);
-
-    return () => clearInterval(intervalId);
-  }, [selectedEmployee]);
 
   const fetchHRData = async () => {
     setIsLoading(true);

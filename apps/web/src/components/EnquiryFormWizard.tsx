@@ -4,7 +4,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { User, Phone, CheckCircle2, Ticket, ChevronRight, ChevronLeft, Calendar, MapPin, Mail, Briefcase, GraduationCap, Globe, ShieldAlert, FileCheck } from "lucide-react";
 import Hover3DWrapper from "@/components/Hover3DWrapper";
-import { supabase } from "@/lib/supabaseClient";
+import { supabase } from "@keyabroad/auth/legacy";
 
 const destinationsList = ["UK", "USA", "Canada", "Australia", "Germany", "Ireland", "Italy", "France", "Cyprus", "Malta", "Turkey", "UAE (Dubai)", "Malaysia", "New Zealand"];
 const subjectsList = ["Business & Management", "Accounting & Finance", "Marketing", "Sports", "Information Technology", "Artificial Intelligence", "Data Science", "Engineering", "Education", "Law", "Social Sciences", "Medical & Health Sciences", "Hospitality & Tourism", "Media & Communication"];

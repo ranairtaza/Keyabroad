@@ -11,7 +11,7 @@ interface EmptyStateProps {
 }
 
 export function EmptyState({ title, description, iconType = 'default', action }: EmptyStateProps) {
-  const Icon = () => {
+  const renderIcon = () => {
     switch (iconType) {
       case 'destination': return <MapPin className="h-12 w-12 text-slate-300" />;
       case 'university': return <Building2 className="h-12 w-12 text-slate-300" />;
@@ -24,7 +24,7 @@ export function EmptyState({ title, description, iconType = 'default', action }:
   return (
     <div className="flex flex-col items-center justify-center p-12 text-center bg-white rounded-3xl border border-dashed border-slate-300">
       <div className="bg-slate-50 p-4 rounded-full mb-4">
-        <Icon />
+        {renderIcon()}
       </div>
       <h3 className="text-xl font-semibold text-slate-800">{title}</h3>
       <p className="text-slate-500 mt-2 max-w-md">{description}</p>

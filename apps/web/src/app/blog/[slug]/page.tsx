@@ -1,13 +1,14 @@
 import React from 'react';
-import { supabase } from '@/lib/supabaseClient';
+import { supabase } from '@keyabroad/auth/legacy';
 import { Calendar, User, ArrowLeft, FileText } from 'lucide-react';
 import Link from 'next/link';
 
-export async function generateMetadata({ params }: { params: { slug: string } }) {
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+  const resolvedParams = await params;
   const { data: blog } = await supabase
     .from('blogs')
     .select('title, excerpt, meta_title, meta_description, featured_image_url')
-    .eq('slug', params.slug)
+    .eq('slug', resolvedParams.slug)
     .single();
 
   if (!blog) return { title: 'Not Found' };
@@ -21,11 +22,12 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   };
 }
 
-export default async function SingleBlogPage({ params }: { params: { slug: string } }) {
+export default async function SingleBlogPage({ params }: { params: Promise<{ slug: string }> }) {
+  const resolvedParams = await params;
   const { data: blog } = await supabase
     .from('blogs')
     .select('*')
-    .eq('slug', params.slug)
+    .eq('slug', resolvedParams.slug)
     .single();
 
   if (!blog) {

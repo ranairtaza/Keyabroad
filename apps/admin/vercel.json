@@ -1,8 +1,0 @@
-{
-  "crons": [
-    {
-      "path": "/api/automations/mark-absent",
-      "schedule": "5 6 * * 1-6"
-    }
-  ]
-}

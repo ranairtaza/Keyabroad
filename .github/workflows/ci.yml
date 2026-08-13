@@ -1,0 +1,92 @@
+name: CI
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+# PR builds: cancel redundant builds on new push (fast feedback)
+# Production deployments on main: queue, never cancel (safety)
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
+jobs:
+  validate-migrations:
+    name: Migration Safety Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Check for Uncommitted Migration Files
+        run: |
+          UNTRACKED=$(git ls-files --others --exclude-standard packages/database/supabase/migrations 2>/dev/null | grep '\.sql$' || true)
+          if [ -n "$UNTRACKED" ]; then
+            echo "❌ Uncommitted migration files detected:"
+            echo "$UNTRACKED"
+            echo "All migration files must be committed before merging."
+            exit 1
+          fi
+          echo "✅ No uncommitted migration files."
+
+      - name: Detect Dangerous Migration Operations
+        run: |
+          MIGRATION_DIR="packages/database/supabase/migrations"
+          if [ ! -d "$MIGRATION_DIR" ]; then
+            echo "⚠️ No migrations directory found, skipping check."
+            exit 0
+          fi
+
+          DANGEROUS_PATTERNS="DROP TABLE|DROP COLUMN|TRUNCATE|DELETE FROM|ALTER TABLE.*DROP"
+          FOUND=$(grep -rl --include="*.sql" -E "$DANGEROUS_PATTERNS" "$MIGRATION_DIR" 2>/dev/null || true)
+
+          if [ -n "$FOUND" ]; then
+            echo "⚠️ WARNING: Potentially destructive migration operations detected:"
+            echo "$FOUND"
+            echo ""
+            echo "The following migrations require manual review before merging:"
+            grep -rn --include="*.sql" -E "$DANGEROUS_PATTERNS" "$MIGRATION_DIR" || true
+            echo ""
+            echo "If these are intentional, a repository maintainer must approve this PR."
+            # Fail explicitly — a human must review and override or approve
+            exit 1
+          fi
+          echo "✅ No dangerous migration operations detected."
+
+  build-and-test:
+    name: Build & Test
+    runs-on: ubuntu-latest
+    needs: validate-migrations
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install Dependencies (Strict Lockfile)
+        run: npm ci
+
+      - name: Typecheck
+        run: npx turbo typecheck
+
+      - name: Lint
+        run: npx turbo lint
+
+      - name: Security Audit (No auto-fix)
+        run: npm audit --audit-level=critical
+
+      - name: Build
+        run: npx turbo build
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          UPSTASH_REDIS_REST_URL: ${{ secrets.UPSTASH_REDIS_REST_URL }}
+          UPSTASH_REDIS_REST_TOKEN: ${{ secrets.UPSTASH_REDIS_REST_TOKEN }}

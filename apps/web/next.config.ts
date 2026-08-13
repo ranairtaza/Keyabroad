@@ -1,6 +1,8 @@
 import type { NextConfig } from "next";
+import "./src/env";
 
 const nextConfig: NextConfig = {
+  transpilePackages: ['@keyabroad/ui', '@keyabroad/validation', '@keyabroad/auth'],
   images: {
     remotePatterns: [
       {

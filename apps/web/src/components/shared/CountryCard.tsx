@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card, CardContent } from '@keyabroad/ui/components/card';
 import { MapPin, GraduationCap } from 'lucide-react';
 import Image from 'next/image';
 

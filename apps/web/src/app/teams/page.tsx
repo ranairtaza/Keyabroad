@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import { Mail, Globe } from "lucide-react";
 import Hover3DWrapper from "@/components/Hover3DWrapper";
-import { supabase } from "@/lib/supabaseClient";
+import { supabase } from "@keyabroad/auth/legacy";
 
 export default function TeamsPage() {
   const [teamMembers, setTeamMembers] = useState<any[]>([]);

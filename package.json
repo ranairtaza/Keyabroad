@@ -10,7 +10,13 @@
     "build": "turbo run build",
     "dev": "turbo run dev",
     "lint": "turbo run lint",
-    "test": "turbo run test"
+    "test": "turbo run test",
+    "test:rls": "node --loader ts-node/esm tests/rls.test.ts",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:security": "node tests/security/adversarial.js",
+    "test:smoke": "node tests/smoke-test.js",
+    "test:load:setup": "node tests/load/setup.js"
   },
   "dependencies": {
     "@imgly/background-removal-node": "^1.4.5",

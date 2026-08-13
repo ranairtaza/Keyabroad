@@ -4,7 +4,7 @@ import { useState } from "react";
 import { ArrowRight, CheckCircle2 } from "lucide-react";
 import Hover3DWrapper from "@/components/Hover3DWrapper";
 import { destinations } from "@/data/destinations";
-import { supabase } from "@/lib/supabaseClient";
+import { supabase } from "@keyabroad/auth/legacy";
 
 export default function RegistrationForm() {
   const [isSubmitted, setIsSubmitted] = useState(false);

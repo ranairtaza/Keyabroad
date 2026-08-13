@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef, useMemo } from "react";
-import { supabase } from "@/lib/supabaseClient";
+import { supabase } from "@keyabroad/auth/legacy";
 import { motion } from "framer-motion";
 import { Table, Search, Download, FileSpreadsheet, Edit3, Trash2, Upload, TrendingUp, TrendingDown, Globe, BookOpen, Calendar } from "lucide-react";
 import { useRole } from "@/components/RoleContext";
@@ -109,7 +109,7 @@ export default function MasterRecordsPage() {
     return () => clearInterval(intervalId);
   }, []);
 
-  const fetchRecords = async () => {
+  async function fetchRecords() {
     setIsLoading(true);
     try {
       const { data: studentsData, error: stuErr } = await supabase

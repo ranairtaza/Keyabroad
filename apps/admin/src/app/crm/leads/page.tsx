@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useEffect, useState } from 'react';
-import { supabase } from '@/lib/supabaseClient';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { supabase } from '@keyabroad/auth/legacy';
+import { Card, CardContent, CardHeader, CardTitle } from '@keyabroad/ui/components/card';
 
 const COLUMNS = ['New', 'Contacted', 'Qualified', 'Consultation', 'Interested'];
 

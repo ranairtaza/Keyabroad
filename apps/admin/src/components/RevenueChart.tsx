@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
-import { supabase } from '@/lib/supabaseClient';
+import { supabase } from '@keyabroad/auth/legacy';
 
 export default function RevenueChart() {
   const [data, setData] = useState<any[]>([

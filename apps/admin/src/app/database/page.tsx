@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import { Search, Filter, Mail, Phone, MapPin, Book, Calendar, ChevronDown, Upload, X, FileSpreadsheet, CheckCircle2, FileText, Plus, Trash2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import toast from "react-hot-toast";
-import { supabase } from "@/lib/supabaseClient";
+import { supabase } from "@keyabroad/auth/legacy";
 import StudentProfileModal from '@/components/StudentProfileModal';
 import { useRole } from "@/components/RoleContext";
 

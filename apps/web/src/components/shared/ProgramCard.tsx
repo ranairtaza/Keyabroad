@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@keyabroad/ui/components/card';
 import { GraduationCap, Clock, Banknote, Building2 } from 'lucide-react';
 import { CompareButton } from './CompareButton';
 

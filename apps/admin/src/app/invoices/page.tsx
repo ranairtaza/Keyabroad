@@ -4,7 +4,7 @@ import { FileText, Plus, Search, Filter, Download, Banknote, CheckCircle2, Clock
 import toast from "react-hot-toast";
 import jsPDF from "jspdf";
 import * as XLSX from "xlsx";
-import { createClient } from "@/utils/supabase/client";
+import { createClient } from "@keyabroad/auth/client";
 
 type Invoice = {
   id: string;
@@ -30,7 +30,7 @@ export default function InvoicesPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   
   const [newInvoice, setNewInvoice] = useState({
-    invoice_number: `INV-${new Date().getFullYear()}-${Math.floor(Math.random() * 1000).toString().padStart(3, '0')}`,
+    invoice_number: `INV-TEMP`,
     student: "",
     date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
     amount: "",

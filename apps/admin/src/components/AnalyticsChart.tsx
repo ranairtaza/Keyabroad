@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
-import { supabase } from '@/lib/supabaseClient';
+import { supabase } from '@keyabroad/auth/legacy';
 
 export default function AnalyticsChart() {
   const [data, setData] = useState<any[]>([

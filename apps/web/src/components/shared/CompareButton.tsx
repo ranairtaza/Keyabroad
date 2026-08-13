@@ -1,7 +1,7 @@
 "use client";
 
 import { useCompareStore, CompareItem } from '@/store/compare';
-import { Button } from '@/components/ui/button';
+import { Button } from '@keyabroad/ui/components/button';
 import { Plus, Check } from 'lucide-react';
 
 interface CompareButtonProps {

@@ -10,7 +10,7 @@ import { AIChatbot } from "@/components/ai/AIChatbot";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/next";
 import { ThemeProvider } from "next-themes";
-import { Toaster } from "@/components/ui/sonner";
+import { Toaster } from "@keyabroad/ui/components/sonner";
 
 const inter = Inter({
   variable: "--font-sans",

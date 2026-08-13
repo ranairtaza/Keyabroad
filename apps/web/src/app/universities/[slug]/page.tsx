@@ -3,8 +3,8 @@ import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
 import { Building2, MapPin, Globe, GraduationCap, Banknote, Calendar } from 'lucide-react';
 import Link from 'next/link';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@keyabroad/ui/components/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@keyabroad/ui/components/card';
 
 interface PageProps {
   params: Promise<{

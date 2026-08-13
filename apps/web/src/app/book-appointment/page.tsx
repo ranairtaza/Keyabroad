@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Calendar, Clock, User, Phone, CheckCircle2, AlertCircle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { supabase } from "@/lib/supabaseClient";
+import { supabase } from "@keyabroad/auth/legacy";
 
 export default function BookAppointmentPage() {
   const [formData, setFormData] = useState({

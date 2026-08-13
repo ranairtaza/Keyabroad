@@ -2,9 +2,9 @@
 
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useTransition, useState, useEffect } from 'react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { Button } from '@keyabroad/ui/components/button';
+import { Input } from '@keyabroad/ui/components/input';
+import { Label } from '@keyabroad/ui/components/label';
 import { Search, SlidersHorizontal, X } from 'lucide-react';
 
 interface AdvancedFiltersProps {
@@ -34,6 +34,7 @@ export function AdvancedFilters({ type }: AdvancedFiltersProps) {
 
   // Sync state if URL changes
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/exhaustive-deps, react-hooks/set-state-in-effect
     setFilters({
       search: searchParams.get('search') || '',
       country: searchParams.get('country') || '',

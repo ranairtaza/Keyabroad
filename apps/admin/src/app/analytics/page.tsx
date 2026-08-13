@@ -10,7 +10,7 @@ import toast from "react-hot-toast";
 import Image from "next/image";
 import Link from "next/link";
 import Hover3DWrapper from "@/components/Hover3DWrapper";
-import { supabase } from "@/lib/supabaseClient";
+import { supabase } from "@keyabroad/auth/legacy";
 
 export default function AnalyticsPage() {
   const [viewMode, setViewMode] = useState<"daily" | "weekly" | "monthly">("daily");
@@ -34,13 +34,7 @@ export default function AnalyticsPage() {
     visits: 0, leads: 0, walkIns: 0, conversion: 0
   });
 
-  useEffect(() => {
-    fetchAnalyticsData();
-    const interval = setInterval(fetchAnalyticsData, 15000);
-    return () => clearInterval(interval);
-  }, []);
-
-  const fetchAnalyticsData = async () => {
+  async function fetchAnalyticsData() {
     setIsLoading(true);
     try {
       // Fetch datasets for graphs (limit 10000 to avoid default 1000 row truncation which breaks recent graphs)
@@ -193,9 +187,9 @@ export default function AnalyticsPage() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }
 
-  const currentData =
+  useEffect(() => { fetchAnalyticsData(); const interval = setInterval(fetchAnalyticsData, 15000); return () => clearInterval(interval); }, []);  const currentData =
     viewMode === "monthly" ? monthlyData :
       viewMode === "weekly" ? weeklyData :
         selectedDay === "today" ? dailyDataToday : dailyDataYesterday;

@@ -1,0 +1,27 @@
+{
+  "name": "@keyabroad/auth",
+  "version": "0.1.0",
+  "private": true,
+  "exports": {
+    "./server": "./src/server.ts",
+    "./client": "./src/client.ts",
+    "./middleware": "./src/middleware.ts",
+    "./permissions": "./src/permissions.ts",
+    "./legacy": "./src/legacy.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@supabase/ssr": "^0.12.3",
+    "@supabase/supabase-js": "^2.110.7",
+    "@keyabroad/database": "*"
+  },
+  "peerDependencies": {
+    "next": "^15.0.0 || ^14.0.0"
+  },
+  "devDependencies": {
+    "typescript": "^5",
+    "@types/node": "^20"
+  }
+}

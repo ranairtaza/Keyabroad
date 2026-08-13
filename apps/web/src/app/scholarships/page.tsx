@@ -3,7 +3,7 @@ import { AdvancedFilters } from '@/components/shared/AdvancedFilters';
 import { ScholarshipCard } from '@/components/shared/ScholarshipCard';
 import { EmptyState } from '@/components/shared/EmptyState';
 import { SortControls } from '@/components/shared/SortControls';
-import { Button } from '@/components/ui/button';
+import { Button } from '@keyabroad/ui/components/button';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import Link from 'next/link';
 import { Metadata } from 'next';

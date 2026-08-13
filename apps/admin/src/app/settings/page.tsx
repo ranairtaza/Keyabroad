@@ -7,7 +7,7 @@ import toast from "react-hot-toast";
 import { useRole } from "@/components/RoleContext";
 import { useTheme } from "@/components/ThemeContext";
 import Image from "next/image";
-import { createClient } from "@/utils/supabase/client";
+import { createClient } from "@keyabroad/auth/client";
 import ImageCropperModal from "@/components/ImageCropperModal";
 
 export default function SettingsPage() {

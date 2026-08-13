@@ -4,7 +4,7 @@ import { useState } from "react";
 import { BookOpen, Mic, PenTool, CheckCircle, ArrowRight, User, Mail, Phone, Book } from "lucide-react";
 import Feature3DCard from "@/components/Feature3DCard";
 import Hover3DWrapper from "@/components/Hover3DWrapper";
-import { supabase } from "@/lib/supabaseClient";
+import { supabase } from "@keyabroad/auth/legacy";
 
 export default function LanguageTestsPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);

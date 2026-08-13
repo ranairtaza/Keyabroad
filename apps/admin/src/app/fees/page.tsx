@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import Hover3DWrapper from "@/components/Hover3DWrapper";
-import { supabase } from "@/lib/supabaseClient";
+import { supabase } from "@keyabroad/auth/legacy";
 import { useRole } from "@/components/RoleContext";
 import toast from "react-hot-toast";
 import { DollarSign, AlertCircle, Calendar, Plus, X, Search, TrendingUp, Download, Trash2 } from "lucide-react";

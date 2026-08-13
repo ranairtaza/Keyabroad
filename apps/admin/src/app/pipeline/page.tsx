@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Hover3DWrapper from "@/components/Hover3DWrapper";
-import { supabase } from "@/lib/supabaseClient";
+import { supabase } from "@keyabroad/auth/legacy";
 import toast from "react-hot-toast";
 import { CheckCircle2, Trash2 } from "lucide-react";
 import { useRole } from "@/components/RoleContext";

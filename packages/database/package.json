@@ -1,0 +1,18 @@
+{
+  "name": "@keyabroad/database",
+  "version": "0.1.0",
+  "private": true,
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "scripts": {
+    "db:pull": "supabase db pull",
+    "db:generate-types": "supabase gen types typescript --local > src/types.ts",
+    "db:migration:new": "supabase migration new",
+    "db:migrate:up": "supabase db push",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "typescript": "^5.5.3",
+    "@types/node": "^20.14.9"
+  }
+}

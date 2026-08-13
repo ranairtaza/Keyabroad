@@ -6,7 +6,7 @@ import { languageTests } from "@/data/languageTests";
 import { CheckCircle2, ArrowRight, User, Phone, Mail, BookOpen, Clock, Target } from "lucide-react";
 import Link from "next/link";
 import Hover3DWrapper from "@/components/Hover3DWrapper";
-import { supabase } from "@/lib/supabaseClient";
+import { supabase } from "@keyabroad/auth/legacy";
 
 interface Props {
   params: Promise<{ test: string }>;

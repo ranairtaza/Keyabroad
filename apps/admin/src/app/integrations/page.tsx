@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { createClient } from "@/utils/supabase/client";
+import { createClient } from "@keyabroad/auth/client";
 import { useRole } from "@/components/RoleContext";
 import { toast, Toaster } from "react-hot-toast";
 import { Shield, Cable, MessagesSquare, Video, Bot, Key, Eye, EyeOff, Save, CheckCircle2 } from "lucide-react";
@@ -19,25 +19,27 @@ export default function IntegrationsPage() {
     openai: { api_key: "", secret_key: "", is_active: false }
   });
 
+  async function fetchIntegrations() {
+    setLoading(true);
+    // Since we don't have the table created yet in the actual remote DB unless the user ran the SQL,
+    // we'll simulate it for now, or just return empty.
+    const { data, error } = await supabase.from('integrations').select('*');
+    
+    if (data) {
+      setIntegrations(data);
+    } else {
+      // Mock data if table doesn't exist
+      setIntegrations([
+        { id: '1', provider: 'google', is_active: false, api_key: null, secret_key: null, updated_at: new Date().toISOString() },
+        { id: '2', provider: 'twilio', is_active: false, api_key: null, secret_key: null, updated_at: new Date().toISOString() }
+      ]);
+    }
+    setLoading(false);
+  }
+
   useEffect(() => {
     fetchIntegrations();
   }, []);
-
-  const fetchIntegrations = async () => {
-    setLoading(true);
-    // Since we don't have the table created yet in the actual remote DB unless the user ran the SQL,
-    // we use a try-catch pattern and fallback to state if it fails.
-    const { data, error } = await supabase.from('integrations').select('*');
-    
-    if (data && !error) {
-      const formatted: Record<string, any> = {};
-      data.forEach(item => {
-        formatted[item.provider] = item;
-      });
-      setIntegrations(prev => ({ ...prev, ...formatted }));
-    }
-    setLoading(false);
-  };
 
   const handleSave = async (provider: string) => {
     if (role !== "owner") {

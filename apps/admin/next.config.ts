@@ -1,6 +1,8 @@
 import type { NextConfig } from "next";
+import "./src/env";
 
 const nextConfig: NextConfig = {
+  transpilePackages: ['@keyabroad/ui', '@keyabroad/validation', '@keyabroad/auth', '@keyabroad/ai'],
   images: {
     remotePatterns: [
       {
@@ -24,7 +26,7 @@ const nextConfig: NextConfig = {
         headers: [
           {
             key: 'X-Frame-Options',
-            value: 'SAMEORIGIN',
+            value: 'DENY',
           },
           {
             key: 'X-Content-Type-Options',

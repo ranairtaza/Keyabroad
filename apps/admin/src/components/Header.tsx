@@ -5,7 +5,7 @@ import { useSidebar } from "./SidebarContext";
 import { UserCircle, Settings, User, LogOut, Bell, Check, Menu } from "lucide-react";
 import Image from "next/image";
 import { useState, useRef, useEffect } from "react";
-import { createClient } from "@/utils/supabase/client";
+import { createClient } from "@keyabroad/auth/client";
 import toast from "react-hot-toast";
 import { usePathname } from "next/navigation";
 
@@ -13,8 +13,6 @@ export default function Header() {
   const pathname = usePathname();
   const { currentUser, logout } = useRole();
   const { toggleSidebar } = useSidebar();
-
-  if (pathname.startsWith("/login") || pathname.startsWith("/feedback") || pathname.startsWith("/receipt") || pathname.startsWith("/embed")) return null;
 
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
@@ -106,6 +104,7 @@ export default function Header() {
     setNotifications(notifications.map(n => n.id === id ? { ...n, is_read: true } : n));
   };
 
+  if (pathname.startsWith("/login") || pathname.startsWith("/feedback") || pathname.startsWith("/receipt") || pathname.startsWith("/embed")) return null;
   if (!currentUser) return null;
 
   const unreadCount = notifications.filter(n => !n.is_read).length;

@@ -1,3 +1,4 @@
+/* eslint-disable */
 const fs = require('fs');
 const path = 'src/app/tasks/page.tsx';
 let content = fs.readFileSync(path, 'utf-8');

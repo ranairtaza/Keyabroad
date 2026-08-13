@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { Search, MapPin, DollarSign, BookOpen, Filter, GraduationCap, Building2, Plus, X, Save } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { supabase } from "@/lib/supabaseClient";
+import { supabase } from "@keyabroad/auth/legacy";
 import { useRole } from "@/components/RoleContext";
 import toast from "react-hot-toast";
 
@@ -35,6 +35,11 @@ export default function CourseMatcherPage() {
   const [pte, setPte] = useState<number | "">("");
 
 
+
+  const [studentProfile, setStudentProfile] = useState("");
+  const [matchResult, setMatchResult] = useState<any>(null);
+  const [isMatchModalOpen, setIsMatchModalOpen] = useState(false);
+  const [evaluatingUni, setEvaluatingUni] = useState<string | null>(null);
 
   const fetchUniversities = async () => {
     setLoading(true);
@@ -76,7 +81,38 @@ export default function CourseMatcherPage() {
       toast.success("University added successfully!");
       setIsAddModalOpen(false);
       setNewUni({ name: "", country: "", tuition_fee: "", min_ielts: "", min_pte: "", subjects: "" });
-      fetchUniversities(); // Refresh the list
+      fetchUniversities();
+    }
+  };
+
+  const handleAIMatch = async (uni: University) => {
+    if (!studentProfile.trim()) {
+      toast.error("Please enter a student profile description first.");
+      return;
+    }
+
+    setEvaluatingUni(uni.id);
+    const requirements = `Tuition Fee: $${uni.tuition_fee}
+Minimum IELTS: ${uni.min_ielts}
+Minimum PTE: ${uni.min_pte}
+Subjects Offered: ${uni.subjects_offered.join(', ')}`;
+
+    try {
+      const res = await fetch('/api/ai/matcher', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ studentProfile, universityRequirements: requirements })
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to evaluate");
+
+      setMatchResult({ university: uni.name, ...data });
+      setIsMatchModalOpen(true);
+    } catch (err: any) {
+      toast.error(err.message);
+    } finally {
+      setEvaluatingUni(null);
     }
   };
 
@@ -98,9 +134,9 @@ export default function CourseMatcherPage() {
         <div>
           <h2 className="text-3xl font-bold text-slate-900 mb-2 flex items-center gap-3">
             <GraduationCap className="text-primary" size={32} /> 
-            Course Matcher Engine
+            AI Course Matcher Engine
           </h2>
-          <p className="text-slate-400">Find the perfect university for your students instantly.</p>
+          <p className="text-slate-400">Evaluate student profiles against university requirements deterministically.</p>
         </div>
         {isAdmin && (
           <button 
@@ -116,9 +152,23 @@ export default function CourseMatcherPage() {
         
         {/* Filters Sidebar */}
         <div className="lg:col-span-1 space-y-4">
+          
+          <div className="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-sm">
+             <h3 className="font-bold text-white mb-4 flex items-center gap-2">
+              <BookOpen size={18} className="text-primary" /> Student Profile
+            </h3>
+            <textarea
+              rows={4}
+              placeholder="e.g. Student has IELTS 5.5, budget $30k, wants to study IT in USA..."
+              value={studentProfile}
+              onChange={(e) => setStudentProfile(e.target.value)}
+              className="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-white focus:outline-none focus:border-primary text-sm resize-none"
+            />
+          </div>
+
           <div className="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-sm sticky top-4">
             <h3 className="font-bold text-white mb-4 flex items-center gap-2">
-              <Filter size={18} className="text-primary" /> Filter Requirements
+              <Filter size={18} className="text-primary" /> Hard Filters
             </h3>
             
             <div className="space-y-4">
@@ -216,11 +266,11 @@ export default function CourseMatcherPage() {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, scale: 0.95 }}
                     transition={{ delay: i * 0.05 }}
-                    className="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-sm hover:border-primary/50 transition-colors group relative overflow-hidden"
+                    className="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-sm hover:border-primary/50 transition-colors group relative overflow-hidden flex flex-col"
                   >
                     <div className="absolute top-0 right-0 w-24 h-24 bg-primary/5 rounded-full blur-2xl group-hover:bg-primary/20 transition-colors translate-x-1/3 -translate-y-1/3"></div>
                     
-                    <div className="flex justify-between items-start mb-4 relative z-10">
+                    <div className="flex justify-between items-start mb-4 relative z-10 flex-1">
                       <div>
                         <h4 className="font-bold text-white text-lg flex items-center gap-2">
                           <Building2 size={18} className="text-primary" />
@@ -250,7 +300,7 @@ export default function CourseMatcherPage() {
                       </div>
                     </div>
 
-                    <div className="relative z-10">
+                    <div className="relative z-10 mb-6">
                       <div className="text-[10px] text-slate-500 uppercase tracking-wider mb-2">Key Subjects</div>
                       <div className="flex flex-wrap gap-1.5">
                         {uni.subjects_offered.map(sub => (
@@ -260,6 +310,19 @@ export default function CourseMatcherPage() {
                         ))}
                       </div>
                     </div>
+
+                    <button 
+                      onClick={() => handleAIMatch(uni)}
+                      disabled={evaluatingUni === uni.id}
+                      className="mt-auto w-full py-2.5 rounded-lg font-bold text-sm bg-primary/10 text-primary hover:bg-primary/20 border border-primary/20 transition-colors flex items-center justify-center gap-2"
+                    >
+                      {evaluatingUni === uni.id ? (
+                         <div className="animate-spin h-4 w-4 border-2 border-primary border-t-transparent rounded-full" />
+                      ) : (
+                         <Search size={16} />
+                      )}
+                      {evaluatingUni === uni.id ? "Evaluating..." : "Run AI Eligibility Match"}
+                    </button>
                   </motion.div>
                 ))
               ) : (
@@ -274,6 +337,79 @@ export default function CourseMatcherPage() {
         </div>
 
       </div>
+
+      {/* AI Match Result Modal */}
+      <AnimatePresence>
+        {isMatchModalOpen && matchResult && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="bg-slate-900 border border-slate-800 rounded-2xl p-6 w-full max-w-2xl shadow-2xl overflow-y-auto max-h-[90vh]"
+            >
+              <div className="flex justify-between items-center mb-6">
+                <h3 className="text-xl font-bold text-white flex items-center gap-2">
+                  <GraduationCap className="text-primary" /> Evaluation: {matchResult.university}
+                </h3>
+                <button onClick={() => setIsMatchModalOpen(false)} className="text-slate-400 hover:text-white transition-colors">
+                  <X size={24} />
+                </button>
+              </div>
+
+              <div className="space-y-6">
+                {/* Status Banner */}
+                <div className={`p-4 rounded-xl border font-bold text-lg flex items-center justify-center gap-2 ${
+                  matchResult.status === 'ELIGIBLE' ? 'bg-green-500/10 border-green-500/20 text-green-400' :
+                  matchResult.status === 'INELIGIBLE' ? 'bg-red-500/10 border-red-500/20 text-red-400' :
+                  'bg-yellow-500/10 border-yellow-500/20 text-yellow-400'
+                }`}>
+                  {matchResult.status === 'ELIGIBLE' ? '✅ STUDENT IS ELIGIBLE' :
+                   matchResult.status === 'INELIGIBLE' ? '❌ STUDENT IS INELIGIBLE' :
+                   '⚠️ ELIGIBILITY UNKNOWN'}
+                </div>
+
+                {/* Explanation */}
+                <div>
+                  <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">AI Explanation</h4>
+                  <p className="text-slate-300 leading-relaxed bg-slate-950 p-4 rounded-lg border border-slate-800">
+                    {matchResult.explanation}
+                  </p>
+                </div>
+
+                {/* Criteria Breakdown */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {matchResult.matched_criteria.length > 0 && (
+                    <div>
+                       <h4 className="text-xs font-bold text-green-500 uppercase tracking-wider mb-2">Matched Criteria</h4>
+                       <ul className="list-disc list-inside text-sm text-slate-300 space-y-1">
+                         {matchResult.matched_criteria.map((c: string, i: number) => <li key={i}>{c}</li>)}
+                       </ul>
+                    </div>
+                  )}
+                  {matchResult.failed_criteria.length > 0 && (
+                    <div>
+                       <h4 className="text-xs font-bold text-red-500 uppercase tracking-wider mb-2">Failed Criteria</h4>
+                       <ul className="list-disc list-inside text-sm text-slate-300 space-y-1">
+                         {matchResult.failed_criteria.map((c: string, i: number) => <li key={i}>{c}</li>)}
+                       </ul>
+                    </div>
+                  )}
+                  {matchResult.unknown_criteria.length > 0 && (
+                    <div className="md:col-span-2">
+                       <h4 className="text-xs font-bold text-yellow-500 uppercase tracking-wider mb-2">Missing Information</h4>
+                       <ul className="list-disc list-inside text-sm text-slate-300 space-y-1">
+                         {matchResult.unknown_criteria.map((c: string, i: number) => <li key={i}>{c}</li>)}
+                       </ul>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
 
       {/* Add University Modal */}
       <AnimatePresence>

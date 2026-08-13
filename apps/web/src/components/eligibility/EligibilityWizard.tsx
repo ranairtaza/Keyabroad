@@ -1,12 +1,12 @@
 "use client";
 
 import React, { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { Button } from '@keyabroad/ui/components/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@keyabroad/ui/components/card';
+import { Input } from '@keyabroad/ui/components/input';
+import { Label } from '@keyabroad/ui/components/label';
 import { CheckCircle2, ArrowRight, ArrowLeft, Loader2, Sparkles, AlertCircle } from 'lucide-react';
-import { supabase } from '@/lib/supabaseClient';
+import { supabase } from '@keyabroad/auth/legacy';
 import Link from 'next/link';
 
 interface EligibilitySubmission {

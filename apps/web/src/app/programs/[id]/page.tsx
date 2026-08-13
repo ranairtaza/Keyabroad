@@ -3,9 +3,9 @@ import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
 import { Building2, MapPin, GraduationCap, Banknote, Clock, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+import { Button } from '@keyabroad/ui/components/button';
+import { Card, CardContent } from '@keyabroad/ui/components/card';
+import { Badge } from '@keyabroad/ui/components/badge';
 
 interface PageProps {
   params: Promise<{

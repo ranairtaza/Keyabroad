@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Save, Clock, User, MessageSquare } from 'lucide-react';
-import { createClient } from '@/utils/supabase/client';
+import { createClient } from '@keyabroad/auth/client';
 import toast from 'react-hot-toast';
 import { useRole } from './RoleContext';
 
@@ -47,7 +47,7 @@ export default function StudentProfileModal({ isOpen, onClose, student, onUpdate
     fetchTeam();
   }, [student, currentUser]);
 
-  const fetchActivities = async () => {
+  async function fetchActivities() {
     if (!student?.id) return;
     const { data } = await supabase
       .from('activity_logs')
@@ -55,7 +55,7 @@ export default function StudentProfileModal({ isOpen, onClose, student, onUpdate
       .eq('student_id', student.id)
       .order('created_at', { ascending: false });
     if (data) setActivities(data);
-  };
+  }
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files || e.target.files.length === 0) return;

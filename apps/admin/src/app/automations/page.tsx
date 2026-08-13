@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { Zap, Plus, ArrowRight, Save, Trash2, Power, X } from "lucide-react";
 import toast from "react-hot-toast";
-import { createClient } from "@/utils/supabase/client";
+import { createClient } from "@keyabroad/auth/client";
 
 const supabase = createClient();
 
@@ -26,10 +26,6 @@ export default function AutomationsPage() {
   const [newTrigger, setNewTrigger] = useState("lead_created");
   const [newAction, setNewAction] = useState("create_task");
   
-  useEffect(() => {
-    fetchAutomations();
-  }, []);
-
   const fetchAutomations = async () => {
     setLoading(true);
     const { data, error } = await supabase
@@ -44,6 +40,10 @@ export default function AutomationsPage() {
     }
     setLoading(false);
   };
+
+  useEffect(() => {
+    fetchAutomations();
+  }, []);
 
   const toggleAutomation = async (id: string, currentStatus: boolean) => {
     // Optimistic update

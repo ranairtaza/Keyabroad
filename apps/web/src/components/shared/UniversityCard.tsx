@@ -1,6 +1,6 @@
 import Link from 'next/link';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardHeader, CardTitle } from '@keyabroad/ui/components/card';
+import { Badge } from '@keyabroad/ui/components/badge';
 import { MapPin, GraduationCap, Trophy, Calendar } from 'lucide-react';
 import { CompareButton } from './CompareButton';
 

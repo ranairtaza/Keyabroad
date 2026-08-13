@@ -6,7 +6,7 @@ import Hover3DWrapper from "@/components/Hover3DWrapper";
 import { useRole } from "@/components/RoleContext";
 import { Lock, X, Save, Plus, Download, FileSpreadsheet, CheckSquare, Trash2 } from "lucide-react";
 import toast from "react-hot-toast";
-import { createClient } from "@/utils/supabase/client";
+import { createClient } from "@keyabroad/auth/client";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import * as XLSX from "xlsx";

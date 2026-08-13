@@ -67,8 +67,23 @@ export async function POST(req: Request) {
         
         // Execute Action: Send Email
         if (rule.action_type === 'send_email') {
-          // Log it for now since there's no email provider set up yet
-          console.log(`[SIMULATION] Email Sent to: ${record.email} with template: ${rule.action_payload?.template}`);
+          console.log(`Triggering notification for: ${record.email} with template: ${rule.action_payload?.template}`);
+          // In a real production environment, use absolute URL like process.env.NEXT_PUBLIC_SITE_URL
+          // For now, we simulate an internal async call or just log if not possible.
+          try {
+             await fetch(new URL('/api/notify', req.url).toString(), {
+               method: 'POST',
+               headers: { 'Content-Type': 'application/json' },
+               body: JSON.stringify({
+                 to_email: record.email,
+                 subject: `Update on your Enquiry: ${rule.action_payload?.template}`,
+                 message: `Hello ${record.full_name}, this is an automated update regarding your enquiry.`,
+                 type: 'email'
+               })
+             });
+          } catch (e) {
+             console.error("Failed to trigger notify API", e);
+          }
         }
       }
     }
