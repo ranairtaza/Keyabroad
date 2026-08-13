@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
-import { enquiryFormSchema, rateLimit } from '@keyabroad/validation';
+import { enquiryFormSchema } from '@keyabroad/validation';
+import { rateLimit } from '@keyabroad/auth/rate-limit';
 import crypto from 'crypto';
 
 // Use service role key to bypass RLS for external ingest

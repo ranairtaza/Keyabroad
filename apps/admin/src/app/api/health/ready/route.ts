@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { supabaseAdmin } from '@keyabroad/database';
+import { createClient } from '@supabase/supabase-js';
 
 export async function GET(request: Request) {
   // Readiness probe could be secured by a secret token in headers
@@ -12,6 +12,10 @@ export async function GET(request: Request) {
 
   try {
     // Ping Supabase
+    const supabaseAdmin = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
+    );
     const { data, error } = await supabaseAdmin.from('users').select('id').limit(1);
     if (error) throw error;
     
