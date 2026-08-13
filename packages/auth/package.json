@@ -7,6 +7,7 @@
     "./client": "./src/client.ts",
     "./middleware": "./src/middleware.ts",
     "./permissions": "./src/permissions.ts",
+    "./rate-limit": "./src/rate-limit.ts",
     "./legacy": "./src/legacy.ts"
   },
   "scripts": {
@@ -15,7 +16,9 @@
   "dependencies": {
     "@supabase/ssr": "^0.12.3",
     "@supabase/supabase-js": "^2.110.7",
-    "@keyabroad/database": "*"
+    "@keyabroad/database": "*",
+    "@upstash/ratelimit": "^2.0.8",
+    "@upstash/redis": "^1.38.2"
   },
   "peerDependencies": {
     "next": "^15.0.0 || ^14.0.0"
