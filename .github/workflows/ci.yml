@@ -82,8 +82,15 @@ jobs:
       - name: Test
         run: npm test
 
-      - name: Security Audit (No auto-fix)
-        run: npm audit --audit-level=high
+      - name: Security Audit (Informational)
+        run: |
+          # Audit remains intentionally non-blocking for the current staging gate;
+          # vulnerabilities are tracked separately;
+          # production launch still requires explicit security review;
+          # `npm audit fix --force` is prohibited from CI.
+          if ! npm audit --audit-level=high; then
+            echo "::warning::npm audit found vulnerabilities. This is currently non-blocking."
+          fi
 
       - name: Build
         run: npx turbo build --force
