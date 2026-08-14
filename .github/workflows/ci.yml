@@ -73,28 +73,31 @@ jobs:
       - name: Install Dependencies (Strict Lockfile)
         run: npm ci
 
-      - name: Diagnose Tailwind native binding
+      - name: Inspect resolved Tailwind dependency tree
         run: |
-          echo "Node:"
-          node --version
-          echo "npm:"
-          npm --version
-
+          echo "=== ADMIN OXIDE ==="
+          npm explain @tailwindcss/oxide --workspace=admin || true
           echo ""
-          echo "Tailwind Oxide packages:"
-          npm ls @tailwindcss/oxide @tailwindcss/oxide-linux-x64-gnu || true
-
+          echo "=== ADMIN LINUX OXIDE ==="
+          npm explain @tailwindcss/oxide-linux-x64-gnu --workspace=admin || true
           echo ""
-          echo "Linux Oxide resolution:"
-          node -e "try { console.log(require.resolve('@tailwindcss/oxide-linux-x64-gnu')) } catch (e) { console.error(e.message); process.exitCode=1 }"
-
+          echo "=== WEB OXIDE ==="
+          npm explain @tailwindcss/oxide --workspace=web || true
           echo ""
-          echo "Linux Oxide directory:"
-          ls -la node_modules/@tailwindcss/oxide-linux-x64-gnu || true
-
+          echo "=== WEB LINUX OXIDE ==="
+          npm explain @tailwindcss/oxide-linux-x64-gnu --workspace=web || true
           echo ""
-          echo "Native binary:"
-          find node_modules -name 'tailwindcss-oxide.linux-x64-gnu.node' -print || true
+          echo "=== LOCKFILE ENTRIES ==="
+          node - <<'NODE'
+          const fs = require('fs');
+          const lock = JSON.parse(fs.readFileSync('package-lock.json', 'utf8'));
+          for (const key of Object.keys(lock.packages)) {
+            if (key.includes('@tailwindcss/oxide')) {
+              console.log(key);
+              console.log(JSON.stringify(lock.packages[key], null, 2));
+            }
+          }
+          NODE
 
       - name: Typecheck
         run: npx turbo typecheck --force
