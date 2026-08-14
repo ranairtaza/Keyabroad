@@ -74,19 +74,20 @@ jobs:
         run: npm ci
 
       - name: Typecheck
-        run: npx turbo typecheck
+        run: npx turbo typecheck --force
 
       - name: Lint
-        run: npx turbo lint
+        run: npx turbo lint --force
+
+      - name: Test
+        run: npm test
 
       - name: Security Audit (No auto-fix)
-        run: npm audit --audit-level=critical
+        run: npm audit --audit-level=high
 
       - name: Build
-        run: npx turbo build
+        run: npx turbo build --force
         env:
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
           NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
-          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
-          UPSTASH_REDIS_REST_URL: ${{ secrets.UPSTASH_REDIS_REST_URL }}
-          UPSTASH_REDIS_REST_TOKEN: ${{ secrets.UPSTASH_REDIS_REST_TOKEN }}
+          SUPABASE_SERVICE_ROLE_KEY: "dummy_ci_key"
