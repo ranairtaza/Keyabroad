@@ -73,31 +73,53 @@ jobs:
       - name: Install Dependencies (Strict Lockfile)
         run: npm ci
 
-      - name: Inspect resolved Tailwind dependency tree
+      - name: Diagnose Tailwind installation
         run: |
-          echo "=== ADMIN OXIDE ==="
-          npm explain @tailwindcss/oxide --workspace=admin || true
+          echo "=== Node / npm ==="
+          node --version
+          npm --version
+
           echo ""
-          echo "=== ADMIN LINUX OXIDE ==="
-          npm explain @tailwindcss/oxide-linux-x64-gnu --workspace=admin || true
+          echo "=== Workspace package.json ==="
+          cat apps/web/package.json
+
           echo ""
-          echo "=== WEB OXIDE ==="
-          npm explain @tailwindcss/oxide --workspace=web || true
+          echo "=== npm ls ==="
+          npm ls @tailwindcss/oxide @tailwindcss/oxide-linux-x64-gnu --all || true
+
           echo ""
-          echo "=== WEB LINUX OXIDE ==="
-          npm explain @tailwindcss/oxide-linux-x64-gnu --workspace=web || true
-          echo ""
-          echo "=== LOCKFILE ENTRIES ==="
+          echo "=== package-lock entries ==="
           node - <<'NODE'
           const fs = require('fs');
           const lock = JSON.parse(fs.readFileSync('package-lock.json', 'utf8'));
+
           for (const key of Object.keys(lock.packages)) {
-            if (key.includes('@tailwindcss/oxide')) {
-              console.log(key);
+            if (
+              key.includes('@tailwindcss/oxide') &&
+              key.includes('linux-x64-gnu')
+            ) {
+              console.log('\nLOCK:', key);
               console.log(JSON.stringify(lock.packages[key], null, 2));
             }
           }
           NODE
+
+          echo ""
+          echo "=== Installed web Oxide directory ==="
+          ls -la apps/web/node_modules/@tailwindcss/oxide || true
+
+          echo ""
+          echo "=== Installed Linux package ==="
+          ls -la apps/web/node_modules/@tailwindcss/oxide-linux-x64-gnu || true
+
+          echo ""
+          echo "=== Installed native binaries ==="
+          find apps/web/node_modules/@tailwindcss -type f \
+            \( -name "*.node" -o -name "*linux-x64*" \) -print || true
+
+          echo ""
+          echo "=== npm explain ==="
+          npm explain @tailwindcss/oxide-linux-x64-gnu || true
 
       - name: Typecheck
         run: npx turbo typecheck --force
