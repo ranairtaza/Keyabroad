@@ -73,6 +73,29 @@ jobs:
       - name: Install Dependencies (Strict Lockfile)
         run: npm ci
 
+      - name: Diagnose Tailwind native binding
+        run: |
+          echo "Node:"
+          node --version
+          echo "npm:"
+          npm --version
+
+          echo ""
+          echo "Tailwind Oxide packages:"
+          npm ls @tailwindcss/oxide @tailwindcss/oxide-linux-x64-gnu || true
+
+          echo ""
+          echo "Linux Oxide resolution:"
+          node -e "try { console.log(require.resolve('@tailwindcss/oxide-linux-x64-gnu')) } catch (e) { console.error(e.message); process.exitCode=1 }"
+
+          echo ""
+          echo "Linux Oxide directory:"
+          ls -la node_modules/@tailwindcss/oxide-linux-x64-gnu || true
+
+          echo ""
+          echo "Native binary:"
+          find node_modules -name 'tailwindcss-oxide.linux-x64-gnu.node' -print || true
+
       - name: Typecheck
         run: npx turbo typecheck --force
 
