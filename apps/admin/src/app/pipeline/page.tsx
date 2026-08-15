@@ -5,13 +5,24 @@ import { motion, AnimatePresence } from "framer-motion";
 import Hover3DWrapper from "@/components/Hover3DWrapper";
 import { supabase } from "@keyabroad/auth/legacy";
 import toast from "react-hot-toast";
-import { CheckCircle2, Trash2 } from "lucide-react";
+import { CheckCircle2, Trash2, Plus, X, Save } from "lucide-react";
 import { useRole } from "@/components/RoleContext";
+import { Input } from "@keyabroad/ui/components/input";
 
 export default function PipelinePage() {
   const [activeTab, setActiveTab] = useState<"admissions" | "language">("admissions");
   const [students, setStudents] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [newStudentForm, setNewStudentForm] = useState({
+    name: "",
+    phone: "",
+    email: "",
+    target_destination: "UK",
+    pipeline_type: "Admissions",
+    university_applied: "",
+  });
   const { role } = useRole();
 
   // Columns definitions
@@ -41,6 +52,32 @@ export default function PipelinePage() {
     const interval = setInterval(fetchStudents, 15000);
     return () => clearInterval(interval);
   }, []);
+
+  const handleAddApplication = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    const { data, error } = await supabase.from('students').insert([{
+      name: newStudentForm.name,
+      phone: newStudentForm.phone,
+      email: newStudentForm.email,
+      target_destination: newStudentForm.target_destination,
+      pipeline_type: newStudentForm.pipeline_type,
+      university_applied: newStudentForm.university_applied,
+      ticket_number: `APP-${Math.floor(Math.random() * 9000) + 1000}`,
+      admissions_stage: 'New',
+      language_stage: 'Enrolled'
+    }]);
+
+    if (error) {
+      toast.error(error.message);
+    } else {
+      toast.success("Application added successfully!");
+      setIsAddModalOpen(false);
+      setNewStudentForm({ name: "", phone: "", email: "", target_destination: "UK", pipeline_type: "Admissions", university_applied: "" });
+      fetchStudents();
+    }
+    setIsSubmitting(false);
+  };
 
   const handleDelete = async (id: string) => {
     if (role !== "owner") {
@@ -139,6 +176,12 @@ export default function PipelinePage() {
             Language Center
           </button>
         </div>
+        <button 
+          onClick={() => setIsAddModalOpen(true)}
+          className="bg-primary hover:bg-blue-600 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center gap-2 shadow-sm"
+        >
+          <Plus size={18} /> Add Application
+        </button>
       </motion.div>
 
       <AnimatePresence mode="wait">
@@ -300,6 +343,59 @@ export default function PipelinePage() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      <AnimatePresence>
+        {isAddModalOpen && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setIsAddModalOpen(false)} className="absolute inset-0 bg-slate-950/80 backdrop-blur-sm" />
+            <motion.div initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 20 }} className="bg-slate-900 border border-slate-700 rounded-2xl shadow-2xl relative z-10 w-full max-w-md overflow-hidden flex flex-col p-8">
+              <button onClick={() => setIsAddModalOpen(false)} className="absolute top-4 right-4 text-slate-500 hover:text-white bg-slate-800 p-2 rounded-full transition-colors"><X size={20} /></button>
+              
+              <h3 className="text-2xl font-bold text-white mb-6">New Application</h3>
+              
+              <form onSubmit={handleAddApplication} className="space-y-4">
+                <div>
+                  <label className="text-slate-400 text-xs uppercase block mb-1">Student Name</label>
+                  <input required type="text" value={newStudentForm.name} onChange={e => setNewStudentForm({...newStudentForm, name: e.target.value})} className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-primary" />
+                </div>
+                <div>
+                  <label className="text-slate-400 text-xs uppercase block mb-1">Phone Number</label>
+                  <input required type="tel" value={newStudentForm.phone} onChange={e => setNewStudentForm({...newStudentForm, phone: e.target.value})} className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-primary" />
+                </div>
+                <div>
+                  <label className="text-slate-400 text-xs uppercase block mb-1">Email</label>
+                  <input required type="email" value={newStudentForm.email} onChange={e => setNewStudentForm({...newStudentForm, email: e.target.value})} className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-primary" />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-slate-400 text-xs uppercase block mb-1">Pipeline Type</label>
+                    <select value={newStudentForm.pipeline_type} onChange={e => setNewStudentForm({...newStudentForm, pipeline_type: e.target.value})} className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-primary">
+                      <option value="Admissions">Admissions</option>
+                      <option value="Language">Language</option>
+                      <option value="Both">Both</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="text-slate-400 text-xs uppercase block mb-1">Destination</label>
+                    <input type="text" value={newStudentForm.target_destination} onChange={e => setNewStudentForm({...newStudentForm, target_destination: e.target.value})} className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-primary" />
+                  </div>
+                </div>
+                <div>
+                  <label className="text-slate-400 text-xs uppercase block mb-1">Target University (Optional)</label>
+                  <input type="text" value={newStudentForm.university_applied} onChange={e => setNewStudentForm({...newStudentForm, university_applied: e.target.value})} className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-primary" />
+                </div>
+                
+                <div className="pt-4">
+                  <button type="submit" disabled={isSubmitting} className="w-full bg-primary hover:bg-blue-600 text-white font-bold py-3 px-4 rounded-xl transition-all shadow-lg flex justify-center items-center gap-2">
+                    {isSubmitting ? "Saving..." : <><Save size={18} /> Add Application</>}
+                  </button>
+                </div>
+              </form>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
     </motion.div>
   );
 }

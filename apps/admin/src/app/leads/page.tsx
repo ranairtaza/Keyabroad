@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { motion, Variants, AnimatePresence } from "framer-motion";
 import Hover3DWrapper from "@/components/Hover3DWrapper";
 import { useRole } from "@/components/RoleContext";
-import { Lock, X, Save, Plus, Download, FileSpreadsheet, CheckSquare, Trash2 } from "lucide-react";
+import { Lock, X, Save, Plus, Download, FileSpreadsheet, CheckSquare, Trash2, ArrowRight } from "lucide-react";
 import toast from "react-hot-toast";
 import { createClient } from "@keyabroad/auth/client";
 import jsPDF from "jspdf";
@@ -31,6 +31,7 @@ export default function LeadsPage() {
     inquiry_type: ""
   });
   const [isAddingLead, setIsAddingLead] = useState(false);
+  const [isConverting, setIsConverting] = useState(false);
   const supabase = createClient();
 
 
@@ -187,6 +188,41 @@ export default function LeadsPage() {
       fetchLeads();
       setSelectedLead(null);
     }
+  };
+
+  const handleConvertToApplication = async () => {
+    if (!selectedLead) return;
+    setIsConverting(true);
+
+    // Insert into students table
+    const { error: insertError } = await supabase.from('students').insert([{
+      name: selectedLead.full_name || selectedLead.name,
+      phone: selectedLead.phone_number || selectedLead.phone,
+      email: selectedLead.email,
+      target_destination: 'UK', // Default, can be changed later
+      pipeline_type: 'Admissions',
+      ticket_number: `APP-${Math.floor(Math.random() * 9000) + 1000}`,
+      admissions_stage: 'New',
+      language_stage: 'Enrolled'
+    }]);
+
+    if (insertError) {
+      toast.error("Failed to convert lead: " + insertError.message);
+      setIsConverting(false);
+      return;
+    }
+
+    // Mark lead as completed
+    const { error: updateError } = await supabase.from('enquiries').update({ status: 'completed' }).eq('id', selectedLead.id);
+    
+    if (updateError) {
+      toast.error("Converted to Application, but failed to update Lead status.");
+    } else {
+      toast.success("Lead successfully converted to an Application!");
+      fetchLeads();
+      setSelectedLead(null);
+    }
+    setIsConverting(false);
   };
 
   const handleAddLead = async (e: React.FormEvent) => {
@@ -534,9 +570,16 @@ export default function LeadsPage() {
                   </select>
                 </div>
 
-                <div className="pt-4 mt-6">
-                  <button type="submit" className="w-full bg-primary hover:bg-blue-600 text-white font-bold py-3 px-4 rounded-xl transition-all shadow-lg flex justify-center items-center gap-2">
+                  <button type="submit" className="flex-[2] bg-primary hover:bg-blue-600 text-white font-bold py-3 px-4 rounded-xl transition-all shadow-lg flex justify-center items-center gap-2">
                     <Save size={18} /> Save Changes
+                  </button>
+                  <button 
+                    type="button" 
+                    onClick={handleConvertToApplication}
+                    disabled={isConverting}
+                    className="flex-[1] bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-xl transition-all shadow-lg flex justify-center items-center gap-2"
+                  >
+                    {isConverting ? "Converting..." : <><ArrowRight size={18} /> Convert to Application</>}
                   </button>
                 </div>
               </form>
