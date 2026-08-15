@@ -35,16 +35,17 @@ export default function Footer() {
                 <FaLinkedin size={18} />
               </a>
               <a href="https://www.tiktok.com/@keyabroad" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:text-white hover:bg-secondary transition-all" aria-label="TikTok">
-            {/* ICEF Agency Status Badge */}
+            {/* ICEF Agency Status Logo */}
             <div className="mt-8">
-              <a href="https://www.icef.com/agency/" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-3 bg-slate-800/50 hover:bg-slate-700/50 border border-slate-700 p-3 rounded-xl transition-all group">
-                <div className="w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center">
-                  <Award className="text-blue-400 w-5 h-5 group-hover:scale-110 transition-transform" />
-                </div>
-                <div className="flex flex-col">
-                  <span className="text-xs text-slate-400 font-medium uppercase tracking-wider">Certified</span>
-                  <span className="text-sm font-bold text-white">ICEF Agency</span>
-                </div>
+              <a href="https://www.icef.com/agency/" target="_blank" rel="noopener noreferrer" className="inline-block bg-white p-2 rounded-lg">
+                <Image 
+                  src="/icef-logo.png" 
+                  alt="ICEF Agency Status" 
+                  width={120} 
+                  height={120} 
+                  className="object-contain"
+                  unoptimized
+                />
               </a>
             </div>
           </div>
