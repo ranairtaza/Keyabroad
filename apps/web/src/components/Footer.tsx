@@ -9,7 +9,7 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 mb-16">
           {/* Brand Column */}
-          <div className="lg:col-span-5 pr-8">
+          <div className="lg:col-span-4 pr-8">
             <div className="relative h-12 w-48 mb-6">
               <Image 
                 src="/keyabroad-with-tagline-white.png" 
@@ -38,25 +38,13 @@ export default function Footer() {
                 <FaTiktok size={18} />
               </a>
             </div>
-            {/* ICEF Agency Status Logo */}
-            <div className="mt-8">
-              <a href="https://www.icef.com/agency/" target="_blank" rel="noopener noreferrer" className="inline-block bg-white p-2 rounded-lg">
-                <Image 
-                  src="https://www.icef.com/wp-content/uploads/2019/12/ICEF-Agency-Status-Logo.png" 
-                  alt="ICEF Agency Status" 
-                  width={150} 
-                  height={60} 
-                  className="object-contain"
-                  unoptimized
-                />
-              </a>
-            </div>
+            {/* ICEF Agency Status Logo (Removed due to broken external link) */}
           </div>
 
           {/* Quick Links */}
-          <div className="lg:col-span-3">
+          <div className="lg:col-span-5">
             <h3 className="text-sm font-semibold tracking-widest uppercase text-white mb-8">Quick Links</h3>
-            <ul className="space-y-4">
+            <ul className="grid grid-cols-2 gap-x-6 gap-y-4">
               {[
                 { name: 'Home', href: '/' },
                 { name: 'Premium Services', href: '/services' },
@@ -88,7 +76,7 @@ export default function Footer() {
           </div>
 
           {/* Contact Us */}
-          <div className="lg:col-span-4">
+          <div className="lg:col-span-3">
             <h3 className="text-sm font-semibold tracking-widest uppercase text-white mb-8">Contact Us</h3>
             <ul className="space-y-6">
               <li className="flex items-start group">
