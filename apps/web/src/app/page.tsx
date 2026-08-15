@@ -19,11 +19,12 @@ export default function Home() {
       <section className="relative overflow-hidden bg-slate-900 text-white pt-24 pb-32 lg:pt-36 lg:pb-40">
         <div className="absolute inset-0 z-0 opacity-20">
           <Image 
-            src="https://images.unsplash.com/photo-1523050854058-8df90110c9f1?q=80&w=2070" 
+            src="https://images.unsplash.com/photo-1523050854058-8df90110c9f1" 
             alt="University campus" 
             fill 
             className="object-cover"
             priority
+            unoptimized
           />
           <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/80 to-slate-900/40" />
         </div>
@@ -139,11 +140,12 @@ export default function Home() {
             <div className="relative">
               <div className="absolute inset-0 bg-gradient-to-tr from-primary/20 to-emerald-400/20 rounded-[3rem] transform rotate-3" />
               <Image 
-                src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=2071"
+                src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f"
                 alt="Students studying"
                 width={600}
                 height={700}
                 className="rounded-[3rem] relative z-10 object-cover shadow-2xl"
+                unoptimized
               />
             </div>
           </div>
