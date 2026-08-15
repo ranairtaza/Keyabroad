@@ -59,14 +59,20 @@ export default function Footer() {
             <ul className="space-y-4">
               {[
                 { name: 'Home', href: '/' },
-                { name: 'Services', href: '/services' },
+                { name: 'Premium Services', href: '/services' },
+                { name: 'Scholarships', href: '/scholarships' },
                 { name: 'Language Tests', href: '/language-tests' },
                 { name: 'Destinations', href: '/destinations' },
+                { name: 'Compare Programs', href: '/compare' },
+                { name: 'Cost Calculator', href: '/cost-calculator' },
+                { name: 'AI Advisor', href: '/ai-advisor' },
                 { name: 'About Us', href: '/about' },
                 { name: 'Team', href: '/teams' },
                 { name: 'Careers', href: '/careers' },
                 { name: 'Office Walk-in', href: '/walk-in' },
-                { name: 'Blog', href: '/blog' }
+                { name: 'Blog', href: '/blog' },
+                { name: 'Contact Us', href: '/contact' },
+                { name: 'Student Login', href: '/login' },
               ].map((link) => (
                 <li key={link.name}>
                   <Link 
