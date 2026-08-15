@@ -90,12 +90,12 @@ export default function TeamsPage() {
                   {member.image ? (
                     <Image 
                       src={member.image} 
-                      alt={member.name}
+                      alt={member.name || 'Team Member'}
                       fill
                       className="object-cover group-hover:scale-110 transition-transform duration-500"
                     />
                   ) : (
-                    <div className="text-4xl font-bold text-slate-300">{member.name.charAt(0)}</div>
+                    <div className="text-4xl font-bold text-slate-300">{(member.name || 'U').charAt(0)}</div>
                   )}
                   <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end justify-center pb-6 gap-4">
                     <button className="bg-white p-2 rounded-full text-primary hover:text-secondary hover:scale-110 transition-all">

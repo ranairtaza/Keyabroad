@@ -12,7 +12,7 @@ export function ServerSearchBar({ initialSearch = '' }: { initialSearch?: string
 
   // Sync state if URL changes
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/exhaustive-deps, react-hooks/set-state-in-effect
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setSearchTerm(searchParams.get('search') || '');
   }, [searchParams]);
 

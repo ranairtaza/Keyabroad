@@ -24,5 +24,9 @@
   },
   "devDependencies": {
     "turbo": "^2.1.0"
+  },
+  "overrides": {
+    "postcss": "^8.5.22",
+    "lodash": "^4.17.24"
   }
 }

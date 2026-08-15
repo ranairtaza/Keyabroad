@@ -1,11 +1,20 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { logJobRun } from '../../../../../../../packages/database/src/telemetry';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
 const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
 
 export async function POST(req: Request) {
+  const startTime = performance.now();
   try {
+    const authHeader = req.headers.get('authorization');
+    const CRON_SECRET = process.env.CRON_SECRET || 'dev_secret_key';
+    
+    if (authHeader !== `Bearer ${CRON_SECRET}`) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     if (!supabaseServiceRoleKey) {
       return NextResponse.json({ error: 'Missing service role key' }, { status: 500 });
     }
@@ -18,6 +27,7 @@ export async function POST(req: Request) {
     
     // Only check if it's 6 PM or later
     if (pakTime.getHours() < 18) {
+      logJobRun({ jobName: 'check-tasks', status: 'success', durationMs: Math.round(performance.now() - startTime), context: { reason: 'Too early' } });
       return NextResponse.json({ status: 'skipped', reason: 'Too early (before 6 PM)' });
     }
 
@@ -32,6 +42,7 @@ export async function POST(req: Request) {
       .limit(1);
 
     if (existingLogs && existingLogs.length > 0) {
+      logJobRun({ jobName: 'check-tasks', status: 'success', durationMs: Math.round(performance.now() - startTime), context: { reason: 'Already notified today' } });
       return NextResponse.json({ status: 'skipped', reason: 'Already notified today' });
     }
 
@@ -49,6 +60,7 @@ export async function POST(req: Request) {
     if (followups.data) followups.data.forEach(f => pendingEmployees.add(f.counselor_name));
 
     if (pendingEmployees.size === 0) {
+      logJobRun({ jobName: 'check-tasks', status: 'success', durationMs: Math.round(performance.now() - startTime), context: { reason: 'No pending tasks' } });
       return NextResponse.json({ status: 'skipped', reason: 'No pending tasks' });
     }
 
@@ -61,10 +73,12 @@ export async function POST(req: Request) {
       { recipient: 'owner', message: notificationMessage }
     ]);
 
+    logJobRun({ jobName: 'check-tasks', status: 'success', durationMs: Math.round(performance.now() - startTime), context: { employees: Array.from(pendingEmployees) } });
     return NextResponse.json({ status: 'success', employees: Array.from(pendingEmployees) });
 
   } catch (error: any) {
     console.error("Check Tasks Error:", error);
+    logJobRun({ jobName: 'check-tasks', status: 'failure', durationMs: Math.round(performance.now() - startTime), error: error.message });
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

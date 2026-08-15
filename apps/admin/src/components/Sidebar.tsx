@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useRole } from "./RoleContext";
 import { useSidebar } from "./SidebarContext";
-import { LayoutDashboard, Users, Kanban, CheckSquare, Settings, LogOut, BarChart3, MessageSquare, Network, Database, Globe, Clock, Receipt, Star, GraduationCap, CalendarDays, ShieldCheck, TabletSmartphone, Library, Plane, FileText, Megaphone, Zap, Cable, ShieldAlert, Activity, FileSpreadsheet, X } from "lucide-react";
+import { LayoutDashboard, Users, Kanban, CheckSquare, Settings, LogOut, BarChart3, MessageSquare, Network, Database, Globe, Clock, Receipt, Star, GraduationCap, CalendarDays, ShieldCheck, TabletSmartphone, Library, Plane, FileText, Megaphone, Zap, Cable, ShieldAlert, Activity, FileSpreadsheet, X, Building, Calculator, Sparkles } from "lucide-react";
 
 export default function Sidebar() {
   const pathname = usePathname();
@@ -24,6 +24,9 @@ export default function Sidebar() {
   const links = [
     { name: "Dashboard", href: "/", icon: LayoutDashboard },
     { name: "Analytics", href: "/analytics", icon: BarChart3 },
+    { name: "└ Leads", href: "/analytics/leads", icon: BarChart3 },
+    { name: "└ Applications", href: "/analytics/applications", icon: BarChart3 },
+    { name: "└ Team", href: "/analytics/team", icon: BarChart3 },
     { name: "Student Database", href: "/database", icon: Database },
     { name: "Master Records", href: "/master-records", icon: FileSpreadsheet },
     { name: "Leads", href: "/leads", icon: Users },
@@ -34,9 +37,12 @@ export default function Sidebar() {
     { name: "Automations", href: "/automations", icon: Zap },
     ...(canViewFees ? [{ name: "Fees & Revenue", href: "/fees", icon: Receipt }] : []),
     ...(canViewFees ? [{ name: "Invoices", href: "/invoices", icon: FileText }] : []),
+    ...(canViewFees ? [{ name: "Commissions", href: "/commissions", icon: Building }] : []),
     { name: "Reviews & Feedback", href: "/reviews", icon: Star },
     ...(canManageBlogs ? [{ name: "Blogs", href: "/blogs", icon: Globe }] : []),
     { name: "Daily Operations", href: "/operations", icon: CheckSquare },
+    { name: "Cost Calculator", href: "https://keyabroad.com/cost-calculator", icon: Calculator },
+    { name: "University Matcher", href: "https://keyabroad.com/ai-advisor", icon: Sparkles },
     ...(canViewHROps ? [{ name: "HR Operations", href: "/hr-operations", icon: Activity }] : []),
     { name: "Tasks", href: "/tasks", icon: CheckSquare },
     { name: "Attendance", href: "/attendance", icon: Clock },

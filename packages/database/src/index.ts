@@ -404,6 +404,25 @@ export interface Conversation {
   created_at: string;
 }
 
+export const getDocumentUrl = (supabaseClient: any, path: string) => supabaseClient.storage.from('student-documents').getPublicUrl(path).data.publicUrl;
+
+export const uploadStudentDocument = async (supabase: any, studentId: string, file: File, documentTypeId: string, category: string = 'Other') => {
+  const filePath = `students/${studentId}/${Date.now()}_${file.name}`;
+  const { error: uploadError } = await supabase.storage.from('student-documents').upload(filePath, file);
+  if (uploadError) throw uploadError;
+  const { data, error } = await supabase.from('student_documents').insert({
+    student_id: studentId,
+    document_type_id: documentTypeId,
+    file_name: file.name,
+    file_path: filePath,
+    file_type: file.type,
+    file_size: file.size,
+    category
+  }).select().single();
+  if (error) throw error;
+  return data;
+};
+
 export interface StudentApplication {
   id: string;
   student_id: string;
@@ -412,6 +431,8 @@ export interface StudentApplication {
   program_name: string;
   country: string;
   intake: string | null;
+  visa_deadline: string | null;
+  application_deadline: string | null;
   status: StudentApplicationStatus;
   submitted_at: string | null;
   decision_at: string | null;

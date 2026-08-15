@@ -1,39 +1,66 @@
 
+> admin@0.1.0 prebuild
+> npm install --no-save @tailwindcss/oxide-linux-x64-gnu@4.3.3
+
+
+up to date, audited 1162 packages in 7s
+
+188 packages are looking for funding
+  run `npm fund` for details
+
+7 vulnerabilities (1 moderate, 6 high)
+
+To address issues that do not require attention, run:
+  npm audit fix
+
+To address all issues possible (including breaking changes), run:
+  npm audit fix --force
+
+Some issues need review, and may require choosing
+a different dependency.
+
+Run `npm audit` for details.
+
 > admin@0.1.0 build
 > next build
 
-⚠ Warning: Next.js inferred your workspace root, but it may not be correct.
- We detected multiple lockfiles and selected the directory of C:\Users\DeLL\OneDrive\Desktop\Keyabroad\package-lock.json as the root directory.
- To silence this warning, set `turbopack.root` in your Next.js config, or consider removing one of the lockfiles if it's not needed.
-   See https://nextjs.org/docs/app/api-reference/config/next-config-js/turbopack#root-directory for more information.
- Detected additional lockfiles: 
-   * C:\Users\DeLL\OneDrive\Desktop\Keyabroad\apps\admin\package-lock.json
-
-▲ Next.js 16.2.10 (Turbopack)
+▲ Next.js 16.2.11 (Turbopack)
 - Environments: .env.local
 
 ⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
   Creating an optimized production build ...
-✓ Compiled successfully in 53s
+✓ Compiled successfully in 46s
   Running TypeScript ...
-  Finished TypeScript in 67s ...
+  Finished TypeScript in 23.7s ...
   Collecting page data using 7 workers ...
-  Generating static pages using 7 workers (0/47) ...
-  Generating static pages using 7 workers (11/47) 
-  Generating static pages using 7 workers (23/47) 
-  Generating static pages using 7 workers (35/47) 
-✓ Generating static pages using 7 workers (47/47) in 6.5s
+  Generating static pages using 7 workers (0/63) ...
+  Generating static pages using 7 workers (15/63) 
+  Generating static pages using 7 workers (31/63) 
+  Generating static pages using 7 workers (47/63) 
+✓ Generating static pages using 7 workers (63/63) in 3.2s
   Finalizing page optimization ...
 
 Route (app)
 ┌ ○ /
 ├ ○ /_not-found
-├ ○ /analytics
-├ ○ /analytics/team
+├ ƒ /analytics
+├ ƒ /analytics/applications
+├ ƒ /analytics/leads
+├ ƒ /analytics/revenue
+├ ƒ /analytics/team
+├ ƒ /api/ai/chat
+├ ƒ /api/ai/matcher
+├ ƒ /api/automations/check-invoices
 ├ ƒ /api/automations/check-tasks
 ├ ƒ /api/automations/mark-absent
+├ ƒ /api/automations/sla-check
 ├ ƒ /api/automations/webhook
 ├ ƒ /api/create-employee
+├ ƒ /api/export
+├ ƒ /api/health
+├ ƒ /api/health/ready
+├ ƒ /api/leads/webhook
+├ ƒ /api/messages
 ├ ƒ /api/notify
 ├ ƒ /api/notify/in-app
 ├ ƒ /api/notify/list
@@ -49,24 +76,35 @@ Route (app)
 ├ ○ /automations
 ├ ○ /blogs
 ├ ○ /campaigns
+├ ƒ /commissions
 ├ ○ /course-matcher
 ├ ○ /crm/audit
+├ ○ /crm/documents
 ├ ○ /crm/leads
-├ ○ /crm/tasks
+├ ○ /crm/messages
+├ ƒ /crm/students/[id]
+├ ƒ /crm/tasks
 ├ ○ /database
 ├ ƒ /embed/reviews
 ├ ○ /feedback
 ├ ƒ /feedback/[id]
-├ ○ /fees
+├ ƒ /fees
 ├ ○ /hr-operations
 ├ ○ /icon.png
 ├ ○ /integrations
-├ ○ /invoices
+├ ƒ /invoices
+├ ƒ /invoices/[id]
+├ ƒ /invoices/[id]/pay
+├ ○ /invoices/create
 ├ ○ /leads
 ├ ○ /login
 ├ ○ /master-records
 ├ ○ /operations
+├ ƒ /operations/command-center
+├ ƒ /operations/performance
+├ ○ /operations/system-health
 ├ ○ /pipeline
+├ ○ /pipeline/applications
 ├ ƒ /receipt/[id]
 ├ ○ /reviews
 ├ ○ /settings

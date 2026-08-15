@@ -35,8 +35,8 @@ const nextConfig: NextConfig = {
         permanent: true,
       },
       {
-        source: '/teams',
-        destination: '/team',
+        source: '/team',
+        destination: '/teams',
         permanent: true,
       }
     ];

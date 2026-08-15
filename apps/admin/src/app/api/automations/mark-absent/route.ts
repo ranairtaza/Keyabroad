@@ -4,8 +4,15 @@ import { createClient } from '@supabase/supabase-js';
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
 const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
 
-export async function POST() {
+export async function POST(request: Request) {
   try {
+    const authHeader = request.headers.get('authorization');
+    const CRON_SECRET = process.env.CRON_SECRET || 'dev_secret_key';
+    
+    if (authHeader !== `Bearer ${CRON_SECRET}`) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     if (!supabaseServiceRoleKey) {
       return NextResponse.json({ error: 'Missing service role key' }, { status: 500 });
     }
@@ -77,6 +84,6 @@ export async function POST() {
 }
 
 
-export async function GET() {
-  return POST();
+export async function GET(request: Request) {
+  return POST(request);
 }

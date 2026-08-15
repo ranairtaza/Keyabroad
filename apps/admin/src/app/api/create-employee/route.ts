@@ -28,7 +28,9 @@ export async function POST(request: Request) {
     // 1. Create the user in Supabase Auth
     // Set a default temporary password that they should change later
     const tempPassword = 'KeyabroadPassword123!';
-    
+    let userId = null;
+    let isNewUser = true;
+
     const { data: authData, error: authError } = await supabaseAdmin.auth.admin.createUser({
       email,
       password: tempPassword,
@@ -37,10 +39,26 @@ export async function POST(request: Request) {
     });
 
     if (authError) {
-      return NextResponse.json({ error: authError.message }, { status: 400 });
+      if (authError.message.toLowerCase().includes('already') || authError.status === 422 || authError.status === 400) {
+        // User already exists. Find them in profiles.
+        isNewUser = false;
+        const { data: profile } = await supabaseAdmin
+          .from('profiles')
+          .select('id')
+          .eq('email', email)
+          .single();
+          
+        if (profile) {
+          userId = profile.id;
+        }
+      } else {
+        return NextResponse.json({ error: authError.message }, { status: 400 });
+      }
+    } else {
+      userId = authData?.user?.id;
     }
 
-    // 2. Insert into team_members table
+    // 2. Insert or Update into team_members table
     const newEmp = {
       name,
       email,
@@ -52,22 +70,30 @@ export async function POST(request: Request) {
       image: `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=0D8ABC&color=fff`
     };
 
-    const { error: dbError } = await supabaseAdmin
+    const { data: existingTeamMember } = await supabaseAdmin
       .from('team_members')
-      .insert([newEmp]);
+      .select('id')
+      .eq('email', email)
+      .single();
 
-    if (dbError) {
-      // If adding to team_members fails, we should ideally rollback the user creation, 
-      // but for simplicity we'll just return the error.
-      return NextResponse.json({ error: `User created but failed to add to directory: ${dbError.message}` }, { status: 500 });
+    if (existingTeamMember) {
+      const { error: dbUpdateError } = await supabaseAdmin.from('team_members').update(newEmp).eq('id', existingTeamMember.id);
+      if (dbUpdateError) {
+        return NextResponse.json({ error: `User found but failed to update directory: ${dbUpdateError.message}` }, { status: 500 });
+      }
+    } else {
+      const { error: dbInsertError } = await supabaseAdmin.from('team_members').insert([newEmp]);
+      if (dbInsertError) {
+        return NextResponse.json({ error: `User created but failed to add to directory: ${dbInsertError.message}` }, { status: 500 });
+      }
     }
     
     // 3. Upsert into profiles table to assign their role properly for the dashboard
-    if (authData?.user?.id) {
+    if (userId) {
        const isAdminRole = role.toLowerCase().includes('admin') || role.toLowerCase().includes('ceo') || role.toLowerCase().includes('founder');
        
        await supabaseAdmin.from('profiles').upsert({
-         id: authData.user.id,
+         id: userId,
          email: email,
          full_name: name,
          role: isAdminRole ? 'admin' : 'staff',
@@ -78,8 +104,8 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ 
       success: true, 
-      message: 'Employee account created successfully!',
-      tempPassword 
+      message: isNewUser ? 'Employee account created successfully!' : 'Existing user successfully added to the team directory!',
+      tempPassword: isNewUser ? tempPassword : 'User already has a password'
     });
 
   } catch (error: any) {

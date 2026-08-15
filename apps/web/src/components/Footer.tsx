@@ -38,6 +38,19 @@ export default function Footer() {
                 <FaTiktok size={18} />
               </a>
             </div>
+            {/* ICEF Agency Status Logo */}
+            <div className="mt-8">
+              <a href="https://www.icef.com/agency/" target="_blank" rel="noopener noreferrer" className="inline-block bg-white p-2 rounded-lg">
+                <Image 
+                  src="https://www.icef.com/wp-content/uploads/2019/12/ICEF-Agency-Status-Logo.png" 
+                  alt="ICEF Agency Status" 
+                  width={150} 
+                  height={60} 
+                  className="object-contain"
+                  unoptimized
+                />
+              </a>
+            </div>
           </div>
 
           {/* Quick Links */}
@@ -52,6 +65,7 @@ export default function Footer() {
                 { name: 'About Us', href: '/about' },
                 { name: 'Team', href: '/teams' },
                 { name: 'Careers', href: '/careers' },
+                { name: 'Office Walk-in', href: '/walk-in' },
                 { name: 'Blog', href: '/blog' }
               ].map((link) => (
                 <li key={link.name}>

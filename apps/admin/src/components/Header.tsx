@@ -89,10 +89,50 @@ export default function Header() {
     // Initial fetch
     fetchNotifications(false);
 
-    // Poll every 10 seconds to bypass RLS realtime limitations
-    const interval = setInterval(() => fetchNotifications(true), 10000);
+    // Set up Realtime subscription
+    const channel = supabase
+      .channel('notifications_channel')
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'notifications',
+        },
+        (payload) => {
+          const newNotif = payload.new;
+          if (newNotif.recipient === currentUser.name || newNotif.recipient === 'Admin' || newNotif.recipient === 'admin') {
+            setNotifications(prev => {
+              if (prev.find(p => p.id === newNotif.id)) return prev;
+              
+              toast.success(newNotif.message, { duration: 5000, icon: '🔔' });
+              try {
+                const audio = new Audio('/ping.mp3');
+                audio.play().catch(() => {});
+              } catch (e) {}
 
-    return () => clearInterval(interval);
+              if (typeof window !== "undefined" && "Notification" in window && Notification.permission === "granted") {
+                const notification = new Notification("KeyAbroad Update", { 
+                  body: newNotif.message,
+                  icon: '/icon.png',
+                  requireInteraction: true
+                });
+                notification.onclick = function() {
+                  window.focus();
+                  this.close();
+                };
+              }
+              
+              return [newNotif, ...prev];
+            });
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, [currentUser]);
 
   const markAsRead = async (id: string) => {

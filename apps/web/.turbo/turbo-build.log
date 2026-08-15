@@ -1,25 +1,41 @@
 
+> web@0.1.0 prebuild
+> npm install --no-save @tailwindcss/oxide-linux-x64-gnu@4.3.2
+
+
+up to date, audited 1162 packages in 9s
+
+188 packages are looking for funding
+  run `npm fund` for details
+
+8 vulnerabilities (1 moderate, 7 high)
+
+To address issues that do not require attention, run:
+  npm audit fix
+
+To address all issues possible (including breaking changes), run:
+  npm audit fix --force
+
+Some issues need review, and may require choosing
+a different dependency.
+
+Run `npm audit` for details.
+
 > web@0.1.0 build
 > next build
-
-⚠ Warning: Next.js inferred your workspace root, but it may not be correct.
- We detected multiple lockfiles and selected the directory of C:\Users\DeLL\OneDrive\Desktop\Keyabroad\package-lock.json as the root directory.
- To silence this warning, set `turbopack.root` in your Next.js config, or consider removing one of the lockfiles if it's not needed.
-   See https://nextjs.org/docs/app/api-reference/config/next-config-js/turbopack#root-directory for more information.
- Detected additional lockfiles: 
-   * C:\Users\DeLL\OneDrive\Desktop\Keyabroad\apps\web\package-lock.json
 
 ▲ Next.js 16.2.11 (Turbopack)
 - Environments: .env.local
 
 ⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
   Creating an optimized production build ...
-✓ Compiled successfully in 57s
+✓ Compiled successfully in 28.9s
   Running TypeScript ...
-  Finished TypeScript in 54s ...
+  Finished TypeScript in 19.4s ...
   Collecting page data using 7 workers ...
-  Generating static pages using 7 workers (0/25) ...
-  Generating static pages using 7 workers (6/25) 
+  Generating static pages using 7 workers (0/32) ...
+  Generating static pages using 7 workers (8/32) 
+  Generating static pages using 7 workers (16/32) 
 Error fetching blogs: {
   message: 'TypeError: fetch failed',
   details: 'TypeError: fetch failed\n' +
@@ -30,9 +46,8 @@ Error fetching blogs: {
   hint: '',
   code: ''
 }
-  Generating static pages using 7 workers (12/25) 
-  Generating static pages using 7 workers (18/25) 
-✓ Generating static pages using 7 workers (25/25) in 11.6s
+  Generating static pages using 7 workers (24/32) 
+✓ Generating static pages using 7 workers (32/32) in 8.4s
   Finalizing page optimization ...
 
 Route (app)
@@ -40,10 +55,13 @@ Route (app)
 ├ ○ /_not-found
 ├ ○ /about
 ├ ƒ /api/chat
+├ ƒ /api/health
+├ ƒ /api/messages
 ├ ƒ /api/notify
 ├ ○ /blog
 ├ ƒ /blog/[slug]
 ├ ○ /book-appointment
+├ ○ /careers
 ├ ○ /compare
 ├ ○ /counseling
 ├ ƒ /destinations
@@ -60,7 +78,12 @@ Route (app)
 ├ ƒ /scholarships/[id]
 ├ ○ /services
 ├ ○ /student
+├ ○ /student/applications
 ├ ○ /student/dashboard
+├ ○ /student/documents
+├ ƒ /student/finance
+├ ƒ /student/finance/receipt/[id]
+├ ○ /student/messages
 ├ ○ /student/profile
 ├ ○ /teams
 ├ ƒ /universities
@@ -73,8 +96,3 @@ Route (app)
 ○  (Static)   prerendered as static content
 ƒ  (Dynamic)  server-rendered on demand
 
-npm notice
-npm notice New major version of npm available! 11.13.0 -> 12.0.2
-npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.0.2
-npm notice To update run: npm install -g npm@12.0.2
-npm notice
