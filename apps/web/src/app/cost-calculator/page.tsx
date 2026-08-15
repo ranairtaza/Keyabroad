@@ -1,9 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { Calculator, DollarSign, Euro, PoundSterling, Landmark, Plane, GraduationCap, ArrowRight, ShieldCheck } from "lucide-react";
+import { Calculator, DollarSign, Euro, PoundSterling, Landmark, Plane, GraduationCap, ArrowRight, ShieldCheck, Plus, X } from "lucide-react";
 import { Button } from "@keyabroad/ui/components/button";
 import { Card } from "@keyabroad/ui/components/card";
+import { Input } from "@keyabroad/ui/components/input";
 
 const DESTINATIONS = {
   UK: { currency: "£", rate: 355, symbol: PoundSterling, tuition: [12000, 30000], living: 12000, visa: 490 },
@@ -19,6 +20,23 @@ export default function CostCalculatorPage() {
   const [dest, setDest] = useState<DestKey>("UK");
   const [degree, setDegree] = useState<"bachelors" | "masters">("masters");
   const [scholarship, setScholarship] = useState(0);
+  
+  // Custom Expenses
+  const [customExpenses, setCustomExpenses] = useState<{name: string, amount: number}[]>([]);
+  const [newExpenseName, setNewExpenseName] = useState("");
+  const [newExpenseAmount, setNewExpenseAmount] = useState("");
+
+  const addCustomExpense = () => {
+    if (newExpenseName && newExpenseAmount && Number(newExpenseAmount) > 0) {
+      setCustomExpenses([...customExpenses, { name: newExpenseName, amount: Number(newExpenseAmount) }]);
+      setNewExpenseName("");
+      setNewExpenseAmount("");
+    }
+  };
+
+  const removeCustomExpense = (index: number) => {
+    setCustomExpenses(customExpenses.filter((_, i) => i !== index));
+  };
 
   const selected = DESTINATIONS[dest];
   const Icon = selected.symbol;
@@ -30,7 +48,8 @@ export default function CostCalculatorPage() {
     
   const discountedTuition = Math.max(0, avgTuition - scholarship);
   
-  const totalForeign = discountedTuition + selected.living + selected.visa;
+  const totalCustom = customExpenses.reduce((sum, exp) => sum + exp.amount, 0);
+  const totalForeign = discountedTuition + selected.living + selected.visa + totalCustom;
   const totalPKR = totalForeign * selected.rate;
 
   const formatPKR = (val: number) => {
@@ -120,6 +139,44 @@ export default function CostCalculatorPage() {
                 />
               </div>
 
+              {/* Custom Expenses */}
+              <div className="pt-6 border-t border-slate-200">
+                <label className="block text-sm font-bold text-slate-700 mb-4 uppercase tracking-wider">4. Add Custom Expenses</label>
+                <p className="text-xs text-slate-400 mb-4">Add flights, health insurance, or miscellaneous fees ({selected.currency}).</p>
+                <div className="flex gap-2 mb-4">
+                  <Input 
+                    placeholder="e.g. Flight Ticket" 
+                    value={newExpenseName} 
+                    onChange={e => setNewExpenseName(e.target.value)}
+                    className="flex-1"
+                  />
+                  <Input 
+                    type="number" 
+                    placeholder="Amount" 
+                    value={newExpenseAmount} 
+                    onChange={e => setNewExpenseAmount(e.target.value)}
+                    className="w-24"
+                  />
+                  <Button onClick={addCustomExpense} variant="secondary" size="icon"><Plus className="w-4 h-4" /></Button>
+                </div>
+                
+                {customExpenses.length > 0 && (
+                  <div className="space-y-2">
+                    {customExpenses.map((exp, idx) => (
+                      <div key={idx} className="flex justify-between items-center bg-slate-50 px-3 py-2 rounded-lg border border-slate-200 text-sm">
+                        <span className="font-medium text-slate-700">{exp.name}</span>
+                        <div className="flex items-center gap-3">
+                          <span className="text-slate-900 font-bold">{selected.currency}{formatForeign(exp.amount)}</span>
+                          <button onClick={() => removeCustomExpense(idx)} className="text-red-400 hover:text-red-600">
+                            <X className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
             </Card>
           </div>
 
@@ -180,6 +237,24 @@ export default function CostCalculatorPage() {
                     <p className="text-sm text-slate-400">~ PKR {formatPKR(selected.visa * selected.rate)}</p>
                   </div>
                 </div>
+
+                {customExpenses.map((exp, idx) => (
+                  <div key={idx} className="flex justify-between items-center p-4 bg-blue-900/20 rounded-2xl border border-blue-800/50">
+                    <div className="flex items-center">
+                      <div className="w-10 h-10 bg-blue-500/20 text-blue-400 rounded-xl flex items-center justify-center mr-4">
+                        <Plus size={20} />
+                      </div>
+                      <div>
+                        <h3 className="font-bold">{exp.name}</h3>
+                        <p className="text-sm text-slate-400">Custom expense</p>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <p className="font-bold text-lg">{selected.currency}{formatForeign(exp.amount)}</p>
+                      <p className="text-sm text-slate-400">~ PKR {formatPKR(exp.amount * selected.rate)}</p>
+                    </div>
+                  </div>
+                ))}
               </div>
 
               <div className="pt-6 border-t border-slate-700 mt-auto relative z-10">

@@ -97,6 +97,8 @@ export default function Navbar() {
                 <div className="absolute top-full mt-[-8px] left-[-20px] w-48 bg-white rounded-b-xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 border border-slate-100 z-50">
                   <div className="py-4 flex flex-col">
                     <Link href="/about" className="px-6 py-3 text-[15px] font-bold text-slate-800 hover:text-[#8dc63f] hover:bg-slate-50 transition-colors block">About Us</Link>
+                    <Link href="/cost-calculator" className="px-6 py-3 text-[15px] font-bold text-slate-800 hover:text-[#8dc63f] hover:bg-slate-50 transition-colors block">Cost Calculator</Link>
+                    <Link href="/ai-advisor" className="px-6 py-3 text-[15px] font-bold text-slate-800 hover:text-[#8dc63f] hover:bg-slate-50 transition-colors block">AI Matcher</Link>
                     <Link href="/teams" className="px-6 py-3 text-[15px] font-bold text-slate-800 hover:text-[#8dc63f] hover:bg-slate-50 transition-colors block">Team</Link>
                     <Link href="/careers" className="px-6 py-3 text-[15px] font-bold text-slate-800 hover:text-[#8dc63f] hover:bg-slate-50 transition-colors block">Careers</Link>
                     <Link href="/walk-in" className="px-6 py-3 text-[15px] font-bold text-slate-800 hover:text-[#8dc63f] hover:bg-slate-50 transition-colors block">Office Walk-In</Link>
@@ -169,6 +171,8 @@ export default function Navbar() {
             </div>
 
             <Link href="/about" onClick={() => setIsMobileMenuOpen(false)} className="px-4 py-3 text-lg font-bold text-slate-800 hover:text-primary hover:bg-slate-50 rounded-lg">About Us</Link>
+            <Link href="/cost-calculator" onClick={() => setIsMobileMenuOpen(false)} className="px-4 py-3 text-lg font-bold text-slate-800 hover:text-primary hover:bg-slate-50 rounded-lg">Cost Calculator</Link>
+            <Link href="/ai-advisor" onClick={() => setIsMobileMenuOpen(false)} className="px-4 py-3 text-lg font-bold text-slate-800 hover:text-primary hover:bg-slate-50 rounded-lg">AI Matcher</Link>
             <Link href="/teams" onClick={() => setIsMobileMenuOpen(false)} className="px-4 py-3 text-lg font-bold text-slate-800 hover:text-primary hover:bg-slate-50 rounded-lg">Team</Link>
             <Link href="/careers" onClick={() => setIsMobileMenuOpen(false)} className="px-4 py-3 text-lg font-bold text-slate-800 hover:text-primary hover:bg-slate-50 rounded-lg">Careers</Link>
             <Link href="/walk-in" onClick={() => setIsMobileMenuOpen(false)} className="px-4 py-3 text-lg font-bold text-slate-800 hover:text-primary hover:bg-slate-50 rounded-lg">Office Walk-In</Link>
