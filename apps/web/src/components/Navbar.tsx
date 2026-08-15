@@ -98,6 +98,7 @@ export default function Navbar() {
                   <div className="py-4 flex flex-col">
                     <Link href="/about" className="px-6 py-3 text-[15px] font-bold text-slate-800 hover:text-[#8dc63f] hover:bg-slate-50 transition-colors block">About Us</Link>
                     <Link href="/teams" className="px-6 py-3 text-[15px] font-bold text-slate-800 hover:text-[#8dc63f] hover:bg-slate-50 transition-colors block">Team</Link>
+                    <Link href="/careers" className="px-6 py-3 text-[15px] font-bold text-slate-800 hover:text-[#8dc63f] hover:bg-slate-50 transition-colors block">Careers</Link>
                     <Link href="/blog" className="px-6 py-3 text-[15px] font-bold text-slate-800 hover:text-[#8dc63f] hover:bg-slate-50 transition-colors block">Blog</Link>
                   </div>
                 </div>
@@ -168,6 +169,7 @@ export default function Navbar() {
 
             <Link href="/about" onClick={() => setIsMobileMenuOpen(false)} className="px-4 py-3 text-lg font-bold text-slate-800 hover:text-primary hover:bg-slate-50 rounded-lg">About Us</Link>
             <Link href="/teams" onClick={() => setIsMobileMenuOpen(false)} className="px-4 py-3 text-lg font-bold text-slate-800 hover:text-primary hover:bg-slate-50 rounded-lg">Team</Link>
+            <Link href="/careers" onClick={() => setIsMobileMenuOpen(false)} className="px-4 py-3 text-lg font-bold text-slate-800 hover:text-primary hover:bg-slate-50 rounded-lg">Careers</Link>
             <Link href="/blog" onClick={() => setIsMobileMenuOpen(false)} className="px-4 py-3 text-lg font-bold text-slate-800 hover:text-primary hover:bg-slate-50 rounded-lg">Blog</Link>
             <div className="pt-4 pb-2">
               <Link href="/#contact" onClick={() => setIsMobileMenuOpen(false)} className="block w-full px-4 py-4 text-center text-lg font-bold text-white bg-primary rounded-xl shadow-md hover:bg-secondary transition-colors">

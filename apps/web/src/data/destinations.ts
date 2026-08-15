@@ -16,7 +16,7 @@ const defaultCourses = ["Health/Science", "Business", "I.T", "Computing", "Accou
 
 export const destinations: Destination[] = [
   {
-    id: "uk",
+    id: "united-kingdom",
     name: "United Kingdom",
     image: "/destinations/uk-v2.jpg",
     wavingFlagImage: "/destinations/uk-waving-flag.png",
