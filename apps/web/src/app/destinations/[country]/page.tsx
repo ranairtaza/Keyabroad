@@ -8,6 +8,7 @@ import { Badge } from '@keyabroad/ui/components/badge';
 import { GraduationCap, CheckCircle2, Building2 } from 'lucide-react';
 import { EmptyState } from '@/components/shared/EmptyState';
 import { Metadata } from 'next';
+import { UniversityAccordionList } from '@/components/shared/UniversityAccordionList';
 
 export const revalidate = 3600;
 
@@ -122,27 +123,10 @@ export default async function CountryPage({ params }: PageProps) {
           </div>
           
           {country.universities && country.universities.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {country.universities.map((uni: any) => (
-                <Link key={uni.id} href={`/universities/${uni.slug}`}>
-                  <Card className="h-full transition-colors hover:border-blue-300 hover:bg-blue-50/50">
-                    <CardContent className="p-6 flex items-center gap-4">
-                      <div className="h-12 w-12 rounded-full bg-slate-100 flex items-center justify-center shrink-0 overflow-hidden border border-slate-200">
-                        {uni.logo_url ? (
-                          <img src={uni.logo_url} alt={uni.name} className="h-8 w-8 object-contain" />
-                        ) : (
-                          <GraduationCap className="h-6 w-6 text-slate-400" />
-                        )}
-                      </div>
-                      <div>
-                        <h3 className="font-semibold text-slate-900 line-clamp-1">{uni.name}</h3>
-                        <p className="text-sm text-slate-500">View Programs &rarr;</p>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </Link>
-              ))}
-            </div>
+            <UniversityAccordionList 
+              universities={country.universities} 
+              currencyCode={country.currency_code} 
+            />
           ) : (
             <EmptyState 
               title="Universities are being verified"
