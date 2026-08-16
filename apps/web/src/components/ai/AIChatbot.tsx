@@ -49,7 +49,7 @@ export function AIChatbot() {
       const response = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ query: userMsg.content, history: messages })
+        body: JSON.stringify({ message: userMsg.content, history: messages })
       });
       
       const data = await response.json();
@@ -130,7 +130,7 @@ export function AIChatbot() {
           value={input}
           onChange={(e) => setInput(e.target.value)}
           placeholder="Ask me anything..."
-          className="flex-1 bg-slate-100 border-none rounded-full px-4 text-sm focus:ring-2 focus:ring-blue-600 outline-none"
+          className="flex-1 bg-slate-100 border-none rounded-full px-4 text-sm text-slate-900 focus:ring-2 focus:ring-blue-600 outline-none"
         />
         <button 
           type="submit" 
