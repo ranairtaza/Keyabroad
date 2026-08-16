@@ -44,10 +44,7 @@ export async function getPublishedCountryBySlug(slug: string) {
         name,
         slug,
         logo_url,
-        url,
-        avg_bachelors_tuition,
-        avg_masters_tuition,
-        required_documents
+        url
       )
     `)
     .eq('slug', slug)
