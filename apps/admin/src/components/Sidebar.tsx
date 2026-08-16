@@ -42,8 +42,6 @@ export default function Sidebar() {
     ...(canManageBlogs ? [{ name: "Blogs", href: "/blogs", icon: Globe }] : []),
     { name: "Daily Operations", href: "/operations", icon: CheckSquare },
     { name: "Cost Config", href: "/cost-calculator-config", icon: Calculator },
-    { name: "Cost Calculator (Public)", href: "https://keyabroad.com/cost-calculator", icon: Calculator },
-    { name: "University Matcher", href: "https://keyabroad.com/ai-advisor", icon: Sparkles },
     ...(canViewHROps ? [{ name: "HR Operations", href: "/hr-operations", icon: Activity }] : []),
     { name: "Tasks", href: "/tasks", icon: CheckSquare },
     { name: "Attendance", href: "/attendance", icon: Clock },

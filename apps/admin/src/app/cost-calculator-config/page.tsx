@@ -15,6 +15,8 @@ type Country = {
   exchange_rate_to_pkr: number;
   average_living_cost_per_year: number;
   visa_fee: number;
+  health_insurance_cost: number;
+  flight_ticket_cost: number;
 };
 
 type University = {
@@ -24,6 +26,7 @@ type University = {
   required_documents: string[];
   avg_bachelors_tuition: number;
   avg_masters_tuition: number;
+  application_fee: number;
 };
 
 export default function CostCalculatorConfigPage() {
@@ -64,6 +67,8 @@ export default function CostCalculatorConfigPage() {
       exchange_rate_to_pkr: selectedCountry.exchange_rate_to_pkr,
       average_living_cost_per_year: selectedCountry.average_living_cost_per_year,
       visa_fee: selectedCountry.visa_fee,
+      health_insurance_cost: selectedCountry.health_insurance_cost,
+      flight_ticket_cost: selectedCountry.flight_ticket_cost,
     }).eq('id', selectedCountry.id);
     
     if (error) toast.error(error.message);
@@ -77,6 +82,7 @@ export default function CostCalculatorConfigPage() {
     const { error } = await supabase.from('universities').update({
       avg_bachelors_tuition: selectedUniversity.avg_bachelors_tuition,
       avg_masters_tuition: selectedUniversity.avg_masters_tuition,
+      application_fee: selectedUniversity.application_fee,
       required_documents: selectedUniversity.required_documents || []
     }).eq('id', selectedUniversity.id);
     
@@ -166,6 +172,22 @@ export default function CostCalculatorConfigPage() {
                   onChange={e => setSelectedCountry({...selectedCountry, visa_fee: Number(e.target.value)})} 
                 />
               </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">Health Insurance Cost / Year (in local currency)</label>
+                <Input 
+                  type="number"
+                  value={selectedCountry.health_insurance_cost || 0} 
+                  onChange={e => setSelectedCountry({...selectedCountry, health_insurance_cost: Number(e.target.value)})} 
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">Flight Ticket Cost (in local currency)</label>
+                <Input 
+                  type="number"
+                  value={selectedCountry.flight_ticket_cost || 0} 
+                  onChange={e => setSelectedCountry({...selectedCountry, flight_ticket_cost: Number(e.target.value)})} 
+                />
+              </div>
               
               <Button onClick={saveCountry} disabled={saving} className="w-full mt-4 flex items-center gap-2">
                 <Save size={16} /> Save Country Settings
@@ -214,6 +236,14 @@ export default function CostCalculatorConfigPage() {
                       type="number"
                       value={selectedUniversity.avg_masters_tuition || 0} 
                       onChange={e => setSelectedUniversity({...selectedUniversity, avg_masters_tuition: Number(e.target.value)})} 
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium mb-1">Application Fee</label>
+                    <Input 
+                      type="number"
+                      value={selectedUniversity.application_fee || 0} 
+                      onChange={e => setSelectedUniversity({...selectedUniversity, application_fee: Number(e.target.value)})} 
                     />
                   </div>
                 </div>

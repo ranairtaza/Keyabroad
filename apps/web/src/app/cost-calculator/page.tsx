@@ -52,13 +52,13 @@ export default function CostCalculatorPage() {
 
   const fetchData = async () => {
     setLoading(true);
-    const { data: cData } = await supabase.from('countries').select('*').order('name');
-    if (cData) {
-      setCountries(cData);
-      if (cData.length > 0) setSelectedCountryId(cData[0].id);
+    const { data: countriesData } = await supabase.from('countries').select('id, name, currency_code, exchange_rate_to_pkr, average_living_cost_per_year, visa_fee, health_insurance_cost, flight_ticket_cost');
+    const { data: universitiesData } = await supabase.from('universities').select('id, name, country_id, avg_bachelors_tuition, avg_masters_tuition, application_fee');
+    if (countriesData) {
+      setCountries(countriesData);
+      if (countriesData.length > 0) setSelectedCountryId(countriesData[0].id);
     }
-    const { data: uData } = await supabase.from('universities').select('*').order('name');
-    if (uData) setUniversities(uData);
+    if (universitiesData) setUniversities(universitiesData);
     setLoading(false);
   };
 
@@ -122,8 +122,11 @@ export default function CostCalculatorPage() {
   const totalCustom = customExpenses.reduce((sum, exp) => sum + exp.amount, 0);
   const livingCost = selectedCountry.average_living_cost_per_year || 0;
   const visaFee = selectedCountry.visa_fee || 0;
+  const healthInsurance = selectedCountry.health_insurance_cost || 0;
+  const flightTicket = selectedCountry.flight_ticket_cost || 0;
+  const applicationFee = selectedUniversity?.application_fee || 0;
   
-  const totalForeign = discountedTuition + livingCost + visaFee + totalCustom;
+  const totalForeign = discountedTuition + livingCost + visaFee + healthInsurance + flightTicket + applicationFee + totalCustom;
   const totalPKR = totalForeign * exchangeRate;
 
   const formatPKR = (val: number) => new Intl.NumberFormat('en-PK', { maximumFractionDigits: 0 }).format(val);
@@ -346,18 +349,22 @@ export default function CostCalculatorPage() {
                       </div>
                     </div>
 
-                    <div className="flex items-center justify-between group">
-                      <div className="flex items-center gap-4">
-                        <div className="w-10 h-10 rounded-xl bg-slate-800 flex items-center justify-center text-orange-400 group-hover:bg-orange-400 group-hover:text-white transition-colors">
-                          <Plane size={20} />
-                        </div>
-                        <div>
-                          <p className="font-medium text-white group-hover:text-orange-400 transition-colors">Visa & Processing</p>
-                          <p className="text-xs text-slate-400">One-time fee</p>
-                        </div>
+                    <div className="space-y-2 mt-4">
+                      <div className="flex justify-between items-center bg-slate-800/50 p-3 rounded-lg">
+                        <span className="text-slate-300">Visa Fee</span>
+                        <span className="font-medium">{currency} {formatForeign(visaFee)}</span>
                       </div>
-                      <div className="text-right">
-                        <p className="font-bold">{currency} {formatForeign(visaFee)}</p>
+                      <div className="flex justify-between items-center bg-slate-800/50 p-3 rounded-lg">
+                        <span className="text-slate-300">Health Insurance (Est.)</span>
+                        <span className="font-medium">{currency} {formatForeign(healthInsurance)}</span>
+                      </div>
+                      <div className="flex justify-between items-center bg-slate-800/50 p-3 rounded-lg">
+                        <span className="text-slate-300">Flight Ticket (Est.)</span>
+                        <span className="font-medium">{currency} {formatForeign(flightTicket)}</span>
+                      </div>
+                      <div className="flex justify-between items-center bg-slate-800/50 p-3 rounded-lg">
+                        <span className="text-slate-300">Application Fee</span>
+                        <span className="font-medium">{currency} {formatForeign(applicationFee)}</span>
                       </div>
                     </div>
 
