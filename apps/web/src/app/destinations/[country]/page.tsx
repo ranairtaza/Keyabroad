@@ -51,6 +51,7 @@ export default async function CountryPage({ params }: PageProps) {
             fill
             className="object-cover opacity-40 mix-blend-overlay"
             priority
+            unoptimized
           />
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-[#0a1930] via-transparent to-transparent" />
