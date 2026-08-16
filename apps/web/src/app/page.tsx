@@ -94,6 +94,25 @@ export default function Home() {
         </div>
       </section>
 
+      {/* 3.5 ACCREDITATIONS */}
+      <section className="py-12 bg-white border-t border-slate-100">
+        <div className="container mx-auto px-4 text-center">
+          <p className="text-sm font-semibold tracking-widest text-slate-400 uppercase mb-8">Globally Recognized & Accredited</p>
+          <div className="flex justify-center items-center opacity-80 hover:opacity-100 transition-opacity">
+            <a href="https://www.icef.com/agency/" target="_blank" rel="noopener noreferrer">
+              <Image 
+                src="/icef-logo.png" 
+                alt="ICEF Agency Status" 
+                width={180} 
+                height={180} 
+                className="object-contain"
+                unoptimized
+              />
+            </a>
+          </div>
+        </div>
+      </section>
+
       {/* 4. DESTINATIONS */}
       <section className="py-24 bg-slate-50">
         <div className="container mx-auto px-4">
