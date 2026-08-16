@@ -36,7 +36,7 @@ export const destinations: Destination[] = [
     flagCode: "gb"
   },
   {
-    id: "usa",
+    id: "united-states",
     name: "USA",
     image: "/destinations/usa-v2.jpg",
     wavingFlagImage: "/destinations/usa-waving-flag.png",
