@@ -10,7 +10,7 @@ import { EmptyState } from '@/components/shared/EmptyState';
 import { Metadata } from 'next';
 import { UniversityAccordionList } from '@/components/shared/UniversityAccordionList';
 
-export const revalidate = 3600;
+export const dynamic = 'force-dynamic';
 
 interface PageProps {
   params: Promise<{

@@ -3,7 +3,7 @@ import { CountryCard } from '@/components/shared/CountryCard';
 import { EmptyState } from '@/components/shared/EmptyState';
 import { Metadata } from 'next';
 
-export const revalidate = 3600;
+export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
   title: 'Study Destinations | KeyAbroad',
