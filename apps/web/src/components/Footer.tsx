@@ -50,19 +50,38 @@ export default function Footer() {
             </div>
           </div>
 
-          {/* Quick Links */}
-          <div className="lg:col-span-5">
-            <h3 className="text-sm font-semibold tracking-widest uppercase text-white mb-8">Quick Links</h3>
-            <ul className="grid grid-cols-2 gap-x-6 gap-y-4">
+          {/* Explore */}
+          <div className="lg:col-span-3">
+            <h3 className="text-sm font-semibold tracking-widest uppercase text-white mb-8">Explore</h3>
+            <ul className="space-y-4">
               {[
-                { name: 'Home', href: '/' },
+                { name: 'Destinations', href: '/destinations' },
                 { name: 'Premium Services', href: '/services' },
                 { name: 'Scholarships', href: '/scholarships' },
                 { name: 'Language Tests', href: '/language-tests' },
-                { name: 'Destinations', href: '/destinations' },
                 { name: 'Compare Programs', href: '/compare' },
                 { name: 'Cost Calculator', href: '/cost-calculator' },
                 { name: 'AI Advisor', href: '/ai-advisor' },
+              ].map((link) => (
+                <li key={link.name}>
+                  <Link 
+                    href={link.href} 
+                    className="text-slate-400 hover:text-white transition-all flex items-center group w-fit"
+                  >
+                    <ArrowRight size={14} className="opacity-0 -ml-4 group-hover:opacity-100 group-hover:ml-0 mr-2 transition-all text-secondary" />
+                    <span className="group-hover:translate-x-1 transition-transform">{link.name}</span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Quick Links */}
+          <div className="lg:col-span-2">
+            <h3 className="text-sm font-semibold tracking-widest uppercase text-white mb-8">Quick Links</h3>
+            <ul className="space-y-4">
+              {[
+                { name: 'Home', href: '/' },
                 { name: 'About Us', href: '/about' },
                 { name: 'Team', href: '/teams' },
                 { name: 'Careers', href: '/careers' },
