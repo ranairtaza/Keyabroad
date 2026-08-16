@@ -116,7 +116,7 @@ export default function CostCalculatorPage() {
   const exchangeRate = liveExchangeRate || selectedCountry.exchange_rate_to_pkr || 278;
   
   const avgTuition = selectedUniversity 
-    ? (degree === "masters" ? selectedUniversity.avg_masters_tuition : selectedUniversity.avg_bachelors_tuition) 
+    ? (degree === "masters" ? (selectedUniversity.avg_masters_tuition || 0) : (selectedUniversity.avg_bachelors_tuition || 0)) 
     : 15000;
     
   const discountedTuition = Math.max(0, avgTuition - scholarship);
@@ -354,23 +354,23 @@ export default function CostCalculatorPage() {
                     <div className="space-y-2 mt-4">
                       <div className="flex justify-between items-center bg-slate-800/50 p-3 rounded-lg">
                         <span className="text-slate-300">Visa Fee</span>
-                        <span className="font-medium">{currency} {formatForeign(visaFee)}</span>
+                        <span className="font-medium">{currency || ''} {formatForeign(visaFee || 0)}</span>
                       </div>
                       <div className="flex justify-between items-center bg-slate-800/50 p-3 rounded-lg">
                         <span className="text-slate-300">Health Insurance (Est.)</span>
-                        <span className="font-medium">{currency} {formatForeign(healthInsurance)}</span>
+                        <span className="font-medium">{currency || ''} {formatForeign(healthInsurance || 0)}</span>
                       </div>
                       <div className="flex justify-between items-center bg-slate-800/50 p-3 rounded-lg">
                         <span className="text-slate-300">Flight Ticket (Est.)</span>
-                        <span className="font-medium">{currency} {formatForeign(flightTicket)}</span>
+                        <span className="font-medium">{currency || ''} {formatForeign(flightTicket || 0)}</span>
                       </div>
                       <div className="flex justify-between items-center bg-slate-800/50 p-3 rounded-lg">
                         <span className="text-slate-300">Application Fee</span>
-                        <span className="font-medium">{currency} {formatForeign(applicationFee)}</span>
+                        <span className="font-medium">{currency || ''} {formatForeign(applicationFee || 0)}</span>
                       </div>
                     </div>
 
-                    {customExpenses.length > 0 && (
+                    {customExpenses && customExpenses.length > 0 && (
                       <div className="flex items-center justify-between group">
                         <div className="flex items-center gap-4">
                           <div className="w-10 h-10 rounded-xl bg-slate-800 flex items-center justify-center text-purple-400 group-hover:bg-purple-400 group-hover:text-white transition-colors">
@@ -382,7 +382,7 @@ export default function CostCalculatorPage() {
                           </div>
                         </div>
                         <div className="text-right">
-                          <p className="font-bold">{currency} {formatForeign(totalCustom)}</p>
+                          <p className="font-bold">{currency || ''} {formatForeign(totalCustom || 0)}</p>
                         </div>
                       </div>
                     )}
@@ -391,14 +391,14 @@ export default function CostCalculatorPage() {
               </Card>
 
               {/* Required Documents Alert */}
-              {selectedUniversity && selectedUniversity.required_documents?.length > 0 && (
+              {selectedUniversity && selectedUniversity.required_documents && selectedUniversity.required_documents.length > 0 && (
                 <Card className="p-6 bg-blue-50 border-blue-200 shadow-sm rounded-2xl">
                   <div className="flex items-center gap-3 mb-4">
                     <FileCheck className="text-blue-600" size={24} />
                     <h3 className="font-bold text-slate-800">Required Documents for {selectedUniversity.name}</h3>
                   </div>
                   <ul className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    {selectedUniversity.required_documents.map((doc, idx) => (
+                    {selectedUniversity.required_documents.map((doc: string, idx: number) => (
                       <li key={idx} className="flex items-start gap-2 text-sm text-slate-700">
                         <div className="mt-1 w-4 h-4 rounded-full bg-blue-200 flex items-center justify-center flex-shrink-0">
                           <div className="w-1.5 h-1.5 bg-blue-600 rounded-full"></div>
