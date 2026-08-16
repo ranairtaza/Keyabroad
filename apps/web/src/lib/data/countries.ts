@@ -37,7 +37,6 @@ export async function getPublishedCountryBySlug(slug: string) {
       description,
       image_url,
       flag_code,
-      currency_code,
       country_features(feature),
       universities(
         id,
