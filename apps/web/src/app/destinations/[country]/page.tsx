@@ -125,7 +125,7 @@ export default async function CountryPage({ params }: PageProps) {
           {country.universities && country.universities.length > 0 ? (
             <UniversityAccordionList 
               universities={country.universities} 
-              currencyCode={country.currency_code} 
+              currencyCode="USD" 
             />
           ) : (
             <EmptyState 

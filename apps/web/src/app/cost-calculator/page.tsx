@@ -6,24 +6,26 @@ import { Button } from "@keyabroad/ui/components/button";
 import { Card } from "@keyabroad/ui/components/card";
 import { Input } from "@keyabroad/ui/components/input";
 import { createClient } from "@keyabroad/auth/client";
-import toast from "react-hot-toast";
-
+// Removed react-hot-toast
 type Country = {
   id: string;
   name: string;
-  currency_code: string;
-  exchange_rate_to_pkr: number;
-  average_living_cost_per_year: number;
-  visa_fee: number;
+  currency_code?: string;
+  exchange_rate_to_pkr?: number;
+  average_living_cost_per_year?: number;
+  visa_fee?: number;
+  health_insurance_cost?: number;
+  flight_ticket_cost?: number;
 };
 
 type University = {
   id: string;
   name: string;
   country_id: string;
-  avg_bachelors_tuition: number;
-  avg_masters_tuition: number;
-  required_documents: string[];
+  avg_bachelors_tuition?: number;
+  avg_masters_tuition?: number;
+  required_documents?: string[];
+  application_fee?: number;
 };
 
 export default function CostCalculatorPage() {
@@ -52,13 +54,13 @@ export default function CostCalculatorPage() {
 
   const fetchData = async () => {
     setLoading(true);
-    const { data: countriesData } = await supabase.from('countries').select('id, name, currency_code, exchange_rate_to_pkr, average_living_cost_per_year, visa_fee, health_insurance_cost, flight_ticket_cost');
-    const { data: universitiesData } = await supabase.from('universities').select('id, name, country_id, avg_bachelors_tuition, avg_masters_tuition, application_fee');
+    const { data: countriesData } = await supabase.from('countries').select('id, name');
+    const { data: universitiesData } = await supabase.from('universities').select('id, name, country_id');
     if (countriesData) {
-      setCountries(countriesData);
+      setCountries(countriesData as any);
       if (countriesData.length > 0) setSelectedCountryId(countriesData[0].id);
     }
-    if (universitiesData) setUniversities(universitiesData);
+    if (universitiesData) setUniversities(universitiesData as any);
     setLoading(false);
   };
 
