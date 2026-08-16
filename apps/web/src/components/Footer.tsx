@@ -35,6 +35,9 @@ export default function Footer() {
                 <FaLinkedin size={18} />
               </a>
               <a href="https://www.tiktok.com/@keyabroad" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:text-white hover:bg-secondary transition-all" aria-label="TikTok">
+                <FaTiktok size={18} />
+              </a>
+            </div>
             {/* ICEF Agency Status Logo */}
             <div className="mt-8">
               <a href="https://www.icef.com/agency/" target="_blank" rel="noopener noreferrer" className="inline-block bg-white p-2 rounded-lg">
