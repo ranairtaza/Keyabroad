@@ -34,7 +34,6 @@ export function AdvancedFilters({ type }: AdvancedFiltersProps) {
 
   // Sync state if URL changes
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     setFilters({
       search: searchParams.get('search') || '',
       country: searchParams.get('country') || '',

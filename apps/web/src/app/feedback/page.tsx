@@ -3,17 +3,45 @@
 import { useState, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { supabase } from "@keyabroad/auth/legacy";
-import { Star, Send, CheckCircle2 } from "lucide-react";
+import { Star, Send, CheckCircle2, Search } from "lucide-react";
 
 function FeedbackForm() {
   const searchParams = useSearchParams();
-  const studentId = searchParams.get("id");
+  const studentIdParam = searchParams.get("id");
 
+  const [step, setStep] = useState<"lookup" | "form" | "success">(studentIdParam ? "form" : "lookup");
+  const [identifier, setIdentifier] = useState("");
+  const [student, setStudent] = useState<any>(null);
+  const [loading, setLoading] = useState(false);
   const [rating, setRating] = useState(0);
   const [hoverRating, setHoverRating] = useState(0);
   const [reviewText, setReviewText] = useState("");
   const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
   const [errorMessage, setErrorMessage] = useState("");
+
+  const handleSearch = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!identifier.trim()) return;
+    setLoading(true);
+
+    const { data, error } = await supabase
+      .from('students')
+      .select('id, name')
+      .or(`ticket_number.eq.${identifier},email.eq.${identifier}`)
+      .single();
+
+    setLoading(false);
+
+    if (error || !data) {
+      setErrorMessage("We couldn't find your profile. Please check your Ticket Number or Email and try again.");
+      setStatus("error");
+    } else {
+      setStudent(data);
+      setStep("form");
+      setStatus("idle");
+      setErrorMessage("");
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -31,7 +59,7 @@ function FeedbackForm() {
     setStatus("submitting");
 
     const payload = {
-      student_id: studentId || null,
+      student_id: studentIdParam || student?.id || null,
       rating: rating,
       review_text: reviewText,
     };
@@ -46,7 +74,7 @@ function FeedbackForm() {
     }
   };
 
-  if (status === "success") {
+  if (status === "success" || step === "success") {
     return (
       <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-6">
         <div className="bg-white rounded-3xl shadow-xl max-w-md w-full p-8 text-center transform scale-105 transition-all">
@@ -67,7 +95,6 @@ function FeedbackForm() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-slate-50 flex flex-col items-center justify-center p-6 relative overflow-hidden">
-      {/* Decorative background shapes */}
       <div className="absolute top-[-10%] left-[-10%] w-96 h-96 bg-primary/10 rounded-full blur-3xl pointer-events-none"></div>
       <div className="absolute bottom-[-10%] right-[-10%] w-96 h-96 bg-secondary/10 rounded-full blur-3xl pointer-events-none"></div>
 
@@ -79,64 +106,105 @@ function FeedbackForm() {
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="bg-white rounded-3xl shadow-2xl p-8 md:p-12 border border-slate-100">
-          
-          <div className="flex flex-col items-center mb-10">
-            <label className="text-slate-700 font-bold mb-4 text-xl">Rate our service</label>
-            <div className="flex gap-2">
-              {[1, 2, 3, 4, 5].map((star) => (
-                <button
-                  key={star}
-                  type="button"
-                  onClick={() => setRating(star)}
-                  onMouseEnter={() => setHoverRating(star)}
-                  onMouseLeave={() => setHoverRating(0)}
-                  className="focus:outline-none transition-transform hover:scale-110"
-                >
-                  <Star 
-                    className={`w-12 h-12 transition-colors duration-200 ${
-                      star <= (hoverRating || rating) 
-                        ? "fill-yellow-400 text-yellow-400" 
-                        : "fill-transparent text-slate-300"
-                    }`}
-                  />
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div className="mb-8">
-            <label className="block text-slate-700 font-bold mb-3 text-lg">Your Review</label>
-            <textarea
-              required
-              rows={5}
-              value={reviewText}
-              onChange={(e) => setReviewText(e.target.value)}
-              placeholder="Tell us about your experience with our counsellors..."
-              className="w-full px-5 py-4 rounded-2xl bg-slate-50 border border-slate-200 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all resize-none text-slate-800"
-            ></textarea>
-          </div>
-
-          {status === "error" && (
-            <div className="mb-6 p-4 bg-red-50 text-red-600 rounded-xl text-sm font-medium border border-red-100">
-              {errorMessage}
-            </div>
+        <div className="bg-white rounded-3xl shadow-2xl p-8 md:p-12 border border-slate-100">
+          {step === "lookup" && (
+            <form onSubmit={handleSearch} className="space-y-6">
+              <div className="text-center mb-6">
+                <h2 className="text-2xl font-bold text-slate-900 mb-2">Find Your Profile</h2>
+                <p className="text-slate-600 text-sm">
+                  Please enter your registered Email Address or Ticket Number to leave a review.
+                </p>
+              </div>
+              <div>
+                <input
+                  type="text"
+                  required
+                  placeholder="Email or Ticket Number"
+                  value={identifier}
+                  onChange={e => setIdentifier(e.target.value)}
+                  className="w-full px-5 py-4 rounded-2xl bg-slate-50 border border-slate-200 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all text-slate-800"
+                />
+              </div>
+              {status === "error" && (
+                <div className="p-4 bg-red-50 text-red-600 rounded-xl text-sm font-medium border border-red-100">
+                  {errorMessage}
+                </div>
+              )}
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full bg-primary text-white font-bold text-lg py-4 rounded-full hover:bg-blue-600 transition-all shadow-xl shadow-primary/30 flex justify-center items-center gap-2 disabled:opacity-70"
+              >
+                {loading ? "Searching..." : <><Search size={20} /> Continue</>}
+              </button>
+            </form>
           )}
 
-          <button
-            type="submit"
-            disabled={status === "submitting"}
-            className="w-full bg-primary text-white font-bold text-lg py-4 rounded-full hover:bg-blue-600 transition-all shadow-xl shadow-primary/30 flex justify-center items-center gap-2 disabled:opacity-70"
-          >
-            {status === "submitting" ? (
-              "Submitting..."
-            ) : (
-              <>
-                <Send size={20} /> Submit Feedback
-              </>
-            )}
-          </button>
-        </form>
+          {step === "form" && (
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div className="text-center mb-6">
+                <h2 className="text-2xl font-bold text-slate-900 mb-1">Hi {student?.name || "Student"}</h2>
+                <p className="text-slate-600 text-sm">How was your experience?</p>
+              </div>
+
+              <div className="flex flex-col items-center gap-2">
+                <label className="text-slate-700 font-bold mb-2 text-lg">Rate our service</label>
+                <div className="flex gap-2">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <button
+                      key={star}
+                      type="button"
+                      onClick={() => setRating(star)}
+                      onMouseEnter={() => setHoverRating(star)}
+                      onMouseLeave={() => setHoverRating(0)}
+                      className="focus:outline-none transition-transform hover:scale-110"
+                    >
+                      <Star
+                        className={`w-12 h-12 transition-colors duration-200 ${
+                          star <= (hoverRating || rating)
+                            ? "fill-yellow-400 text-yellow-400"
+                            : "fill-transparent text-slate-300"
+                        }`}
+                      />
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-slate-700 font-bold mb-3 text-lg">Your Review</label>
+                <textarea
+                  required
+                  rows={5}
+                  value={reviewText}
+                  onChange={(e) => setReviewText(e.target.value)}
+                  placeholder="Tell us about your experience with our counsellors..."
+                  className="w-full px-5 py-4 rounded-2xl bg-slate-50 border border-slate-200 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all resize-none text-slate-800"
+                />
+              </div>
+
+              {status === "error" && (
+                <div className="p-4 bg-red-50 text-red-600 rounded-xl text-sm font-medium border border-red-100">
+                  {errorMessage}
+                </div>
+              )}
+
+              <button
+                type="submit"
+                disabled={status === "submitting"}
+                className="w-full bg-primary text-white font-bold text-lg py-4 rounded-full hover:bg-blue-600 transition-all shadow-xl shadow-primary/30 flex justify-center items-center gap-2 disabled:opacity-70"
+              >
+                {status === "submitting" ? (
+                  "Submitting..."
+                ) : (
+                  <>
+                    <Send size={20} /> Submit Feedback
+                  </>
+                )}
+              </button>
+            </form>
+          )}
+        </div>
       </div>
     </div>
   );

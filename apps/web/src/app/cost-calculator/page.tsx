@@ -16,6 +16,11 @@ type Country = {
   visa_fee?: number;
   health_insurance_cost?: number;
   flight_ticket_cost?: number;
+  bank_statement_amount?: number;
+  embassy_fee?: number;
+  consultant_fee?: number;
+  miscellaneous_cost?: number;
+  scholarship_max_amount?: number;
 };
 
 type University = {
@@ -48,13 +53,9 @@ export default function CostCalculatorPage() {
 
   const supabase = createClient();
 
-  useEffect(() => {
-    fetchData();
-  }, []);
-
   const fetchData = async () => {
     setLoading(true);
-    const { data: countriesData } = await supabase.from('countries').select('id, name');
+    const { data: countriesData } = await supabase.from('countries').select('id, name, currency_code, exchange_rate_to_pkr, average_living_cost_per_year, visa_fee, health_insurance_cost, flight_ticket_cost, bank_statement_amount, embassy_fee, consultant_fee, miscellaneous_cost, scholarship_max_amount');
     const { data: universitiesData } = await supabase.from('universities').select('id, name, country_id');
     if (countriesData) {
       setCountries(countriesData as any);
@@ -63,6 +64,10 @@ export default function CostCalculatorPage() {
     if (universitiesData) setUniversities(universitiesData as any);
     setLoading(false);
   };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   const selectedCountry = countries.find(c => c.id === selectedCountryId);
   const availableUniversities = universities.filter(u => u.country_id === selectedCountryId);
@@ -83,13 +88,6 @@ export default function CostCalculatorPage() {
         .catch(() => setLiveExchangeRate(null));
     }
   }, [selectedCountryId, selectedCountry?.currency_code]);
-
-  // Set default university when country changes
-  useEffect(() => {
-    if (availableUniversities.length > 0 && (!selectedUniversityId || !availableUniversities.find(u => u.id === selectedUniversityId))) {
-      setSelectedUniversityId(availableUniversities[0].id);
-    }
-  }, [selectedCountryId, availableUniversities]);
 
   const addCustomExpense = () => {
     if (newExpenseName && newExpenseAmount && Number(newExpenseAmount) > 0) {
@@ -127,9 +125,17 @@ export default function CostCalculatorPage() {
   const healthInsurance = selectedCountry.health_insurance_cost || 0;
   const flightTicket = selectedCountry.flight_ticket_cost || 0;
   const applicationFee = selectedUniversity?.application_fee || 0;
+  const bankStatement = selectedCountry.bank_statement_amount || 0;
+  const embassyFee = selectedCountry.embassy_fee || 0;
+  const consultantFee = selectedCountry.consultant_fee || 0;
+  const miscCost = selectedCountry.miscellaneous_cost || 0;
   
-  const totalForeign = discountedTuition + livingCost + visaFee + healthInsurance + flightTicket + applicationFee + totalCustom;
+  const totalForeign = discountedTuition + livingCost + visaFee + healthInsurance + flightTicket + applicationFee + bankStatement + embassyFee + consultantFee + miscCost + totalCustom;
   const totalPKR = totalForeign * exchangeRate;
+
+  const scholarshipMax = selectedCountry.scholarship_max_amount && selectedCountry.scholarship_max_amount > 0 
+    ? selectedCountry.scholarship_max_amount 
+    : totalForeign || avgTuition;
 
   const formatPKR = (val: number) => new Intl.NumberFormat('en-PK', { maximumFractionDigits: 0 }).format(val);
   const formatForeign = (val: number) => new Intl.NumberFormat('en-US', { maximumFractionDigits: 0 }).format(val);
@@ -179,7 +185,8 @@ export default function CostCalculatorPage() {
                   <p className="text-sm text-slate-500 bg-slate-50 p-3 rounded-lg border border-slate-200">No universities found for {selectedCountry.name}.</p>
                 ) : (
                   <select 
-                    value={selectedUniversityId}
+                    key={selectedCountryId}
+                    defaultValue={availableUniversities[0]?.id}
                     onChange={(e) => setSelectedUniversityId(e.target.value)}
                     className="w-full p-3 border border-slate-200 rounded-xl bg-slate-50 text-sm font-bold text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary"
                   >
@@ -221,7 +228,7 @@ export default function CostCalculatorPage() {
                 <input 
                   type="range" 
                   min="0" 
-                  max={avgTuition} 
+                  max={scholarshipMax} 
                   step="500" 
                   value={scholarship}
                   onChange={(e) => setScholarship(Number(e.target.value))}
@@ -367,6 +374,22 @@ export default function CostCalculatorPage() {
                       <div className="flex justify-between items-center bg-slate-800/50 p-3 rounded-lg">
                         <span className="text-slate-300">Application Fee</span>
                         <span className="font-medium">{currency || ''} {formatForeign(applicationFee || 0)}</span>
+                      </div>
+                      <div className="flex justify-between items-center bg-slate-800/50 p-3 rounded-lg">
+                        <span className="text-slate-300">Bank Statement Amount</span>
+                        <span className="font-medium">{currency || ''} {formatForeign(bankStatement || 0)}</span>
+                      </div>
+                      <div className="flex justify-between items-center bg-slate-800/50 p-3 rounded-lg">
+                        <span className="text-slate-300">Embassy Fee</span>
+                        <span className="font-medium">{currency || ''} {formatForeign(embassyFee || 0)}</span>
+                      </div>
+                      <div className="flex justify-between items-center bg-slate-800/50 p-3 rounded-lg">
+                        <span className="text-slate-300">Consultant / Agent Fee</span>
+                        <span className="font-medium">{currency || ''} {formatForeign(consultantFee || 0)}</span>
+                      </div>
+                      <div className="flex justify-between items-center bg-slate-800/50 p-3 rounded-lg">
+                        <span className="text-slate-300">Miscellaneous</span>
+                        <span className="font-medium">{currency || ''} {formatForeign(miscCost || 0)}</span>
                       </div>
                     </div>
 

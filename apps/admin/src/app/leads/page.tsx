@@ -570,6 +570,7 @@ export default function LeadsPage() {
                   </select>
                 </div>
 
+                <div className="flex gap-3">
                   <button type="submit" className="flex-[2] bg-primary hover:bg-blue-600 text-white font-bold py-3 px-4 rounded-xl transition-all shadow-lg flex justify-center items-center gap-2">
                     <Save size={18} /> Save Changes
                   </button>

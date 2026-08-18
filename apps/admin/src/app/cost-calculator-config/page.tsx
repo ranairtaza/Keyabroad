@@ -17,6 +17,11 @@ type Country = {
   visa_fee: number;
   health_insurance_cost: number;
   flight_ticket_cost: number;
+  bank_statement_amount: number;
+  embassy_fee: number;
+  consultant_fee: number;
+  miscellaneous_cost: number;
+  scholarship_max_amount: number;
 };
 
 type University = {
@@ -41,10 +46,6 @@ export default function CostCalculatorConfigPage() {
 
   const supabase = createClient();
 
-  useEffect(() => {
-    fetchData();
-  }, []);
-
   const fetchData = async () => {
     setLoading(true);
     
@@ -59,6 +60,10 @@ export default function CostCalculatorConfigPage() {
     setLoading(false);
   };
 
+  useEffect(() => {
+    fetchData();
+  }, []);
+
   const saveCountry = async () => {
     if (!selectedCountry) return;
     setSaving(true);
@@ -69,6 +74,11 @@ export default function CostCalculatorConfigPage() {
       visa_fee: selectedCountry.visa_fee,
       health_insurance_cost: selectedCountry.health_insurance_cost,
       flight_ticket_cost: selectedCountry.flight_ticket_cost,
+      bank_statement_amount: selectedCountry.bank_statement_amount,
+      embassy_fee: selectedCountry.embassy_fee,
+      consultant_fee: selectedCountry.consultant_fee,
+      miscellaneous_cost: selectedCountry.miscellaneous_cost,
+      scholarship_max_amount: selectedCountry.scholarship_max_amount,
     }).eq('id', selectedCountry.id);
     
     if (error) toast.error(error.message);
@@ -180,14 +190,59 @@ export default function CostCalculatorConfigPage() {
                   onChange={e => setSelectedCountry({...selectedCountry, health_insurance_cost: Number(e.target.value)})} 
                 />
               </div>
-              <div>
-                <label className="block text-sm font-medium mb-1">Flight Ticket Cost (in local currency)</label>
-                <Input 
-                  type="number"
-                  value={selectedCountry.flight_ticket_cost || 0} 
-                  onChange={e => setSelectedCountry({...selectedCountry, flight_ticket_cost: Number(e.target.value)})} 
-                />
-              </div>
+               <div>
+                 <label className="block text-sm font-medium mb-1">Flight Ticket Cost (in local currency)</label>
+                 <Input 
+                   type="number"
+                   value={selectedCountry.flight_ticket_cost || 0} 
+                   onChange={e => setSelectedCountry({...selectedCountry, flight_ticket_cost: Number(e.target.value)})} 
+                 />
+               </div>
+               <div>
+                 <label className="block text-sm font-medium mb-1">Bank Statement Amount (in local currency)</label>
+                 <p className="text-xs text-slate-400 mb-2">Minimum balance required for visa application.</p>
+                 <Input 
+                   type="number"
+                   value={selectedCountry.bank_statement_amount || 0} 
+                   onChange={e => setSelectedCountry({...selectedCountry, bank_statement_amount: Number(e.target.value)})} 
+                 />
+               </div>
+               <div>
+                 <label className="block text-sm font-medium mb-1">Embassy Fee (in local currency)</label>
+                 <p className="text-xs text-slate-400 mb-2">Visa application / embassy processing fee.</p>
+                 <Input 
+                   type="number"
+                   value={selectedCountry.embassy_fee || 0} 
+                   onChange={e => setSelectedCountry({...selectedCountry, embassy_fee: Number(e.target.value)})} 
+                 />
+               </div>
+               <div>
+                 <label className="block text-sm font-medium mb-1">Consultant / Agent Fee (in local currency)</label>
+                 <p className="text-xs text-slate-400 mb-2">Consultant or agent charges for processing.</p>
+                 <Input 
+                   type="number"
+                   value={selectedCountry.consultant_fee || 0} 
+                   onChange={e => setSelectedCountry({...selectedCountry, consultant_fee: Number(e.target.value)})} 
+                 />
+               </div>
+               <div>
+                 <label className="block text-sm font-medium mb-1">Miscellaneous Cost (in local currency)</label>
+                 <p className="text-xs text-slate-400 mb-2">Any other estimated miscellaneous expenses.</p>
+                 <Input 
+                   type="number"
+                   value={selectedCountry.miscellaneous_cost || 0} 
+                   onChange={e => setSelectedCountry({...selectedCountry, miscellaneous_cost: Number(e.target.value)})} 
+                 />
+               </div>
+               <div>
+                 <label className="block text-sm font-medium mb-1">Scholarship Max Amount (in local currency)</label>
+                 <p className="text-xs text-slate-400 mb-2">Maximum scholarship amount a student can apply for in this country. Set 0 for no limit.</p>
+                 <Input 
+                   type="number"
+                   value={selectedCountry.scholarship_max_amount || 0} 
+                   onChange={e => setSelectedCountry({...selectedCountry, scholarship_max_amount: Number(e.target.value)})} 
+                 />
+               </div>
               
               <Button onClick={saveCountry} disabled={saving} className="w-full mt-4 flex items-center gap-2">
                 <Save size={16} /> Save Country Settings

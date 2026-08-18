@@ -1,6 +1,6 @@
 import { test as setup, expect } from '@playwright/test';
-import path from 'path';
 import fs from 'fs';
+import { AUTH_PATHS, ensureAuthDir } from './paths';
 
 /**
  * Auth Fixtures — Playwright storageState
@@ -18,20 +18,6 @@ import fs from 'fs';
 
 const WEB_URL = process.env.WEB_URL || 'http://localhost:3000';
 const ADMIN_URL = process.env.ADMIN_URL || 'http://localhost:3001';
-
-export const STORAGE_STATE_DIR = path.join(__dirname, '.auth');
-
-export const AUTH_PATHS = {
-  student: path.join(STORAGE_STATE_DIR, 'student.json'),
-  admin: path.join(STORAGE_STATE_DIR, 'admin.json'),
-  counselor: path.join(STORAGE_STATE_DIR, 'counselor.json'),
-};
-
-function ensureAuthDir() {
-  if (!fs.existsSync(STORAGE_STATE_DIR)) {
-    fs.mkdirSync(STORAGE_STATE_DIR, { recursive: true });
-  }
-}
 
 // ─── Student Auth Setup ───────────────────────────────────────────────────────
 

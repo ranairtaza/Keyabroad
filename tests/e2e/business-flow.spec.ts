@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { AUTH_PATHS } from './fixtures/auth.setup';
+import { AUTH_PATHS } from './fixtures/paths';
 import fs from 'fs';
 
 /**

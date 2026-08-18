@@ -11,6 +11,7 @@ export async function middleware(request: NextRequest) {
     path.startsWith('/auth') ||
     path.startsWith('/feedback') ||
     path.startsWith('/embed') ||
+    path.startsWith('/api/health') ||
     path.startsWith('/api/leads/webhook') ||
     path.startsWith('/api/automations/webhook')
   ) {
@@ -19,6 +20,9 @@ export async function middleware(request: NextRequest) {
 
   // 2. Require Authentication
   if (!user) {
+    if (path.startsWith('/api/')) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
     const url = request.nextUrl.clone()
     url.pathname = '/login'
     return NextResponse.redirect(url)

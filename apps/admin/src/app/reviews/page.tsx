@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { createClient } from "@keyabroad/auth/client";
-import { Star, MessageSquare, Trash2 } from "lucide-react";
+import { Star, MessageSquare, Trash2, Pencil, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import Hover3DWrapper from "@/components/Hover3DWrapper";
 import toast from "react-hot-toast";
@@ -10,6 +10,10 @@ import toast from "react-hot-toast";
 export default function ReviewsPage() {
   const [feedbacks, setFeedbacks] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [editingReview, setEditingReview] = useState<any>(null);
+  const [editRating, setEditRating] = useState(0);
+  const [editText, setEditText] = useState("");
+  const [saving, setSaving] = useState(false);
   const supabase = createClient();
 
   const handleDelete = async (id: string) => {
@@ -22,6 +26,29 @@ export default function ReviewsPage() {
         fetchFeedbacks();
       }
     }
+  };
+
+  const openEdit = (feedback: any) => {
+    setEditingReview(feedback);
+    setEditRating(feedback.rating);
+    setEditText(feedback.review_text);
+  };
+
+  const handleSaveEdit = async () => {
+    if (!editingReview) return;
+    setSaving(true);
+    const { error } = await supabase
+      .from('student_feedbacks')
+      .update({ rating: editRating, review_text: editText })
+      .eq('id', editingReview.id);
+    if (error) {
+      toast.error("Failed to update review");
+    } else {
+      toast.success("Review updated successfully");
+      setEditingReview(null);
+      fetchFeedbacks();
+    }
+    setSaving(false);
   };
 
   const fetchFeedbacks = async () => {
@@ -122,13 +149,22 @@ export default function ReviewsPage() {
                       <div className="flex bg-slate-950 p-1.5 rounded-lg border border-slate-800">
                         {renderStars(f.rating)}
                       </div>
-                      <button 
-                        onClick={() => handleDelete(f.id)}
-                        className="text-red-400 hover:text-red-500 hover:bg-red-500/10 p-1.5 rounded transition-colors"
-                        title="Delete Review"
-                      >
-                        <Trash2 size={16} />
-                      </button>
+                      <div className="flex gap-1">
+                        <button 
+                          onClick={() => openEdit(f)}
+                          className="text-blue-400 hover:text-blue-500 hover:bg-blue-500/10 p-1.5 rounded transition-colors"
+                          title="Edit Review"
+                        >
+                          <Pencil size={16} />
+                        </button>
+                        <button 
+                          onClick={() => handleDelete(f.id)}
+                          className="text-red-400 hover:text-red-500 hover:bg-red-500/10 p-1.5 rounded transition-colors"
+                          title="Delete Review"
+                        >
+                          <Trash2 size={16} />
+                        </button>
+                      </div>
                     </div>
                   </div>
                   <p className="text-slate-300 text-sm italic flex-1">
@@ -143,6 +179,47 @@ export default function ReviewsPage() {
           ))}
         </motion.div>
       )}
+      
+      <AnimatePresence>
+        {editingReview && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setEditingReview(null)} className="absolute inset-0 bg-slate-950/80 backdrop-blur-sm" />
+            <motion.div initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 20 }} className="bg-slate-900 border border-slate-700 rounded-2xl shadow-2xl relative z-10 w-full max-w-lg overflow-hidden flex flex-col p-8">
+              <button onClick={() => setEditingReview(null)} className="absolute top-4 right-4 text-slate-500 hover:text-white bg-slate-800 p-2 rounded-full transition-colors"><X size={20} /></button>
+              <h3 className="text-2xl font-bold text-white mb-6">Edit Review</h3>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-slate-400 text-xs uppercase block mb-2">Rating</label>
+                  <div className="flex gap-2">
+                    {[1, 2, 3, 4, 5].map((star) => (
+                      <button key={star} type="button" onClick={() => setEditRating(star)} className="p-1 transition-transform hover:scale-110 focus:outline-none">
+                        <Star size={28} className={star <= editRating ? "fill-yellow-400 text-yellow-400" : "text-slate-700"} />
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-slate-400 text-xs uppercase block mb-2">Review Text</label>
+                  <textarea
+                    rows={5}
+                    value={editText}
+                    onChange={(e) => setEditText(e.target.value)}
+                    className="w-full bg-slate-950 border border-slate-700 rounded-xl p-4 text-white focus:border-primary transition-colors resize-none"
+                  />
+                </div>
+                <div className="flex gap-3">
+                  <button onClick={handleSaveEdit} disabled={saving} className="flex-[2] bg-primary hover:bg-blue-600 text-white font-bold py-3 px-4 rounded-xl transition-all shadow-lg flex justify-center items-center gap-2">
+                    {saving ? "Saving..." : "Save Changes"}
+                  </button>
+                  <button type="button" onClick={() => setEditingReview(null)} className="flex-[1] bg-slate-800 hover:bg-slate-700 text-white font-bold py-3 px-4 rounded-xl transition-all">
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

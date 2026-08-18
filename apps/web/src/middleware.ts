@@ -7,6 +7,9 @@ export async function middleware(request: NextRequest) {
 
   // Protect student-specific private routes
   if (!user && (path.startsWith('/student') || path.startsWith('/book-appointment'))) {
+    if (path.startsWith('/api/')) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
     const url = request.nextUrl.clone()
     url.pathname = '/login'
     return NextResponse.redirect(url)
