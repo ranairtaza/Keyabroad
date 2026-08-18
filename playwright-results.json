@@ -1,0 +1,3601 @@
+{
+  "config": {
+    "argv": [
+      "D:\\Automation\\node.exe",
+      "C:\\Users\\DeLL\\OneDrive\\Desktop\\Keyabroad\\node_modules\\@playwright\\test\\cli.js",
+      "test",
+      "--list"
+    ],
+    "configFile": "C:\\Users\\DeLL\\OneDrive\\Desktop\\Keyabroad\\playwright.config.ts",
+    "rootDir": "C:/Users/DeLL/OneDrive/Desktop/Keyabroad/tests/e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {},
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "C:/Users/DeLL/OneDrive/Desktop/Keyabroad/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {},
+        "id": "setup",
+        "name": "setup",
+        "testDir": "C:/Users/DeLL/OneDrive/Desktop/Keyabroad/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "/.*\\.setup\\.ts/"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "C:/Users/DeLL/OneDrive/Desktop/Keyabroad/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {},
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "C:/Users/DeLL/OneDrive/Desktop/Keyabroad/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "C:/Users/DeLL/OneDrive/Desktop/Keyabroad/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {},
+        "id": "firefox",
+        "name": "firefox",
+        "testDir": "C:/Users/DeLL/OneDrive/Desktop/Keyabroad/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "C:/Users/DeLL/OneDrive/Desktop/Keyabroad/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {},
+        "id": "mobile-chrome",
+        "name": "mobile-chrome",
+        "testDir": "C:/Users/DeLL/OneDrive/Desktop/Keyabroad/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "C:/Users/DeLL/OneDrive/Desktop/Keyabroad/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {},
+        "id": "mobile-safari",
+        "name": "mobile-safari",
+        "testDir": "C:/Users/DeLL/OneDrive/Desktop/Keyabroad/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "html",
+        {
+          "open": "never",
+          "outputFolder": "playwright-report"
+        }
+      ],
+      [
+        "json",
+        {
+          "outputFile": "playwright-results.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.62.1",
+    "workers": 4,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "fixtures\\auth.setup.ts",
+      "file": "fixtures/auth.setup.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "authenticate as student",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "setup",
+              "projectName": "setup",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "6db7255f214771fc958b-bf44ec47e9d6f83d5ddd",
+          "file": "fixtures/auth.setup.ts",
+          "line": 24,
+          "column": 6
+        },
+        {
+          "title": "authenticate as admin",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "setup",
+              "projectName": "setup",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "6db7255f214771fc958b-7a4cb2f54c8cfab47e0d",
+          "file": "fixtures/auth.setup.ts",
+          "line": 48,
+          "column": 6
+        },
+        {
+          "title": "authenticate as counselor",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "setup",
+              "projectName": "setup",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "6db7255f214771fc958b-8ee737b08115b5e1064f",
+          "file": "fixtures/auth.setup.ts",
+          "line": 71,
+          "column": 6
+        }
+      ]
+    },
+    {
+      "title": "admin.spec.ts",
+      "file": "admin.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Admin Journey",
+          "file": "admin.spec.ts",
+          "line": 23,
+          "column": 6,
+          "specs": [
+            {
+              "title": "admin health endpoint returns UP",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Skipped: Set ADMIN_EMAIL and ADMIN_PASSWORD env vars to enable",
+                      "location": {
+                        "file": "C:\\Users\\DeLL\\OneDrive\\Desktop\\Keyabroad\\tests\\e2e\\admin.spec.ts",
+                        "line": 24,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d4043a9dd1ab94463227-3a89c5f93d83b00ce189",
+              "file": "admin.spec.ts",
+              "line": 26,
+              "column": 7
+            },
+            {
+              "title": "admin login redirects to dashboard",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Skipped: Set ADMIN_EMAIL and ADMIN_PASSWORD env vars to enable",
+                      "location": {
+                        "file": "C:\\Users\\DeLL\\OneDrive\\Desktop\\Keyabroad\\tests\\e2e\\admin.spec.ts",
+                        "line": 24,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d4043a9dd1ab94463227-bb2870794412c5484dd5",
+              "file": "admin.spec.ts",
+              "line": 33,
+              "column": 7
+            },
+            {
+              "title": "admin can access CRM leads",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Skipped: Set ADMIN_EMAIL and ADMIN_PASSWORD env vars to enable",
+                      "location": {
+                        "file": "C:\\Users\\DeLL\\OneDrive\\Desktop\\Keyabroad\\tests\\e2e\\admin.spec.ts",
+                        "line": 24,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d4043a9dd1ab94463227-0d70084bac10e3a7b7c8",
+              "file": "admin.spec.ts",
+              "line": 41,
+              "column": 7
+            },
+            {
+              "title": "admin can access pipeline",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Skipped: Set ADMIN_EMAIL and ADMIN_PASSWORD env vars to enable",
+                      "location": {
+                        "file": "C:\\Users\\DeLL\\OneDrive\\Desktop\\Keyabroad\\tests\\e2e\\admin.spec.ts",
+                        "line": 24,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d4043a9dd1ab94463227-569105b0327a60a89aa8",
+              "file": "admin.spec.ts",
+              "line": 54,
+              "column": 7
+            },
+            {
+              "title": "admin can access analytics",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Skipped: Set ADMIN_EMAIL and ADMIN_PASSWORD env vars to enable",
+                      "location": {
+                        "file": "C:\\Users\\DeLL\\OneDrive\\Desktop\\Keyabroad\\tests\\e2e\\admin.spec.ts",
+                        "line": 24,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d4043a9dd1ab94463227-06e23c663a8822f69b0d",
+              "file": "admin.spec.ts",
+              "line": 65,
+              "column": 7
+            },
+            {
+              "title": "no server secrets in admin HTML",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Skipped: Set ADMIN_EMAIL and ADMIN_PASSWORD env vars to enable",
+                      "location": {
+                        "file": "C:\\Users\\DeLL\\OneDrive\\Desktop\\Keyabroad\\tests\\e2e\\admin.spec.ts",
+                        "line": 24,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d4043a9dd1ab94463227-0e606242a9e2f326e328",
+              "file": "admin.spec.ts",
+              "line": 76,
+              "column": 7
+            },
+            {
+              "title": "admin health endpoint returns UP",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Skipped: Set ADMIN_EMAIL and ADMIN_PASSWORD env vars to enable",
+                      "location": {
+                        "file": "C:\\Users\\DeLL\\OneDrive\\Desktop\\Keyabroad\\tests\\e2e\\admin.spec.ts",
+                        "line": 24,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d4043a9dd1ab94463227-5acba52d3c9e22ebb986",
+              "file": "admin.spec.ts",
+              "line": 26,
+              "column": 7
+            },
+            {
+              "title": "admin login redirects to dashboard",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Skipped: Set ADMIN_EMAIL and ADMIN_PASSWORD env vars to enable",
+                      "location": {
+                        "file": "C:\\Users\\DeLL\\OneDrive\\Desktop\\Keyabroad\\tests\\e2e\\admin.spec.ts",
+                        "line": 24,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d4043a9dd1ab94463227-cbbccbde5823abd5cea7",
+              "file": "admin.spec.ts",
+              "line": 33,
+              "column": 7
+            },
+            {
+              "title": "admin can access CRM leads",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Skipped: Set ADMIN_EMAIL and ADMIN_PASSWORD env vars to enable",
+                      "location": {
+                        "file": "C:\\Users\\DeLL\\OneDrive\\Desktop\\Keyabroad\\tests\\e2e\\admin.spec.ts",
+                        "line": 24,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d4043a9dd1ab94463227-4cc868de854a60598bb6",
+              "file": "admin.spec.ts",
+              "line": 41,
+              "column": 7
+            },
+            {
+              "title": "admin can access pipeline",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Skipped: Set ADMIN_EMAIL and ADMIN_PASSWORD env vars to enable",
+                      "location": {
+                        "file": "C:\\Users\\DeLL\\OneDrive\\Desktop\\Keyabroad\\tests\\e2e\\admin.spec.ts",
+                        "line": 24,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d4043a9dd1ab94463227-4dc1cf74318f5ba7306b",
+              "file": "admin.spec.ts",
+              "line": 54,
+              "column": 7
+            },
+            {
+              "title": "admin can access analytics",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Skipped: Set ADMIN_EMAIL and ADMIN_PASSWORD env vars to enable",
+                      "location": {
+                        "file": "C:\\Users\\DeLL\\OneDrive\\Desktop\\Keyabroad\\tests\\e2e\\admin.spec.ts",
+                        "line": 24,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d4043a9dd1ab94463227-01c5a633efb4085d0e1a",
+              "file": "admin.spec.ts",
+              "line": 65,
+              "column": 7
+            },
+            {
+              "title": "no server secrets in admin HTML",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Skipped: Set ADMIN_EMAIL and ADMIN_PASSWORD env vars to enable",
+                      "location": {
+                        "file": "C:\\Users\\DeLL\\OneDrive\\Desktop\\Keyabroad\\tests\\e2e\\admin.spec.ts",
+                        "line": 24,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d4043a9dd1ab94463227-17e7156333a084b29b5f",
+              "file": "admin.spec.ts",
+              "line": 76,
+              "column": 7
+            },
+            {
+              "title": "admin health endpoint returns UP",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Skipped: Set ADMIN_EMAIL and ADMIN_PASSWORD env vars to enable",
+                      "location": {
+                        "file": "C:\\Users\\DeLL\\OneDrive\\Desktop\\Keyabroad\\tests\\e2e\\admin.spec.ts",
+                        "line": 24,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "mobile-chrome",
+                  "projectName": "mobile-chrome",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d4043a9dd1ab94463227-07cba826f62991a940a9",
+              "file": "admin.spec.ts",
+              "line": 26,
+              "column": 7
+            },
+            {
+              "title": "admin login redirects to dashboard",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Skipped: Set ADMIN_EMAIL and ADMIN_PASSWORD env vars to enable",
+                      "location": {
+                        "file": "C:\\Users\\DeLL\\OneDrive\\Desktop\\Keyabroad\\tests\\e2e\\admin.spec.ts",
+                        "line": 24,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "mobile-chrome",
+                  "projectName": "mobile-chrome",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d4043a9dd1ab94463227-54d5538785651ffff1ba",
+              "file": "admin.spec.ts",
+              "line": 33,
+              "column": 7
+            },
+            {
+              "title": "admin can access CRM leads",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Skipped: Set ADMIN_EMAIL and ADMIN_PASSWORD env vars to enable",
+                      "location": {
+                        "file": "C:\\Users\\DeLL\\OneDrive\\Desktop\\Keyabroad\\tests\\e2e\\admin.spec.ts",
+                        "line": 24,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "mobile-chrome",
+                  "projectName": "mobile-chrome",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d4043a9dd1ab94463227-a74c5de77059bc7f0d7f",
+              "file": "admin.spec.ts",
+              "line": 41,
+              "column": 7
+            },
+            {
+              "title": "admin can access pipeline",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Skipped: Set ADMIN_EMAIL and ADMIN_PASSWORD env vars to enable",
+                      "location": {
+                        "file": "C:\\Users\\DeLL\\OneDrive\\Desktop\\Keyabroad\\tests\\e2e\\admin.spec.ts",
+                        "line": 24,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "mobile-chrome",
+                  "projectName": "mobile-chrome",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d4043a9dd1ab94463227-2e74fbd40f0be92c9713",
+              "file": "admin.spec.ts",
+              "line": 54,
+              "column": 7
+            },
+            {
+              "title": "admin can access analytics",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Skipped: Set ADMIN_EMAIL and ADMIN_PASSWORD env vars to enable",
+                      "location": {
+                        "file": "C:\\Users\\DeLL\\OneDrive\\Desktop\\Keyabroad\\tests\\e2e\\admin.spec.ts",
+                        "line": 24,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "mobile-chrome",
+                  "projectName": "mobile-chrome",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d4043a9dd1ab94463227-9ccb24ef9c3d76880270",
+              "file": "admin.spec.ts",
+              "line": 65,
+              "column": 7
+            },
+            {
+              "title": "no server secrets in admin HTML",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Skipped: Set ADMIN_EMAIL and ADMIN_PASSWORD env vars to enable",
+                      "location": {
+                        "file": "C:\\Users\\DeLL\\OneDrive\\Desktop\\Keyabroad\\tests\\e2e\\admin.spec.ts",
+                        "line": 24,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "mobile-chrome",
+                  "projectName": "mobile-chrome",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d4043a9dd1ab94463227-a4079e21777bf432d263",
+              "file": "admin.spec.ts",
+              "line": 76,
+              "column": 7
+            },
+            {
+              "title": "admin health endpoint returns UP",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Skipped: Set ADMIN_EMAIL and ADMIN_PASSWORD env vars to enable",
+                      "location": {
+                        "file": "C:\\Users\\DeLL\\OneDrive\\Desktop\\Keyabroad\\tests\\e2e\\admin.spec.ts",
+                        "line": 24,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "mobile-safari",
+                  "projectName": "mobile-safari",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d4043a9dd1ab94463227-e04110fc3ea6339a1a40",
+              "file": "admin.spec.ts",
+              "line": 26,
+              "column": 7
+            },
+            {
+              "title": "admin login redirects to dashboard",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Skipped: Set ADMIN_EMAIL and ADMIN_PASSWORD env vars to enable",
+                      "location": {
+                        "file": "C:\\Users\\DeLL\\OneDrive\\Desktop\\Keyabroad\\tests\\e2e\\admin.spec.ts",
+                        "line": 24,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "mobile-safari",
+                  "projectName": "mobile-safari",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d4043a9dd1ab94463227-2cf2394d964a059066e0",
+              "file": "admin.spec.ts",
+              "line": 33,
+              "column": 7
+            },
+            {
+              "title": "admin can access CRM leads",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Skipped: Set ADMIN_EMAIL and ADMIN_PASSWORD env vars to enable",
+                      "location": {
+                        "file": "C:\\Users\\DeLL\\OneDrive\\Desktop\\Keyabroad\\tests\\e2e\\admin.spec.ts",
+                        "line": 24,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "mobile-safari",
+                  "projectName": "mobile-safari",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d4043a9dd1ab94463227-9f1639180a3b5d7bc2f6",
+              "file": "admin.spec.ts",
+              "line": 41,
+              "column": 7
+            },
+            {
+              "title": "admin can access pipeline",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Skipped: Set ADMIN_EMAIL and ADMIN_PASSWORD env vars to enable",
+                      "location": {
+                        "file": "C:\\Users\\DeLL\\OneDrive\\Desktop\\Keyabroad\\tests\\e2e\\admin.spec.ts",
+                        "line": 24,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "mobile-safari",
+                  "projectName": "mobile-safari",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d4043a9dd1ab94463227-0ea7d41b047c50d4bc05",
+              "file": "admin.spec.ts",
+              "line": 54,
+              "column": 7
+            },
+            {
+              "title": "admin can access analytics",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Skipped: Set ADMIN_EMAIL and ADMIN_PASSWORD env vars to enable",
+                      "location": {
+                        "file": "C:\\Users\\DeLL\\OneDrive\\Desktop\\Keyabroad\\tests\\e2e\\admin.spec.ts",
+                        "line": 24,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "mobile-safari",
+                  "projectName": "mobile-safari",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d4043a9dd1ab94463227-0595174f1166966d9e22",
+              "file": "admin.spec.ts",
+              "line": 65,
+              "column": 7
+            },
+            {
+              "title": "no server secrets in admin HTML",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Skipped: Set ADMIN_EMAIL and ADMIN_PASSWORD env vars to enable",
+                      "location": {
+                        "file": "C:\\Users\\DeLL\\OneDrive\\Desktop\\Keyabroad\\tests\\e2e\\admin.spec.ts",
+                        "line": 24,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "mobile-safari",
+                  "projectName": "mobile-safari",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d4043a9dd1ab94463227-4e2441964178531f277c",
+              "file": "admin.spec.ts",
+              "line": 76,
+              "column": 7
+            }
+          ]
+        },
+        {
+          "title": "Counselor Journey",
+          "file": "admin.spec.ts",
+          "line": 92,
+          "column": 6,
+          "specs": [
+            {
+              "title": "counselor can log in to admin portal",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Skipped: Set COUNSELOR_EMAIL and COUNSELOR_PASSWORD env vars to enable",
+                      "location": {
+                        "file": "C:\\Users\\DeLL\\OneDrive\\Desktop\\Keyabroad\\tests\\e2e\\admin.spec.ts",
+                        "line": 93,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d4043a9dd1ab94463227-4ff9919a13d2927f9143",
+              "file": "admin.spec.ts",
+              "line": 95,
+              "column": 7
+            },
+            {
+              "title": "counselor can access leads",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Skipped: Set COUNSELOR_EMAIL and COUNSELOR_PASSWORD env vars to enable",
+                      "location": {
+                        "file": "C:\\Users\\DeLL\\OneDrive\\Desktop\\Keyabroad\\tests\\e2e\\admin.spec.ts",
+                        "line": 93,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d4043a9dd1ab94463227-78b99e11b726115b009f",
+              "file": "admin.spec.ts",
+              "line": 103,
+              "column": 7
+            },
+            {
+              "title": "counselor can access tasks",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Skipped: Set COUNSELOR_EMAIL and COUNSELOR_PASSWORD env vars to enable",
+                      "location": {
+                        "file": "C:\\Users\\DeLL\\OneDrive\\Desktop\\Keyabroad\\tests\\e2e\\admin.spec.ts",
+                        "line": 93,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d4043a9dd1ab94463227-959f01c642361c2753ea",
+              "file": "admin.spec.ts",
+              "line": 114,
+              "column": 7
+            },
+            {
+              "title": "counselor can log in to admin portal",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Skipped: Set COUNSELOR_EMAIL and COUNSELOR_PASSWORD env vars to enable",
+                      "location": {
+                        "file": "C:\\Users\\DeLL\\OneDrive\\Desktop\\Keyabroad\\tests\\e2e\\admin.spec.ts",
+                        "line": 93,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d4043a9dd1ab94463227-cfa4ce5dd9f4545befda",
+              "file": "admin.spec.ts",
+              "line": 95,
+              "column": 7
+            },
+            {
+              "title": "counselor can access leads",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Skipped: Set COUNSELOR_EMAIL and COUNSELOR_PASSWORD env vars to enable",
+                      "location": {
+                        "file": "C:\\Users\\DeLL\\OneDrive\\Desktop\\Keyabroad\\tests\\e2e\\admin.spec.ts",
+                        "line": 93,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d4043a9dd1ab94463227-03c1f3004f70f83e504b",
+              "file": "admin.spec.ts",
+              "line": 103,
+              "column": 7
+            },
+            {
+              "title": "counselor can access tasks",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Skipped: Set COUNSELOR_EMAIL and COUNSELOR_PASSWORD env vars to enable",
+                      "location": {
+                        "file": "C:\\Users\\DeLL\\OneDrive\\Desktop\\Keyabroad\\tests\\e2e\\admin.spec.ts",
+                        "line": 93,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d4043a9dd1ab94463227-39bd318f5a6781028be4",
+              "file": "admin.spec.ts",
+              "line": 114,
+              "column": 7
+            },
+            {
+              "title": "counselor can log in to admin portal",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Skipped: Set COUNSELOR_EMAIL and COUNSELOR_PASSWORD env vars to enable",
+                      "location": {
+                        "file": "C:\\Users\\DeLL\\OneDrive\\Desktop\\Keyabroad\\tests\\e2e\\admin.spec.ts",
+                        "line": 93,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "mobile-chrome",
+                  "projectName": "mobile-chrome",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d4043a9dd1ab94463227-12edb8501851787d87be",
+              "file": "admin.spec.ts",
+              "line": 95,
+              "column": 7
+            },
+            {
+              "title": "counselor can access leads",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Skipped: Set COUNSELOR_EMAIL and COUNSELOR_PASSWORD env vars to enable",
+                      "location": {
+                        "file": "C:\\Users\\DeLL\\OneDrive\\Desktop\\Keyabroad\\tests\\e2e\\admin.spec.ts",
+                        "line": 93,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "mobile-chrome",
+                  "projectName": "mobile-chrome",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d4043a9dd1ab94463227-08ec58c73840fabce881",
+              "file": "admin.spec.ts",
+              "line": 103,
+              "column": 7
+            },
+            {
+              "title": "counselor can access tasks",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Skipped: Set COUNSELOR_EMAIL and COUNSELOR_PASSWORD env vars to enable",
+                      "location": {
+                        "file": "C:\\Users\\DeLL\\OneDrive\\Desktop\\Keyabroad\\tests\\e2e\\admin.spec.ts",
+                        "line": 93,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "mobile-chrome",
+                  "projectName": "mobile-chrome",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d4043a9dd1ab94463227-04c18711759106c9a4cf",
+              "file": "admin.spec.ts",
+              "line": 114,
+              "column": 7
+            },
+            {
+              "title": "counselor can log in to admin portal",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Skipped: Set COUNSELOR_EMAIL and COUNSELOR_PASSWORD env vars to enable",
+                      "location": {
+                        "file": "C:\\Users\\DeLL\\OneDrive\\Desktop\\Keyabroad\\tests\\e2e\\admin.spec.ts",
+                        "line": 93,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "mobile-safari",
+                  "projectName": "mobile-safari",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d4043a9dd1ab94463227-64fe1d4bcd6e28d79b13",
+              "file": "admin.spec.ts",
+              "line": 95,
+              "column": 7
+            },
+            {
+              "title": "counselor can access leads",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Skipped: Set COUNSELOR_EMAIL and COUNSELOR_PASSWORD env vars to enable",
+                      "location": {
+                        "file": "C:\\Users\\DeLL\\OneDrive\\Desktop\\Keyabroad\\tests\\e2e\\admin.spec.ts",
+                        "line": 93,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "mobile-safari",
+                  "projectName": "mobile-safari",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d4043a9dd1ab94463227-179691675e459c70611a",
+              "file": "admin.spec.ts",
+              "line": 103,
+              "column": 7
+            },
+            {
+              "title": "counselor can access tasks",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Skipped: Set COUNSELOR_EMAIL and COUNSELOR_PASSWORD env vars to enable",
+                      "location": {
+                        "file": "C:\\Users\\DeLL\\OneDrive\\Desktop\\Keyabroad\\tests\\e2e\\admin.spec.ts",
+                        "line": 93,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "mobile-safari",
+                  "projectName": "mobile-safari",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d4043a9dd1ab94463227-26e8cba0cdc61f452fa5",
+              "file": "admin.spec.ts",
+              "line": 114,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "business-flow.spec.ts",
+      "file": "business-flow.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Critical Business Flow: Visitor → CRM → Counselor → Student",
+          "file": "business-flow.spec.ts",
+          "line": 28,
+          "column": 6,
+          "specs": [
+            {
+              "title": "Step 1 — Public visitor can submit enquiry form",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "217b13a97265dada01ae-e4b976fd6d3c8224af89",
+              "file": "business-flow.spec.ts",
+              "line": 31,
+              "column": 7
+            },
+            {
+              "title": "Step 2 — Web health probe passes",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "217b13a97265dada01ae-f8ea1add3424dcc0bc4c",
+              "file": "business-flow.spec.ts",
+              "line": 44,
+              "column": 7
+            },
+            {
+              "title": "Step 3 — Admin health probe passes",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "217b13a97265dada01ae-0a1adb3a5091d922e91e",
+              "file": "business-flow.spec.ts",
+              "line": 52,
+              "column": 7
+            },
+            {
+              "title": "Step 4 — Unauthenticated user cannot access admin dashboard",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "217b13a97265dada01ae-86350b059cf92e67d477",
+              "file": "business-flow.spec.ts",
+              "line": 60,
+              "column": 7
+            },
+            {
+              "title": "Step 5 — Student role cannot access admin portal",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "217b13a97265dada01ae-cb591650b69122293ec0",
+              "file": "business-flow.spec.ts",
+              "line": 70,
+              "column": 7
+            },
+            {
+              "title": "Step 6 — Admin can access CRM leads",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "217b13a97265dada01ae-cb2fd92c6565f159890b",
+              "file": "business-flow.spec.ts",
+              "line": 94,
+              "column": 7
+            },
+            {
+              "title": "Step 7 — Admin pipeline renders without crash",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "217b13a97265dada01ae-301d2b84aa2b0c610f61",
+              "file": "business-flow.spec.ts",
+              "line": 108,
+              "column": 7
+            },
+            {
+              "title": "Step 8 — No server secrets exposed in web HTML",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "217b13a97265dada01ae-fbb9d0c0b2ac16c7293a",
+              "file": "business-flow.spec.ts",
+              "line": 120,
+              "column": 7
+            },
+            {
+              "title": "Step 9 — No server secrets exposed in admin login HTML",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "217b13a97265dada01ae-365641aa639b5e2e7c8f",
+              "file": "business-flow.spec.ts",
+              "line": 130,
+              "column": 7
+            },
+            {
+              "title": "Step 10 — Counselor can access tasks",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "217b13a97265dada01ae-044a716e4b2b3a2deb08",
+              "file": "business-flow.spec.ts",
+              "line": 139,
+              "column": 7
+            },
+            {
+              "title": "Step 1 — Public visitor can submit enquiry form",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "217b13a97265dada01ae-b2964d6f3ddd98157bb9",
+              "file": "business-flow.spec.ts",
+              "line": 31,
+              "column": 7
+            },
+            {
+              "title": "Step 2 — Web health probe passes",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "217b13a97265dada01ae-28177288aef5b3570525",
+              "file": "business-flow.spec.ts",
+              "line": 44,
+              "column": 7
+            },
+            {
+              "title": "Step 3 — Admin health probe passes",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "217b13a97265dada01ae-56aaea7ee9712ad60374",
+              "file": "business-flow.spec.ts",
+              "line": 52,
+              "column": 7
+            },
+            {
+              "title": "Step 4 — Unauthenticated user cannot access admin dashboard",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "217b13a97265dada01ae-6b0ef90315bde342e4c9",
+              "file": "business-flow.spec.ts",
+              "line": 60,
+              "column": 7
+            },
+            {
+              "title": "Step 5 — Student role cannot access admin portal",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "217b13a97265dada01ae-f508727aac3f3190a831",
+              "file": "business-flow.spec.ts",
+              "line": 70,
+              "column": 7
+            },
+            {
+              "title": "Step 6 — Admin can access CRM leads",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "217b13a97265dada01ae-6d2aa92b3064dc8824ef",
+              "file": "business-flow.spec.ts",
+              "line": 94,
+              "column": 7
+            },
+            {
+              "title": "Step 7 — Admin pipeline renders without crash",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "217b13a97265dada01ae-1bd1626be677b11c2c8c",
+              "file": "business-flow.spec.ts",
+              "line": 108,
+              "column": 7
+            },
+            {
+              "title": "Step 8 — No server secrets exposed in web HTML",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "217b13a97265dada01ae-963cd6d84c486ac00426",
+              "file": "business-flow.spec.ts",
+              "line": 120,
+              "column": 7
+            },
+            {
+              "title": "Step 9 — No server secrets exposed in admin login HTML",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "217b13a97265dada01ae-50e558a9910ba722f032",
+              "file": "business-flow.spec.ts",
+              "line": 130,
+              "column": 7
+            },
+            {
+              "title": "Step 10 — Counselor can access tasks",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "217b13a97265dada01ae-abc00c3a1522a0dece94",
+              "file": "business-flow.spec.ts",
+              "line": 139,
+              "column": 7
+            },
+            {
+              "title": "Step 1 — Public visitor can submit enquiry form",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "mobile-chrome",
+                  "projectName": "mobile-chrome",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "217b13a97265dada01ae-58a0251256cc8aa8cde0",
+              "file": "business-flow.spec.ts",
+              "line": 31,
+              "column": 7
+            },
+            {
+              "title": "Step 2 — Web health probe passes",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "mobile-chrome",
+                  "projectName": "mobile-chrome",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "217b13a97265dada01ae-6b01c86e82ef7f4993df",
+              "file": "business-flow.spec.ts",
+              "line": 44,
+              "column": 7
+            },
+            {
+              "title": "Step 3 — Admin health probe passes",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "mobile-chrome",
+                  "projectName": "mobile-chrome",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "217b13a97265dada01ae-22f19057eaf3c2901b11",
+              "file": "business-flow.spec.ts",
+              "line": 52,
+              "column": 7
+            },
+            {
+              "title": "Step 4 — Unauthenticated user cannot access admin dashboard",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "mobile-chrome",
+                  "projectName": "mobile-chrome",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "217b13a97265dada01ae-48191f5875718575bfa9",
+              "file": "business-flow.spec.ts",
+              "line": 60,
+              "column": 7
+            },
+            {
+              "title": "Step 5 — Student role cannot access admin portal",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "mobile-chrome",
+                  "projectName": "mobile-chrome",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "217b13a97265dada01ae-2aa33e3ecc9f70225cf4",
+              "file": "business-flow.spec.ts",
+              "line": 70,
+              "column": 7
+            },
+            {
+              "title": "Step 6 — Admin can access CRM leads",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "mobile-chrome",
+                  "projectName": "mobile-chrome",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "217b13a97265dada01ae-a66411ee315a637c9df8",
+              "file": "business-flow.spec.ts",
+              "line": 94,
+              "column": 7
+            },
+            {
+              "title": "Step 7 — Admin pipeline renders without crash",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "mobile-chrome",
+                  "projectName": "mobile-chrome",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "217b13a97265dada01ae-aace262ce3964df23cee",
+              "file": "business-flow.spec.ts",
+              "line": 108,
+              "column": 7
+            },
+            {
+              "title": "Step 8 — No server secrets exposed in web HTML",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "mobile-chrome",
+                  "projectName": "mobile-chrome",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "217b13a97265dada01ae-49ca9c714fdfe1e4adc6",
+              "file": "business-flow.spec.ts",
+              "line": 120,
+              "column": 7
+            },
+            {
+              "title": "Step 9 — No server secrets exposed in admin login HTML",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "mobile-chrome",
+                  "projectName": "mobile-chrome",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "217b13a97265dada01ae-98848f46af70d6fa9958",
+              "file": "business-flow.spec.ts",
+              "line": 130,
+              "column": 7
+            },
+            {
+              "title": "Step 10 — Counselor can access tasks",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "mobile-chrome",
+                  "projectName": "mobile-chrome",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "217b13a97265dada01ae-0b135bfdbea3b17ab452",
+              "file": "business-flow.spec.ts",
+              "line": 139,
+              "column": 7
+            },
+            {
+              "title": "Step 1 — Public visitor can submit enquiry form",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "mobile-safari",
+                  "projectName": "mobile-safari",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "217b13a97265dada01ae-b1b9e9d0c2a51fcfb94b",
+              "file": "business-flow.spec.ts",
+              "line": 31,
+              "column": 7
+            },
+            {
+              "title": "Step 2 — Web health probe passes",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "mobile-safari",
+                  "projectName": "mobile-safari",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "217b13a97265dada01ae-c0c2b0a74ff7ebeab371",
+              "file": "business-flow.spec.ts",
+              "line": 44,
+              "column": 7
+            },
+            {
+              "title": "Step 3 — Admin health probe passes",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "mobile-safari",
+                  "projectName": "mobile-safari",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "217b13a97265dada01ae-3da8180cc0e3d62e1b9e",
+              "file": "business-flow.spec.ts",
+              "line": 52,
+              "column": 7
+            },
+            {
+              "title": "Step 4 — Unauthenticated user cannot access admin dashboard",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "mobile-safari",
+                  "projectName": "mobile-safari",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "217b13a97265dada01ae-5a920de66ca99587f862",
+              "file": "business-flow.spec.ts",
+              "line": 60,
+              "column": 7
+            },
+            {
+              "title": "Step 5 — Student role cannot access admin portal",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "mobile-safari",
+                  "projectName": "mobile-safari",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "217b13a97265dada01ae-2e674367d71c3f7ac7d6",
+              "file": "business-flow.spec.ts",
+              "line": 70,
+              "column": 7
+            },
+            {
+              "title": "Step 6 — Admin can access CRM leads",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "mobile-safari",
+                  "projectName": "mobile-safari",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "217b13a97265dada01ae-b7a864fd839567fafaf4",
+              "file": "business-flow.spec.ts",
+              "line": 94,
+              "column": 7
+            },
+            {
+              "title": "Step 7 — Admin pipeline renders without crash",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "mobile-safari",
+                  "projectName": "mobile-safari",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "217b13a97265dada01ae-6a51580c4550e0820bb6",
+              "file": "business-flow.spec.ts",
+              "line": 108,
+              "column": 7
+            },
+            {
+              "title": "Step 8 — No server secrets exposed in web HTML",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "mobile-safari",
+                  "projectName": "mobile-safari",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "217b13a97265dada01ae-880137b70513cfa7f0f9",
+              "file": "business-flow.spec.ts",
+              "line": 120,
+              "column": 7
+            },
+            {
+              "title": "Step 9 — No server secrets exposed in admin login HTML",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "mobile-safari",
+                  "projectName": "mobile-safari",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "217b13a97265dada01ae-edf45d5dd98c90bf8cd2",
+              "file": "business-flow.spec.ts",
+              "line": 130,
+              "column": 7
+            },
+            {
+              "title": "Step 10 — Counselor can access tasks",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "mobile-safari",
+                  "projectName": "mobile-safari",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "217b13a97265dada01ae-c99622884e30be04a308",
+              "file": "business-flow.spec.ts",
+              "line": 139,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "public.spec.ts",
+      "file": "public.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Public Visitor",
+          "file": "public.spec.ts",
+          "line": 12,
+          "column": 6,
+          "specs": [
+            {
+              "title": "homepage loads in under 3 seconds",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "349fc90c6061c792a808-2a6385ab155ed9f58413",
+              "file": "public.spec.ts",
+              "line": 13,
+              "column": 7
+            },
+            {
+              "title": "homepage renders key content",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "349fc90c6061c792a808-3dd6ee8336e10e11581b",
+              "file": "public.spec.ts",
+              "line": 22,
+              "column": 7
+            },
+            {
+              "title": "blog page renders",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "349fc90c6061c792a808-03ec3c7121e637dc6058",
+              "file": "public.spec.ts",
+              "line": 29,
+              "column": 7
+            },
+            {
+              "title": "universities page renders",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "349fc90c6061c792a808-431e42a84443faad4e0d",
+              "file": "public.spec.ts",
+              "line": 36,
+              "column": 7
+            },
+            {
+              "title": "programs page renders",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "349fc90c6061c792a808-20879c46e1a371f8cedc",
+              "file": "public.spec.ts",
+              "line": 41,
+              "column": 7
+            },
+            {
+              "title": "/student/dashboard redirects unauthenticated visitor to /login",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "349fc90c6061c792a808-bcb481742f951242984a",
+              "file": "public.spec.ts",
+              "line": 46,
+              "column": 7
+            },
+            {
+              "title": "/book-appointment redirects unauthenticated visitor to /login",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "349fc90c6061c792a808-3b3437077f74a6d09f45",
+              "file": "public.spec.ts",
+              "line": 51,
+              "column": 7
+            },
+            {
+              "title": "health endpoint returns UP",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "349fc90c6061c792a808-95f4d2932ec75e3aa2f0",
+              "file": "public.spec.ts",
+              "line": 56,
+              "column": 7
+            },
+            {
+              "title": "no server secrets in rendered HTML",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "349fc90c6061c792a808-27834eb1aae7f0478cf9",
+              "file": "public.spec.ts",
+              "line": 63,
+              "column": 7
+            },
+            {
+              "title": "homepage loads in under 3 seconds",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "349fc90c6061c792a808-c4f5e7050fcd4ddde6a4",
+              "file": "public.spec.ts",
+              "line": 13,
+              "column": 7
+            },
+            {
+              "title": "homepage renders key content",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "349fc90c6061c792a808-eb6345d4cbd61b8f90ed",
+              "file": "public.spec.ts",
+              "line": 22,
+              "column": 7
+            },
+            {
+              "title": "blog page renders",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "349fc90c6061c792a808-b6af59a2764765032a21",
+              "file": "public.spec.ts",
+              "line": 29,
+              "column": 7
+            },
+            {
+              "title": "universities page renders",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "349fc90c6061c792a808-7bce0c1d7ca79b7c2fed",
+              "file": "public.spec.ts",
+              "line": 36,
+              "column": 7
+            },
+            {
+              "title": "programs page renders",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "349fc90c6061c792a808-9091ad6e532aa2d6e117",
+              "file": "public.spec.ts",
+              "line": 41,
+              "column": 7
+            },
+            {
+              "title": "/student/dashboard redirects unauthenticated visitor to /login",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "349fc90c6061c792a808-e3e73c9c57bfe0f8f1f6",
+              "file": "public.spec.ts",
+              "line": 46,
+              "column": 7
+            },
+            {
+              "title": "/book-appointment redirects unauthenticated visitor to /login",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "349fc90c6061c792a808-9e8351624aec85737d53",
+              "file": "public.spec.ts",
+              "line": 51,
+              "column": 7
+            },
+            {
+              "title": "health endpoint returns UP",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "349fc90c6061c792a808-564b5a4abf3a0a706143",
+              "file": "public.spec.ts",
+              "line": 56,
+              "column": 7
+            },
+            {
+              "title": "no server secrets in rendered HTML",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "349fc90c6061c792a808-7defdd4561215f37ecf2",
+              "file": "public.spec.ts",
+              "line": 63,
+              "column": 7
+            },
+            {
+              "title": "homepage loads in under 3 seconds",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "mobile-chrome",
+                  "projectName": "mobile-chrome",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "349fc90c6061c792a808-446123112aecddba05aa",
+              "file": "public.spec.ts",
+              "line": 13,
+              "column": 7
+            },
+            {
+              "title": "homepage renders key content",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "mobile-chrome",
+                  "projectName": "mobile-chrome",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "349fc90c6061c792a808-77ed0fc7795c84cc2f8a",
+              "file": "public.spec.ts",
+              "line": 22,
+              "column": 7
+            },
+            {
+              "title": "blog page renders",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "mobile-chrome",
+                  "projectName": "mobile-chrome",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "349fc90c6061c792a808-574f22825f49a3064752",
+              "file": "public.spec.ts",
+              "line": 29,
+              "column": 7
+            },
+            {
+              "title": "universities page renders",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "mobile-chrome",
+                  "projectName": "mobile-chrome",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "349fc90c6061c792a808-eb946c166a0e46ac34f8",
+              "file": "public.spec.ts",
+              "line": 36,
+              "column": 7
+            },
+            {
+              "title": "programs page renders",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "mobile-chrome",
+                  "projectName": "mobile-chrome",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "349fc90c6061c792a808-6cc92d5faafa6d2543ed",
+              "file": "public.spec.ts",
+              "line": 41,
+              "column": 7
+            },
+            {
+              "title": "/student/dashboard redirects unauthenticated visitor to /login",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "mobile-chrome",
+                  "projectName": "mobile-chrome",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "349fc90c6061c792a808-498bd7622cb1c9f6d7c5",
+              "file": "public.spec.ts",
+              "line": 46,
+              "column": 7
+            },
+            {
+              "title": "/book-appointment redirects unauthenticated visitor to /login",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "mobile-chrome",
+                  "projectName": "mobile-chrome",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "349fc90c6061c792a808-8174b79d320d0ce926c3",
+              "file": "public.spec.ts",
+              "line": 51,
+              "column": 7
+            },
+            {
+              "title": "health endpoint returns UP",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "mobile-chrome",
+                  "projectName": "mobile-chrome",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "349fc90c6061c792a808-f617c7b35412b86ae132",
+              "file": "public.spec.ts",
+              "line": 56,
+              "column": 7
+            },
+            {
+              "title": "no server secrets in rendered HTML",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "mobile-chrome",
+                  "projectName": "mobile-chrome",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "349fc90c6061c792a808-6c232552776260fec905",
+              "file": "public.spec.ts",
+              "line": 63,
+              "column": 7
+            },
+            {
+              "title": "homepage loads in under 3 seconds",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "mobile-safari",
+                  "projectName": "mobile-safari",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "349fc90c6061c792a808-b5cd36860c37b30d082e",
+              "file": "public.spec.ts",
+              "line": 13,
+              "column": 7
+            },
+            {
+              "title": "homepage renders key content",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "mobile-safari",
+                  "projectName": "mobile-safari",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "349fc90c6061c792a808-b37d73332265dea9d8a8",
+              "file": "public.spec.ts",
+              "line": 22,
+              "column": 7
+            },
+            {
+              "title": "blog page renders",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "mobile-safari",
+                  "projectName": "mobile-safari",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "349fc90c6061c792a808-56efcbab51a0297da2a1",
+              "file": "public.spec.ts",
+              "line": 29,
+              "column": 7
+            },
+            {
+              "title": "universities page renders",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "mobile-safari",
+                  "projectName": "mobile-safari",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "349fc90c6061c792a808-cc65e3dbc08983ddd777",
+              "file": "public.spec.ts",
+              "line": 36,
+              "column": 7
+            },
+            {
+              "title": "programs page renders",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "mobile-safari",
+                  "projectName": "mobile-safari",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "349fc90c6061c792a808-a74d565bf67b9f764e67",
+              "file": "public.spec.ts",
+              "line": 41,
+              "column": 7
+            },
+            {
+              "title": "/student/dashboard redirects unauthenticated visitor to /login",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "mobile-safari",
+                  "projectName": "mobile-safari",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "349fc90c6061c792a808-fc44e570ab3a156dd491",
+              "file": "public.spec.ts",
+              "line": 46,
+              "column": 7
+            },
+            {
+              "title": "/book-appointment redirects unauthenticated visitor to /login",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "mobile-safari",
+                  "projectName": "mobile-safari",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "349fc90c6061c792a808-a60229e9ffc6e98230d0",
+              "file": "public.spec.ts",
+              "line": 51,
+              "column": 7
+            },
+            {
+              "title": "health endpoint returns UP",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "mobile-safari",
+                  "projectName": "mobile-safari",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "349fc90c6061c792a808-31e4e44fd28101ed6b94",
+              "file": "public.spec.ts",
+              "line": 56,
+              "column": 7
+            },
+            {
+              "title": "no server secrets in rendered HTML",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "mobile-safari",
+                  "projectName": "mobile-safari",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "349fc90c6061c792a808-bdf60d1f30f9f5e4a576",
+              "file": "public.spec.ts",
+              "line": 63,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "student.spec.ts",
+      "file": "student.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Student Journey",
+          "file": "student.spec.ts",
+          "line": 20,
+          "column": 6,
+          "specs": [
+            {
+              "title": "student can log in successfully",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Skipped: Set STUDENT_EMAIL and STUDENT_PASSWORD env vars to enable",
+                      "location": {
+                        "file": "C:\\Users\\DeLL\\OneDrive\\Desktop\\Keyabroad\\tests\\e2e\\student.spec.ts",
+                        "line": 21,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "28673771c95032e93b6d-73e35dd4c236b57169df",
+              "file": "student.spec.ts",
+              "line": 23,
+              "column": 7
+            },
+            {
+              "title": "student can view dashboard after login",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Skipped: Set STUDENT_EMAIL and STUDENT_PASSWORD env vars to enable",
+                      "location": {
+                        "file": "C:\\Users\\DeLL\\OneDrive\\Desktop\\Keyabroad\\tests\\e2e\\student.spec.ts",
+                        "line": 21,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "28673771c95032e93b6d-a75892c9d74bcc16ae9d",
+              "file": "student.spec.ts",
+              "line": 33,
+              "column": 7
+            },
+            {
+              "title": "student cannot access admin portal",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Skipped: Set STUDENT_EMAIL and STUDENT_PASSWORD env vars to enable",
+                      "location": {
+                        "file": "C:\\Users\\DeLL\\OneDrive\\Desktop\\Keyabroad\\tests\\e2e\\student.spec.ts",
+                        "line": 21,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "28673771c95032e93b6d-d7ccd573b5bac68bf159",
+              "file": "student.spec.ts",
+              "line": 45,
+              "column": 7
+            },
+            {
+              "title": "login with wrong password shows error",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Skipped: Set STUDENT_EMAIL and STUDENT_PASSWORD env vars to enable",
+                      "location": {
+                        "file": "C:\\Users\\DeLL\\OneDrive\\Desktop\\Keyabroad\\tests\\e2e\\student.spec.ts",
+                        "line": 21,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "28673771c95032e93b6d-757a0f90beeefff376be",
+              "file": "student.spec.ts",
+              "line": 61,
+              "column": 7
+            },
+            {
+              "title": "eligibility checker page renders",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Skipped: Set STUDENT_EMAIL and STUDENT_PASSWORD env vars to enable",
+                      "location": {
+                        "file": "C:\\Users\\DeLL\\OneDrive\\Desktop\\Keyabroad\\tests\\e2e\\student.spec.ts",
+                        "line": 21,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "28673771c95032e93b6d-f1585f138a51b0d0de60",
+              "file": "student.spec.ts",
+              "line": 71,
+              "column": 7
+            },
+            {
+              "title": "university search page renders",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Skipped: Set STUDENT_EMAIL and STUDENT_PASSWORD env vars to enable",
+                      "location": {
+                        "file": "C:\\Users\\DeLL\\OneDrive\\Desktop\\Keyabroad\\tests\\e2e\\student.spec.ts",
+                        "line": 21,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "28673771c95032e93b6d-801fcb5706b4dd2d3f86",
+              "file": "student.spec.ts",
+              "line": 77,
+              "column": 7
+            },
+            {
+              "title": "student can log in successfully",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Skipped: Set STUDENT_EMAIL and STUDENT_PASSWORD env vars to enable",
+                      "location": {
+                        "file": "C:\\Users\\DeLL\\OneDrive\\Desktop\\Keyabroad\\tests\\e2e\\student.spec.ts",
+                        "line": 21,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "28673771c95032e93b6d-4afc290e1b3e102e3e4c",
+              "file": "student.spec.ts",
+              "line": 23,
+              "column": 7
+            },
+            {
+              "title": "student can view dashboard after login",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Skipped: Set STUDENT_EMAIL and STUDENT_PASSWORD env vars to enable",
+                      "location": {
+                        "file": "C:\\Users\\DeLL\\OneDrive\\Desktop\\Keyabroad\\tests\\e2e\\student.spec.ts",
+                        "line": 21,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "28673771c95032e93b6d-fffe164f6079ba4641a4",
+              "file": "student.spec.ts",
+              "line": 33,
+              "column": 7
+            },
+            {
+              "title": "student cannot access admin portal",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Skipped: Set STUDENT_EMAIL and STUDENT_PASSWORD env vars to enable",
+                      "location": {
+                        "file": "C:\\Users\\DeLL\\OneDrive\\Desktop\\Keyabroad\\tests\\e2e\\student.spec.ts",
+                        "line": 21,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "28673771c95032e93b6d-6292d0190aa501213a6d",
+              "file": "student.spec.ts",
+              "line": 45,
+              "column": 7
+            },
+            {
+              "title": "login with wrong password shows error",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Skipped: Set STUDENT_EMAIL and STUDENT_PASSWORD env vars to enable",
+                      "location": {
+                        "file": "C:\\Users\\DeLL\\OneDrive\\Desktop\\Keyabroad\\tests\\e2e\\student.spec.ts",
+                        "line": 21,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "28673771c95032e93b6d-b53d33c57fe26fc91b06",
+              "file": "student.spec.ts",
+              "line": 61,
+              "column": 7
+            },
+            {
+              "title": "eligibility checker page renders",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Skipped: Set STUDENT_EMAIL and STUDENT_PASSWORD env vars to enable",
+                      "location": {
+                        "file": "C:\\Users\\DeLL\\OneDrive\\Desktop\\Keyabroad\\tests\\e2e\\student.spec.ts",
+                        "line": 21,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "28673771c95032e93b6d-0be4e69172e3cefc2001",
+              "file": "student.spec.ts",
+              "line": 71,
+              "column": 7
+            },
+            {
+              "title": "university search page renders",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Skipped: Set STUDENT_EMAIL and STUDENT_PASSWORD env vars to enable",
+                      "location": {
+                        "file": "C:\\Users\\DeLL\\OneDrive\\Desktop\\Keyabroad\\tests\\e2e\\student.spec.ts",
+                        "line": 21,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "28673771c95032e93b6d-12a9a38bd56fd5d69b8c",
+              "file": "student.spec.ts",
+              "line": 77,
+              "column": 7
+            },
+            {
+              "title": "student can log in successfully",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Skipped: Set STUDENT_EMAIL and STUDENT_PASSWORD env vars to enable",
+                      "location": {
+                        "file": "C:\\Users\\DeLL\\OneDrive\\Desktop\\Keyabroad\\tests\\e2e\\student.spec.ts",
+                        "line": 21,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "mobile-chrome",
+                  "projectName": "mobile-chrome",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "28673771c95032e93b6d-afaa6c05ee1a077d3067",
+              "file": "student.spec.ts",
+              "line": 23,
+              "column": 7
+            },
+            {
+              "title": "student can view dashboard after login",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Skipped: Set STUDENT_EMAIL and STUDENT_PASSWORD env vars to enable",
+                      "location": {
+                        "file": "C:\\Users\\DeLL\\OneDrive\\Desktop\\Keyabroad\\tests\\e2e\\student.spec.ts",
+                        "line": 21,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "mobile-chrome",
+                  "projectName": "mobile-chrome",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "28673771c95032e93b6d-25b1c02575ccc24c4688",
+              "file": "student.spec.ts",
+              "line": 33,
+              "column": 7
+            },
+            {
+              "title": "student cannot access admin portal",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Skipped: Set STUDENT_EMAIL and STUDENT_PASSWORD env vars to enable",
+                      "location": {
+                        "file": "C:\\Users\\DeLL\\OneDrive\\Desktop\\Keyabroad\\tests\\e2e\\student.spec.ts",
+                        "line": 21,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "mobile-chrome",
+                  "projectName": "mobile-chrome",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "28673771c95032e93b6d-f16909e9636facfca8fd",
+              "file": "student.spec.ts",
+              "line": 45,
+              "column": 7
+            },
+            {
+              "title": "login with wrong password shows error",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Skipped: Set STUDENT_EMAIL and STUDENT_PASSWORD env vars to enable",
+                      "location": {
+                        "file": "C:\\Users\\DeLL\\OneDrive\\Desktop\\Keyabroad\\tests\\e2e\\student.spec.ts",
+                        "line": 21,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "mobile-chrome",
+                  "projectName": "mobile-chrome",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "28673771c95032e93b6d-80ed12af2acbb42496c4",
+              "file": "student.spec.ts",
+              "line": 61,
+              "column": 7
+            },
+            {
+              "title": "eligibility checker page renders",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Skipped: Set STUDENT_EMAIL and STUDENT_PASSWORD env vars to enable",
+                      "location": {
+                        "file": "C:\\Users\\DeLL\\OneDrive\\Desktop\\Keyabroad\\tests\\e2e\\student.spec.ts",
+                        "line": 21,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "mobile-chrome",
+                  "projectName": "mobile-chrome",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "28673771c95032e93b6d-a9064d8ad03ae6bcded4",
+              "file": "student.spec.ts",
+              "line": 71,
+              "column": 7
+            },
+            {
+              "title": "university search page renders",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Skipped: Set STUDENT_EMAIL and STUDENT_PASSWORD env vars to enable",
+                      "location": {
+                        "file": "C:\\Users\\DeLL\\OneDrive\\Desktop\\Keyabroad\\tests\\e2e\\student.spec.ts",
+                        "line": 21,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "mobile-chrome",
+                  "projectName": "mobile-chrome",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "28673771c95032e93b6d-65a884900f360d406572",
+              "file": "student.spec.ts",
+              "line": 77,
+              "column": 7
+            },
+            {
+              "title": "student can log in successfully",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Skipped: Set STUDENT_EMAIL and STUDENT_PASSWORD env vars to enable",
+                      "location": {
+                        "file": "C:\\Users\\DeLL\\OneDrive\\Desktop\\Keyabroad\\tests\\e2e\\student.spec.ts",
+                        "line": 21,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "mobile-safari",
+                  "projectName": "mobile-safari",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "28673771c95032e93b6d-610f0a8c1968f988e427",
+              "file": "student.spec.ts",
+              "line": 23,
+              "column": 7
+            },
+            {
+              "title": "student can view dashboard after login",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Skipped: Set STUDENT_EMAIL and STUDENT_PASSWORD env vars to enable",
+                      "location": {
+                        "file": "C:\\Users\\DeLL\\OneDrive\\Desktop\\Keyabroad\\tests\\e2e\\student.spec.ts",
+                        "line": 21,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "mobile-safari",
+                  "projectName": "mobile-safari",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "28673771c95032e93b6d-503ffc61d142c579e1a3",
+              "file": "student.spec.ts",
+              "line": 33,
+              "column": 7
+            },
+            {
+              "title": "student cannot access admin portal",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Skipped: Set STUDENT_EMAIL and STUDENT_PASSWORD env vars to enable",
+                      "location": {
+                        "file": "C:\\Users\\DeLL\\OneDrive\\Desktop\\Keyabroad\\tests\\e2e\\student.spec.ts",
+                        "line": 21,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "mobile-safari",
+                  "projectName": "mobile-safari",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "28673771c95032e93b6d-ac4179c7f458c2b88d77",
+              "file": "student.spec.ts",
+              "line": 45,
+              "column": 7
+            },
+            {
+              "title": "login with wrong password shows error",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Skipped: Set STUDENT_EMAIL and STUDENT_PASSWORD env vars to enable",
+                      "location": {
+                        "file": "C:\\Users\\DeLL\\OneDrive\\Desktop\\Keyabroad\\tests\\e2e\\student.spec.ts",
+                        "line": 21,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "mobile-safari",
+                  "projectName": "mobile-safari",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "28673771c95032e93b6d-9711bf4f7ee2e7f047c6",
+              "file": "student.spec.ts",
+              "line": 61,
+              "column": 7
+            },
+            {
+              "title": "eligibility checker page renders",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Skipped: Set STUDENT_EMAIL and STUDENT_PASSWORD env vars to enable",
+                      "location": {
+                        "file": "C:\\Users\\DeLL\\OneDrive\\Desktop\\Keyabroad\\tests\\e2e\\student.spec.ts",
+                        "line": 21,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "mobile-safari",
+                  "projectName": "mobile-safari",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "28673771c95032e93b6d-90f3d0eb96feb147032e",
+              "file": "student.spec.ts",
+              "line": 71,
+              "column": 7
+            },
+            {
+              "title": "university search page renders",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Skipped: Set STUDENT_EMAIL and STUDENT_PASSWORD env vars to enable",
+                      "location": {
+                        "file": "C:\\Users\\DeLL\\OneDrive\\Desktop\\Keyabroad\\tests\\e2e\\student.spec.ts",
+                        "line": 21,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "mobile-safari",
+                  "projectName": "mobile-safari",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "28673771c95032e93b6d-8642f0e3e8b11c174278",
+              "file": "student.spec.ts",
+              "line": 77,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-08-18T09:44:36.115Z",
+    "duration": 555.844,
+    "expected": 0,
+    "skipped": 139,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

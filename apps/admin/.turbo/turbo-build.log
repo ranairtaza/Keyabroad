@@ -3,7 +3,7 @@
 > npm install --no-save @tailwindcss/oxide-linux-x64-gnu@4.3.3
 
 
-up to date, audited 1162 packages in 7s
+up to date, audited 1174 packages in 10s
 
 188 packages are looking for funding
   run `npm fund` for details
@@ -24,20 +24,22 @@ Run `npm audit` for details.
 > admin@0.1.0 build
 > next build
 
+⚠ Found lockfile missing swc dependencies, patching...
 ▲ Next.js 16.2.11 (Turbopack)
 - Environments: .env.local
 
 ⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
   Creating an optimized production build ...
-✓ Compiled successfully in 46s
+⚠ Lockfile was successfully patched, please run "npm install" to ensure @next/swc dependencies are downloaded
+✓ Compiled successfully in 100s
   Running TypeScript ...
-  Finished TypeScript in 23.7s ...
+  Finished TypeScript in 80s ...
   Collecting page data using 7 workers ...
-  Generating static pages using 7 workers (0/63) ...
-  Generating static pages using 7 workers (15/63) 
-  Generating static pages using 7 workers (31/63) 
-  Generating static pages using 7 workers (47/63) 
-✓ Generating static pages using 7 workers (63/63) in 3.2s
+  Generating static pages using 7 workers (0/64) ...
+  Generating static pages using 7 workers (16/64) 
+  Generating static pages using 7 workers (32/64) 
+  Generating static pages using 7 workers (48/64) 
+✓ Generating static pages using 7 workers (64/64) in 4.4s
   Finalizing page optimization ...
 
 Route (app)
@@ -77,6 +79,7 @@ Route (app)
 ├ ○ /blogs
 ├ ○ /campaigns
 ├ ƒ /commissions
+├ ○ /cost-calculator-config
 ├ ○ /course-matcher
 ├ ○ /crm/audit
 ├ ○ /crm/documents
