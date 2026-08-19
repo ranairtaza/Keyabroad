@@ -1,4 +1,4 @@
-import { createClient } from "@keyabroad/auth/server";
+import { createClient } from "@/lib/auth/server";
 import { DollarSign, TrendingUp, AlertCircle, Building, Filter, Calendar } from "lucide-react";
 import { redirect } from "next/navigation";
 import Link from "next/link";

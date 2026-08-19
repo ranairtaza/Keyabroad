@@ -1,7 +1,7 @@
 import { cookies } from "next/headers";
 import { createServerClient } from "@supabase/ssr";
-import { Database } from "@keyabroad/database";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@keyabroad/ui/components/card";
+import { Database } from "@/lib/db";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/lib/ui/components/card";
 import { Activity, AlertCircle, Clock, FileWarning, Briefcase, Users } from "lucide-react";
 
 export const revalidate = 0;

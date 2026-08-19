@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef, useMemo } from "react";
-import { supabase } from "@keyabroad/auth/legacy";
+import { supabase } from "@/lib/auth/legacy";
 import { motion } from "framer-motion";
 import { Table, Search, Download, FileSpreadsheet, Edit3, Trash2, Upload, TrendingUp, TrendingDown, Globe, BookOpen, Calendar } from "lucide-react";
 import { useRole } from "@/components/RoleContext";

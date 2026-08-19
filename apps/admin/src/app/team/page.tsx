@@ -7,7 +7,7 @@ import { Lock, Plus, UserX, Shield, MoreVertical, Briefcase, Calendar, Mail, Map
 import Image from "next/image";
 import { useRole } from "@/components/RoleContext";
 import toast from "react-hot-toast";
-import { supabase } from "@keyabroad/auth/legacy";
+import { supabase } from "@/lib/auth/legacy";
 
 export default function TeamDirectoryPage() {
   const { role, currentUser } = useRole();

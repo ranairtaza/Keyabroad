@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { Toaster, toast } from "react-hot-toast";
-import { createClient } from "@keyabroad/auth/client";
+import { createClient } from "@/lib/auth/client";
 
 type Role = "owner" | "employee";
 

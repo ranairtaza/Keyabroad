@@ -7,7 +7,7 @@ import MagneticButton from "@/components/MagneticButton";
 import AnalyticsChart from "@/components/AnalyticsChart";
 import { Users, FileText, CheckCircle, Clock, Phone } from "lucide-react";
 import { useEffect, useState } from "react";
-import { supabase } from "@keyabroad/auth/legacy";
+import { supabase } from "@/lib/auth/legacy";
 import { useRouter } from "next/navigation";
 
 const formatTimeAgo = (dateString: string) => {

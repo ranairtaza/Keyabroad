@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { createClient } from "@keyabroad/auth/client";
+import { createClient } from "@/lib/auth/client";
 import { Star, MessageSquare, Trash2, Pencil, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import Hover3DWrapper from "@/components/Hover3DWrapper";

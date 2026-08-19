@@ -1,6 +1,6 @@
 "use server";
 
-import { createClient } from "@keyabroad/auth/server";
+import { createClient } from "@/lib/auth/server";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 

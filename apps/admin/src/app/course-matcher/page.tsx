@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { Search, MapPin, DollarSign, BookOpen, Filter, GraduationCap, Building2, Plus, X, Save } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { supabase } from "@keyabroad/auth/legacy";
+import { supabase } from "@/lib/auth/legacy";
 import { useRole } from "@/components/RoleContext";
 import toast from "react-hot-toast";
 

@@ -3,9 +3,9 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { ShieldAlert, Database, Activity, Cpu, Server, HardDrive } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@keyabroad/ui/components/card";
-import { Badge } from "@keyabroad/ui/components/badge";
-import { supabase } from "@keyabroad/auth/legacy";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/lib/ui/components/card";
+import { Badge } from "@/lib/ui/components/badge";
+import { supabase } from "@/lib/auth/legacy";
 
 export default function SystemHealthPage() {
   const [systemErrors, setSystemErrors] = useState<any[]>([]);

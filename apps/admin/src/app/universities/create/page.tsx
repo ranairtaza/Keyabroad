@@ -5,12 +5,12 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useRouter } from "next/navigation";
-import { createClient } from "@keyabroad/auth/client";
+import { createClient } from "@/lib/auth/client";
 
-import { Button } from "@keyabroad/ui/components/button";
-import { Input } from "@keyabroad/ui/components/input";
-import { Textarea } from "@keyabroad/ui/components/textarea";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@keyabroad/ui/components/card";
+import { Button } from "@/lib/ui/components/button";
+import { Input } from "@/lib/ui/components/input";
+import { Textarea } from "@/lib/ui/components/textarea";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/lib/ui/components/card";
 import { ArrowLeft, Save, Building2 } from "lucide-react";
 import Link from "next/link";
 

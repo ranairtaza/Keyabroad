@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { Zap, Plus, ArrowRight, Save, Trash2, Power, X } from "lucide-react";
 import toast from "react-hot-toast";
-import { createClient } from "@keyabroad/auth/client";
+import { createClient } from "@/lib/auth/client";
 
 const supabase = createClient();
 

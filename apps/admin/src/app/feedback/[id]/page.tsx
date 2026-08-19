@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, use } from "react";
-import { supabase } from "@keyabroad/auth/legacy";
+import { supabase } from "@/lib/auth/legacy";
 import toast from "react-hot-toast";
 import { Star, CheckCircle2 } from "lucide-react";
 import { motion } from "framer-motion";

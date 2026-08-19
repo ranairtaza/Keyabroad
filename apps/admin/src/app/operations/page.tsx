@@ -6,7 +6,7 @@ import Hover3DWrapper from "@/components/Hover3DWrapper";
 import { useRole } from "@/components/RoleContext";
 import { Lock, Users, CheckSquare, X } from "lucide-react";
 import toast from "react-hot-toast";
-import { supabase } from "@keyabroad/auth/legacy";
+import { supabase } from "@/lib/auth/legacy";
 import { useEffect } from "react";
 
 export default function OperationsPage() {

@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useRole } from "@/components/RoleContext";
 import { CheckCircle, Clock, Book, User, Phone, Mail, FileText, Plus, X, Trash2, Undo, Users, BarChart3, Ticket, Calendar } from "lucide-react";
 import toast from "react-hot-toast";
-import { createClient } from "@keyabroad/auth/client";
+import { createClient } from "@/lib/auth/client";
 import { AddTaskModal } from "./components/TaskModals";
 import { ActivityLeaderboard } from "./components/TaskTables";
 

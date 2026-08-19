@@ -1,4 +1,4 @@
-import { createClient } from "@keyabroad/auth/server";
+import { createClient } from "@/lib/auth/server";
 import { FileText, Plus, Search, Calendar, Filter } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";

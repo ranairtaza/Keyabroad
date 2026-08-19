@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
-import { createClient } from "@keyabroad/auth/client";
+import { createClient } from "@/lib/auth/client";
 import { useRole } from "@/components/RoleContext";
 import { Send, User } from "lucide-react";
 import toast from "react-hot-toast";

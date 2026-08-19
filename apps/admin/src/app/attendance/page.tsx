@@ -5,7 +5,7 @@ import { motion, Variants } from "framer-motion";
 import Hover3DWrapper from "@/components/Hover3DWrapper";
 import { Clock, CheckCircle2, AlertCircle, FileText } from "lucide-react";
 import toast from "react-hot-toast";
-import { createClient } from "@keyabroad/auth/client";
+import { createClient } from "@/lib/auth/client";
 import { useRole } from "@/components/RoleContext";
 
 export default function AttendancePage() {

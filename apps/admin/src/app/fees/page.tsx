@@ -1,4 +1,4 @@
-import { createClient } from "@keyabroad/auth/server";
+import { createClient } from "@/lib/auth/server";
 import { Receipt, Search, CreditCard, Download, Filter } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";

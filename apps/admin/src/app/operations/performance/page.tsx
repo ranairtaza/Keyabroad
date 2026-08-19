@@ -1,7 +1,7 @@
 import { cookies } from "next/headers";
 import { createServerClient } from "@supabase/ssr";
-import { Database } from "@keyabroad/database";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@keyabroad/ui/components/card";
+import { Database } from "@/lib/db";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/lib/ui/components/card";
 import { CheckCircle2, Clock, Users, ShieldAlert, BarChart3 } from "lucide-react";
 import { redirect } from "next/navigation";
 

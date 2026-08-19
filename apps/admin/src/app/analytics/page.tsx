@@ -1,4 +1,4 @@
-import { createClient } from "@keyabroad/auth/server";
+import { createClient } from "@/lib/auth/server";
 import { Globe, Target, Trophy, FileText } from "lucide-react";
 import Link from "next/link";
 import { AnalyticsCharts } from "./AnalyticsCharts";

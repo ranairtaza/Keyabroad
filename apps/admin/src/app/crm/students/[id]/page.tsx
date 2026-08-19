@@ -1,9 +1,9 @@
 import { cookies } from "next/headers";
 import { createServerClient } from "@supabase/ssr";
-import { Database } from "@keyabroad/database";
-import { Card, CardContent, CardHeader, CardTitle } from "@keyabroad/ui/components/card";
-import { Badge } from "@keyabroad/ui/components/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@keyabroad/ui/components/tabs";
+import { Database } from "@/lib/db";
+import { Card, CardContent, CardHeader, CardTitle } from "@/lib/ui/components/card";
+import { Badge } from "@/lib/ui/components/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/lib/ui/components/tabs";
 import { redirect } from "next/navigation";
 import { CheckCircle2, Circle, AlertCircle, Clock, FileWarning, Briefcase, FileText, Activity } from "lucide-react";
 import Link from "next/link";

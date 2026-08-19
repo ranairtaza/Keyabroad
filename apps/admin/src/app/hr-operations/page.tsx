@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useRole } from "@/components/RoleContext";
 import { Users, Activity, Phone, Search, Filter, Calendar, Clock, MessageSquare, Plus } from "lucide-react";
-import { supabase } from "@keyabroad/auth/legacy";
+import { supabase } from "@/lib/auth/legacy";
 import toast from "react-hot-toast";
 
 export default function HROperationsPage() {

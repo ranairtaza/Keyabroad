@@ -5,7 +5,7 @@ import { useSidebar } from "./SidebarContext";
 import { UserCircle, Settings, User, LogOut, Bell, Check, Menu } from "lucide-react";
 import Image from "next/image";
 import { useState, useRef, useEffect } from "react";
-import { createClient } from "@keyabroad/auth/client";
+import { createClient } from "@/lib/auth/client";
 import toast from "react-hot-toast";
 import { usePathname } from "next/navigation";
 

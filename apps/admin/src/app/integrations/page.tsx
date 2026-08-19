@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { createClient } from "@keyabroad/auth/client";
+import { createClient } from "@/lib/auth/client";
 import { useRole } from "@/components/RoleContext";
 import { toast, Toaster } from "react-hot-toast";
 import { Shield, Cable, MessagesSquare, Video, Bot, Key, Eye, EyeOff, Save, CheckCircle2 } from "lucide-react";

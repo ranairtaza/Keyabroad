@@ -1,12 +1,12 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { createClient } from "@keyabroad/auth/client";
+import { createClient } from "@/lib/auth/client";
 import { Save, Building, MapPin, Search } from "lucide-react";
 import toast from "react-hot-toast";
-import { Card } from "@keyabroad/ui/components/card";
-import { Input } from "@keyabroad/ui/components/input";
-import { Button } from "@keyabroad/ui/components/button";
+import { Card } from "@/lib/ui/components/card";
+import { Input } from "@/lib/ui/components/input";
+import { Button } from "@/lib/ui/components/button";
 
 type Country = {
   id: string;

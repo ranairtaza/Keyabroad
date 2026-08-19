@@ -1,4 +1,4 @@
-import { createClient } from "@keyabroad/auth/server";
+import { createClient } from "@/lib/auth/server";
 
 export default async function TeamAnalyticsPage() {
   const supabase = await createClient();

@@ -1,8 +1,8 @@
 import { cookies } from "next/headers";
 import { createServerClient } from "@supabase/ssr";
-import { Database } from "@keyabroad/database";
-import { Card, CardContent } from "@keyabroad/ui/components/card";
-import { Badge } from "@keyabroad/ui/components/badge";
+import { Database } from "@/lib/db";
+import { Card, CardContent } from "@/lib/ui/components/card";
+import { Badge } from "@/lib/ui/components/badge";
 import { CheckCircle2, Circle, AlertCircle, Clock, User } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";

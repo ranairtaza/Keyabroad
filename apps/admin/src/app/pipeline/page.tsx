@@ -3,11 +3,11 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Hover3DWrapper from "@/components/Hover3DWrapper";
-import { supabase } from "@keyabroad/auth/legacy";
+import { supabase } from "@/lib/auth/legacy";
 import toast from "react-hot-toast";
 import { CheckCircle2, Trash2, Plus, X, Save } from "lucide-react";
 import { useRole } from "@/components/RoleContext";
-import { Input } from "@keyabroad/ui/components/input";
+import { Input } from "@/lib/ui/components/input";
 
 export default function PipelinePage() {
   const [activeTab, setActiveTab] = useState<"admissions" | "language">("admissions");

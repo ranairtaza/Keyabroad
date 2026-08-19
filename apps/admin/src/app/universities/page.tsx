@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { Search, MapPin, Calendar, Award, Banknote, Plus, X } from "lucide-react";
-import { createClient } from "@keyabroad/auth/client";
+import { createClient } from "@/lib/auth/client";
 import toast from "react-hot-toast";
 
 type University = {

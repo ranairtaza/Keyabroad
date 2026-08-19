@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { Calendar, Clock, User, Phone, CheckCircle2, XCircle, Search, CalendarDays, Trash2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { supabase } from "@keyabroad/auth/legacy";
+import { supabase } from "@/lib/auth/legacy";
 import { useRole } from "@/components/RoleContext";
 import toast from "react-hot-toast";
 

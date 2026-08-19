@@ -1,4 +1,4 @@
-import { createClient } from "@keyabroad/auth/server";
+import { createClient } from "@/lib/auth/server";
 import { ArrowLeft, CreditCard } from "lucide-react";
 import Link from "next/link";
 import { recordPaymentAction } from "../../actions";
