@@ -102,10 +102,10 @@ export default function Home() {
             <a href="https://www.icef.com/agency/" target="_blank" rel="noopener noreferrer">
               <Image 
                 src="/icef-logo.png" 
-                alt="ICEF Agency Status" 
-                width={180} 
-                height={180} 
-                className="object-contain"
+                alt="ICEF Agency Status — International Consultants for Education and Fairs" 
+                width={240} 
+                height={160} 
+                className="object-contain drop-shadow-md"
                 unoptimized
               />
             </a>

@@ -21,19 +21,28 @@ export default function IntegrationsPage() {
 
   async function fetchIntegrations() {
     setLoading(true);
-    // Since we don't have the table created yet in the actual remote DB unless the user ran the SQL,
-    // we'll simulate it for now, or just return empty.
     const { data, error } = await supabase.from('integrations').select('*');
     
-    if (data) {
-      setIntegrations(data);
-    } else {
-      // Mock data if table doesn't exist
-      setIntegrations([
-        { id: '1', provider: 'google', is_active: false, api_key: null, secret_key: null, updated_at: new Date().toISOString() },
-        { id: '2', provider: 'twilio', is_active: false, api_key: null, secret_key: null, updated_at: new Date().toISOString() }
-      ]);
-    }
+    const defaultState = {
+      twilio: { api_key: "", secret_key: "", is_active: false },
+      zoom: { api_key: "", secret_key: "", is_active: false },
+      openai: { api_key: "", secret_key: "", is_active: false }
+    };
+
+    const fetchedData = data || [];
+    const newState: Record<string, any> = { ...defaultState };
+
+    fetchedData.forEach((item: any) => {
+      if (item.provider) {
+        newState[item.provider] = {
+          api_key: item.api_key || "",
+          secret_key: item.secret_key || "",
+          is_active: item.is_active || false
+        };
+      }
+    });
+
+    setIntegrations(newState);
     setLoading(false);
   }
 

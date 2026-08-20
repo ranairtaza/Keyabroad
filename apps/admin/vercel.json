@@ -1,8 +1,8 @@
 {
-  "buildCommand": "npm run build",
+  "buildCommand": "rm -rf node_modules/lightningcss && next build",
   "outputDirectory": ".next",
-  "installCommand": "npm install",
-  "devCommand": "npm run dev",
+  "installCommand": "cd ../.. && npm install && npm install --no-save @tailwindcss/oxide-linux-x64-gnu@4.3.3 lightningcss-linux-x64-gnu@1.33.0",
+  "devCommand": "next dev --port $PORT",
   "framework": "nextjs",
   "regions": ["iad1"],
   "git": {
