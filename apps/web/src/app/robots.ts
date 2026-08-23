@@ -5,7 +5,7 @@ export default function robots(): MetadataRoute.Robots {
     rules: {
       userAgent: '*',
       allow: '/',
-      disallow: ['/login', '/admin'],
+      disallow: ['/login', '/admin', '/student/', '/api/'],
     },
     sitemap: 'https://keyabroad.com/sitemap.xml',
   };

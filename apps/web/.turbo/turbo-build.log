@@ -3,7 +3,7 @@
 > npm install --no-save @tailwindcss/oxide-linux-x64-gnu@4.3.2
 
 
-up to date, audited 1174 packages in 7s
+up to date, audited 1174 packages in 12s
 
 188 packages are looking for funding
   run `npm fund` for details
@@ -29,15 +29,15 @@ Run `npm audit` for details.
 
 ⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
   Creating an optimized production build ...
-✓ Compiled successfully in 14.2s
+✓ Compiled successfully in 26.6s
   Running TypeScript ...
-  Finished TypeScript in 38.7s ...
+  Finished TypeScript in 27.3s ...
   Collecting page data using 7 workers ...
   Generating static pages using 7 workers (0/54) ...
   Generating static pages using 7 workers (13/54) 
   Generating static pages using 7 workers (26/54) 
   Generating static pages using 7 workers (40/54) 
-✓ Generating static pages using 7 workers (54/54) in 16.5s
+✓ Generating static pages using 7 workers (54/54) in 8.0s
   Finalizing page optimization ...
 
 Route (app)

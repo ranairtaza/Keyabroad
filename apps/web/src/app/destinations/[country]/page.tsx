@@ -31,6 +31,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   return {
     title: `Study in ${country.name} | KeyAbroad`,
     description: country.about || `Discover excellent academic opportunities and vibrant culture in ${country.name}.`,
+    alternates: {
+      canonical: `/destinations/${country.id}`,
+    },
   };
 }
 

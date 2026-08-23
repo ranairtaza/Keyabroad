@@ -5,6 +5,9 @@ import { Metadata } from 'next';
 export const metadata: Metadata = {
   title: 'Study Destinations | KeyAbroad',
   description: 'Explore world-class study destinations and find the perfect country for your international education.',
+  alternates: {
+    canonical: '/destinations',
+  },
 };
 
 export default function DestinationsPage() {
