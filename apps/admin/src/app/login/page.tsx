@@ -100,8 +100,8 @@ export default function LoginPage() {
       <div className="absolute bottom-0 left-0 w-[50%] h-full bg-secondary opacity-10" style={{ clipPath: 'polygon(0 0, 0 100%, 100% 100%)' }}></div>
       
       <div className="bg-white border border-slate-200 p-10 rounded-2xl shadow-2xl w-full max-w-md relative z-10">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-slate-900 mb-2">Key<span className="text-primary">Abroad</span> Workspace</h1>
+        <div className="text-center mb-8 flex flex-col items-center">
+          <img src="/keyabroad.png" alt="KeyAbroad Workspace" className="h-10 object-contain mb-4" />
           <p className="text-slate-600">Welcome to your command center.</p>
         </div>
         

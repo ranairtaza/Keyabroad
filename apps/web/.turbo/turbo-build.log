@@ -3,7 +3,7 @@
 > npm install --no-save @tailwindcss/oxide-linux-x64-gnu@4.3.2
 
 
-up to date, audited 1174 packages in 11s
+up to date, audited 1174 packages in 7s
 
 188 packages are looking for funding
   run `npm fund` for details
@@ -24,42 +24,20 @@ Run `npm audit` for details.
 > web@0.1.0 build
 > next build
 
-⚠ Found lockfile missing swc dependencies, patching...
 ▲ Next.js 16.2.11 (Turbopack)
 - Environments: .env.local
 
 ⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
   Creating an optimized production build ...
-⚠ Lockfile was successfully patched, please run "npm install" to ensure @next/swc dependencies are downloaded
-✓ Compiled successfully in 77s
+✓ Compiled successfully in 14.2s
   Running TypeScript ...
-  Finished TypeScript in 85s ...
+  Finished TypeScript in 38.7s ...
   Collecting page data using 7 workers ...
-  Generating static pages using 7 workers (0/36) ...
-Error generating sitemap for countries: Error: Dynamic server usage: Route /sitemap.xml couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
-    at S (C:\Users\DeLL\OneDrive\Desktop\Keyabroad\apps\web\.next\server\chunks\[root-of-the-server]__0svjb5q._.js:10:36507)
-    at f (C:\Users\DeLL\OneDrive\Desktop\Keyabroad\apps\web\.next\server\chunks\_1hwa170._.js:23:12704)
-    at R (C:\Users\DeLL\OneDrive\Desktop\Keyabroad\apps\web\.next\server\chunks\[root-of-the-server]__0u-dn65._.js:16:505)
-    at A (C:\Users\DeLL\OneDrive\Desktop\Keyabroad\apps\web\.next\server\chunks\[root-of-the-server]__0u-dn65._.js:16:1461)
-    at E (C:\Users\DeLL\OneDrive\Desktop\Keyabroad\apps\web\.next\server\chunks\[root-of-the-server]__0u-dn65._.js:24:437)
-    at j (C:\Users\DeLL\OneDrive\Desktop\Keyabroad\apps\web\.next\server\chunks\[root-of-the-server]__0u-dn65._.js:24:718) {
-  description: "Route /sitemap.xml couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
-  digest: 'DYNAMIC_SERVER_USAGE'
-}
-  Generating static pages using 7 workers (9/36) 
-  Generating static pages using 7 workers (18/36) 
-  Generating static pages using 7 workers (27/36) 
-Error fetching blogs: {
-  message: 'TypeError: fetch failed',
-  details: 'TypeError: fetch failed\n' +
-    '\n' +
-    'Caused by: Error: getaddrinfo ENOTFOUND dummy.supabase.co (ENOTFOUND)\n' +
-    'Error: getaddrinfo ENOTFOUND dummy.supabase.co\n' +
-    '    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)',
-  hint: '',
-  code: ''
-}
-✓ Generating static pages using 7 workers (36/36) in 11.3s
+  Generating static pages using 7 workers (0/54) ...
+  Generating static pages using 7 workers (13/54) 
+  Generating static pages using 7 workers (26/54) 
+  Generating static pages using 7 workers (40/54) 
+✓ Generating static pages using 7 workers (54/54) in 16.5s
   Finalizing page optimization ...
 
 Route (app)
@@ -80,8 +58,12 @@ Route (app)
 ├ ○ /contact
 ├ ○ /cost-calculator
 ├ ○ /counseling
-├ ƒ /destinations
-├ ƒ /destinations/[country]
+├ ○ /destinations
+├ ● /destinations/[country]
+│ ├ /destinations/united-kingdom
+│ ├ /destinations/united-states
+│ ├ /destinations/canada
+│ └ [+14 more paths]
 ├ ○ /eligibility
 ├ ○ /feedback
 ├ ○ /icon.png
@@ -94,7 +76,7 @@ Route (app)
 ├ ƒ /scholarships
 ├ ƒ /scholarships/[id]
 ├ ○ /services
-├ ƒ /sitemap.xml
+├ ○ /sitemap.xml
 ├ ○ /student
 ├ ○ /student/applications
 ├ ○ /student/dashboard
@@ -112,5 +94,6 @@ Route (app)
 ƒ Proxy (Middleware)
 
 ○  (Static)   prerendered as static content
+●  (SSG)      prerendered as static HTML (uses generateStaticParams)
 ƒ  (Dynamic)  server-rendered on demand
 

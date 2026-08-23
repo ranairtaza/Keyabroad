@@ -75,10 +75,10 @@ export default function Sidebar() {
       <div className={`fixed inset-y-0 left-0 transform ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"} md:relative md:translate-x-0 w-64 md:w-20 lg:w-64 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border-r border-slate-200 dark:border-slate-800 h-full flex flex-col z-50 shadow-2xl md:shadow-xl transition-transform duration-300 ease-in-out`}>
 
         <div className="h-20 flex items-center justify-between md:justify-center lg:justify-start px-4 lg:px-8 border-b border-slate-200 dark:border-slate-800">
-          <Link href="/" onClick={() => setIsSidebarOpen(false)} className="inline-flex items-center text-3xl font-extrabold tracking-tighter text-[#222222] dark:text-white">
-            <span className="md:hidden lg:inline">KeyAbr</span>
-            <Globe className="w-7 h-7 text-[#0090ff] fill-[#65ba74] mx-[2px] mt-1" strokeWidth={1} />
-            <span className="md:hidden lg:inline">ad</span>
+          <Link href="/" onClick={() => setIsSidebarOpen(false)} className="inline-flex items-center w-full justify-center lg:justify-start">
+            <img src="/keyabroad.png" alt="KeyAbroad" className="h-7 lg:h-8 object-contain dark:hidden md:hidden lg:block" />
+            <img src="/keyabroad-white.png" alt="KeyAbroad" className="h-7 lg:h-8 object-contain hidden dark:block dark:md:hidden dark:lg:block" />
+            <Globe className="w-8 h-8 text-[#0090ff] fill-[#65ba74] hidden md:block lg:hidden" strokeWidth={1} />
           </Link>
           <button className="md:hidden p-2 text-slate-500 hover:text-slate-900 dark:hover:text-white" onClick={() => setIsSidebarOpen(false)}>
             <X size={24} />

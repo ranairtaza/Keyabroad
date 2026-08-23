@@ -69,16 +69,9 @@ export default function ReceiptPage() {
       {/* Receipt Paper */}
       <div className="w-full max-w-4xl bg-white p-12 shadow-xl print:shadow-none text-black font-sans relative">
         <div className="text-center mb-8">
-          <img src="/logo.png" alt="KeyAbroad Logo" className="mx-auto h-24 object-contain" onError={(e) => {
+          <img src="/keyabroad.png" alt="KeyAbroad Logo" className="mx-auto h-16 object-contain" onError={(e) => {
              (e.target as HTMLImageElement).style.display = 'none';
-             document.getElementById('fallback-logo')?.classList.remove('hidden');
           }} />
-          <div id="fallback-logo" className="hidden">
-             <h1 className="text-4xl font-black tracking-tighter flex items-center justify-center gap-1">
-               KeyAbr<span className="text-blue-500">o</span>ad
-             </h1>
-             <p className="text-sm font-semibold tracking-wide">Open the door to success</p>
-          </div>
           <h2 className="text-3xl font-serif font-bold mt-6 mb-8 uppercase tracking-widest text-slate-800 border-b-2 border-slate-800 pb-2 inline-block">Official Receipt</h2>
         </div>
 
