@@ -16,6 +16,12 @@ interface PageProps {
   }>;
 }
 
+export function generateStaticParams() {
+  return destinations.map((d) => ({
+    country: d.id,
+  }));
+}
+
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const resolvedParams = await params;
   const country = destinations.find(d => d.id === resolvedParams.country);

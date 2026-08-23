@@ -12,7 +12,7 @@ export const metadata = {
 export default async function BlogPage() {
   const { data: posts, error } = await supabase
     .from('blogs')
-    .select('id, title, slug, excerpt, created_at, author, image_url, category')
+    .select('id, title, slug, excerpt, created_at, author, image_url')
     .eq('status', 'published')
     .order('published_at', { ascending: false });
 
