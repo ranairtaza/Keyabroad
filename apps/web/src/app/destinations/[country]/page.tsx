@@ -1,4 +1,4 @@
-import { getPublishedCountryBySlug } from '@/lib/data/countries';
+import { destinations } from '@/data/destinations';
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -10,8 +10,6 @@ import { EmptyState } from '@/components/shared/EmptyState';
 import { Metadata } from 'next';
 import { UniversityAccordionList } from '@/components/shared/UniversityAccordionList';
 
-export const dynamic = 'force-dynamic';
-
 interface PageProps {
   params: Promise<{
     country: string;
@@ -20,13 +18,13 @@ interface PageProps {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const resolvedParams = await params;
-  const country = await getPublishedCountryBySlug(resolvedParams.country);
+  const country = destinations.find(d => d.id === resolvedParams.country);
   
   if (!country) return { title: 'Destination Not Found' };
 
   return {
     title: `Study in ${country.name} | KeyAbroad`,
-    description: country.description || `Discover excellent academic opportunities and vibrant culture in ${country.name}.`,
+    description: country.about || `Discover excellent academic opportunities and vibrant culture in ${country.name}.`,
   };
 }
 
@@ -34,19 +32,29 @@ export default async function CountryPage({ params }: PageProps) {
   const resolvedParams = await params;
   const slug = resolvedParams.country;
   
-  const country = await getPublishedCountryBySlug(slug);
+  const country = destinations.find(d => d.id === slug);
 
   if (!country) {
     notFound();
   }
 
+  const mappedUniversities = country.universities.map((uni, idx) => ({
+    id: `${country.id}-uni-${idx}`,
+    name: uni.name,
+    url: uni.url,
+    logo_url: null,
+    avg_bachelors_tuition: 15000,
+    avg_masters_tuition: 20000,
+    required_documents: []
+  }));
+
   return (
     <div className="flex flex-col w-full min-h-screen bg-slate-50 pb-16">
       {/* Hero Section */}
       <section className="relative h-[60vh] min-h-[500px] w-full bg-[#0a1930] flex items-center">
-        {country.image_url && (
+        {country.image && (
           <Image
-            src={country.image_url}
+            src={country.image}
             alt={country.name}
             fill
             className="object-cover opacity-40 mix-blend-overlay"
@@ -58,10 +66,10 @@ export default async function CountryPage({ params }: PageProps) {
         
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full text-center md:text-left">
           <div className="flex flex-col md:flex-row items-center gap-6">
-            {country.flag_code && (
+            {country.flagCode && (
               <div className="h-16 w-24 md:h-24 md:w-36 rounded-lg overflow-hidden shadow-2xl border-4 border-white/10 shrink-0">
                 <Image
-                  src={`https://flagcdn.com/w160/${country.flag_code.toLowerCase()}.png`}
+                  src={`https://flagcdn.com/w160/${country.flagCode.toLowerCase()}.png`}
                   alt={`${country.name} flag`}
                   width={144}
                   height={96}
@@ -74,7 +82,7 @@ export default async function CountryPage({ params }: PageProps) {
                 Study in {country.name}
               </h1>
               <p className="text-xl text-blue-100 max-w-2xl">
-                {country.description || `Discover excellent academic opportunities and vibrant culture in ${country.name}.`}
+                {country.about || `Discover excellent academic opportunities and vibrant culture in ${country.name}.`}
               </p>
             </div>
           </div>
@@ -92,12 +100,12 @@ export default async function CountryPage({ params }: PageProps) {
               Why Choose {country.name}?
             </h2>
             
-            {country.country_features && country.country_features.length > 0 ? (
+            {country.whyChoose && country.whyChoose.length > 0 ? (
               <ul className="space-y-4">
-                {country.country_features.map((item: any, i: number) => (
+                {country.whyChoose.map((item: string, i: number) => (
                   <li key={i} className="flex items-start gap-3">
                     <div className="mt-1 h-2 w-2 rounded-full bg-blue-600 shrink-0" />
-                    <span className="text-slate-700">{item.feature}</span>
+                    <span className="text-slate-700">{item}</span>
                   </li>
                 ))}
               </ul>
@@ -123,9 +131,9 @@ export default async function CountryPage({ params }: PageProps) {
             </Badge>
           </div>
           
-          {country.universities && country.universities.length > 0 ? (
+          {mappedUniversities.length > 0 ? (
             <UniversityAccordionList 
-              universities={country.universities} 
+              universities={mappedUniversities} 
               currencyCode="USD" 
             />
           ) : (
