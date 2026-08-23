@@ -1,7 +1,7 @@
 import { MetadataRoute } from 'next';
-import { getPublishedCountries } from '@/lib/data/countries';
+import { destinations } from '@/data/destinations';
 
-export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = 'https://keyabroad.com';
 
   // Static routes
@@ -29,18 +29,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }));
 
   // Dynamic destination routes
-  try {
-    const countries = await getPublishedCountries();
-    const countryRoutes = countries.map((country: any) => ({
-      url: `${baseUrl}/destinations/${country.slug}`,
-      lastModified: new Date(),
-      changeFrequency: 'weekly' as const,
-      priority: 0.9,
-    }));
+  const countryRoutes = destinations.map((country) => ({
+    url: `${baseUrl}/destinations/${country.id}`,
+    lastModified: new Date(),
+    changeFrequency: 'weekly' as const,
+    priority: 0.9,
+  }));
 
-    return [...routes, ...countryRoutes];
-  } catch (error) {
-    console.error('Error generating sitemap for countries:', error);
-    return routes;
-  }
+  return [...routes, ...countryRoutes];
 }
