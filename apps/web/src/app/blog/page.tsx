@@ -12,7 +12,7 @@ export const metadata = {
 export default async function BlogPage() {
   const { data: posts, error } = await supabase
     .from('blogs')
-    .select('id, title, slug, excerpt, created_at, author, featured_image_url, category')
+    .select('id, title, slug, excerpt, created_at, author, image_url, category')
     .eq('status', 'published')
     .order('published_at', { ascending: false });
 
@@ -47,9 +47,9 @@ export default async function BlogPage() {
               {posts.map((blog) => (
                 <div key={blog.id} className="bg-white rounded-2xl overflow-hidden shadow-lg border border-slate-100 hover:shadow-xl transition-shadow flex flex-col h-full group">
                   <div className="relative h-56 w-full overflow-hidden bg-slate-100 flex items-center justify-center">
-                    {blog.featured_image_url ? (
+                    {blog.image_url ? (
                       <img 
-                        src={blog.featured_image_url} 
+                        src={blog.image_url} 
                         alt={blog.title} 
                         className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500" 
                       />

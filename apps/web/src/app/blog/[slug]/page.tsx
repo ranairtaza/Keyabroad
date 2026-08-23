@@ -7,7 +7,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const resolvedParams = await params;
   const { data: blog } = await supabase
     .from('blogs')
-    .select('title, excerpt, meta_title, meta_description, featured_image_url')
+    .select('title, excerpt, meta_title, meta_description, image_url')
     .eq('slug', resolvedParams.slug)
     .single();
 
@@ -17,7 +17,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     title: blog.meta_title || `${blog.title} | KeyAbroad Blog`,
     description: blog.meta_description || blog.excerpt,
     openGraph: {
-      images: blog.featured_image_url ? [blog.featured_image_url] : [],
+      images: blog.image_url ? [blog.image_url] : [],
     }
   };
 }
@@ -50,9 +50,9 @@ export default async function SingleBlogPage({ params }: { params: Promise<{ slu
 
         <article className="bg-white rounded-3xl shadow-xl overflow-hidden border border-slate-100">
           <div className="relative h-64 md:h-96 w-full bg-slate-100 flex items-center justify-center">
-            {blog.featured_image_url ? (
+            {blog.image_url ? (
               <img 
-                src={blog.featured_image_url} 
+                src={blog.image_url} 
                 alt={blog.title} 
                 className="object-cover w-full h-full"
               />
