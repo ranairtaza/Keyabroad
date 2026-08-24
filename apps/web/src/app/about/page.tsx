@@ -30,7 +30,7 @@ export default function AboutPage() {
             </h2>
 
             <p className="text-slate-600 leading-relaxed mb-8">
-              Back in 2011, we saw brilliant, hardworking students giving up on their study abroad dreams—not because they weren't capable, but because the process was a maze. The industry was full of agencies treating students like numbers on a spreadsheet, handing out generic advice, and hiding behind confusing fees.
+              Back in 2014, we saw brilliant, hardworking students giving up on their study abroad dreams—not because they weren't capable, but because the process was a maze. The industry was full of agencies treating students like numbers on a spreadsheet, handing out generic advice, and hiding behind confusing fees.
             </p>
 
             <p className="text-slate-600 leading-relaxed mb-8">
@@ -113,10 +113,10 @@ export default function AboutPage() {
           <div className="relative border-l border-slate-200 ml-4 md:ml-32 space-y-12">
             {/* Timeline Item 1 */}
             <div className="relative pl-8 md:pl-0 md:grid md:grid-cols-12 md:gap-8 items-start">
-              <div className="hidden md:block md:col-span-3 text-right font-bold text-primary text-xl -translate-x-12 mt-1">2011</div>
+              <div className="hidden md:block md:col-span-3 text-right font-bold text-primary text-xl -translate-x-12 mt-1">2014</div>
               <div className="absolute left-[-5px] md:left-[24.3%] top-2 w-3.5 h-3.5 bg-primary rounded-full border-4 border-white z-10"></div>
               <div className="md:col-span-9 bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
-                <span className="md:hidden font-bold text-primary text-lg block mb-2">2011</span>
+                <span className="md:hidden font-bold text-primary text-lg block mb-2">2014</span>
                 <h4 className="text-lg font-bold text-slate-900 mb-2">Foundation of KeyAbroad</h4>
                 <p className="text-slate-600 leading-relaxed text-sm">
                   KeyAbroad was founded in Faisalabad with one clear mission: to make world-class international education accessible and straightforward for ambitious local students.
@@ -126,10 +126,10 @@ export default function AboutPage() {
 
             {/* Timeline Item 2 */}
             <div className="relative pl-8 md:pl-0 md:grid md:grid-cols-12 md:gap-8 items-start">
-              <div className="hidden md:block md:col-span-3 text-right font-bold text-primary text-xl -translate-x-12 mt-1">2015</div>
+              <div className="hidden md:block md:col-span-3 text-right font-bold text-primary text-xl -translate-x-12 mt-1">2018</div>
               <div className="absolute left-[-5px] md:left-[24.3%] top-2 w-3.5 h-3.5 bg-primary rounded-full border-4 border-white z-10"></div>
               <div className="md:col-span-9 bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
-                <span className="md:hidden font-bold text-primary text-lg block mb-2">2015</span>
+                <span className="md:hidden font-bold text-primary text-lg block mb-2">2018</span>
                 <h4 className="text-lg font-bold text-slate-900 mb-2">Gained Official UK Partnerships</h4>
                 <p className="text-slate-600 leading-relaxed text-sm">
                   We established direct, official partnerships with a growing network of reputable UK universities. This allowed us to streamline the admissions process for our students, provide accurate scholarship guidance, and significantly improve visa success rates through trusted channels.
@@ -139,10 +139,10 @@ export default function AboutPage() {
 
             {/* Timeline Item 3 */}
             <div className="relative pl-8 md:pl-0 md:grid md:grid-cols-12 md:gap-8 items-start">
-              <div className="hidden md:block md:col-span-3 text-right font-bold text-primary text-xl -translate-x-12 mt-1">2019</div>
+              <div className="hidden md:block md:col-span-3 text-right font-bold text-primary text-xl -translate-x-12 mt-1">2022</div>
               <div className="absolute left-[-5px] md:left-[24.3%] top-2 w-3.5 h-3.5 bg-primary rounded-full border-4 border-white z-10"></div>
               <div className="md:col-span-9 bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
-                <span className="md:hidden font-bold text-primary text-lg block mb-2">2019</span>
+                <span className="md:hidden font-bold text-primary text-lg block mb-2">2022</span>
                 <h4 className="text-lg font-bold text-slate-900 mb-2">European Expansion (Malta, Cyprus, Ireland)</h4>
                 <p className="text-slate-600 leading-relaxed text-sm">
                   We expanded our horizons across Europe, opening up exciting new pathways for students to study in Schengen countries and English-speaking destinations like Ireland and Malta.
@@ -152,10 +152,10 @@ export default function AboutPage() {
 
             {/* Timeline Item 4 */}
             <div className="relative pl-8 md:pl-0 md:grid md:grid-cols-12 md:gap-8 items-start">
-              <div className="hidden md:block md:col-span-3 text-right font-bold text-primary text-xl -translate-x-12 mt-1">2024</div>
+              <div className="hidden md:block md:col-span-3 text-right font-bold text-primary text-xl -translate-x-12 mt-1">2026</div>
               <div className="absolute left-[-5px] md:left-[24.3%] top-2 w-3.5 h-3.5 bg-primary rounded-full border-4 border-white z-10"></div>
               <div className="md:col-span-9 bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
-                <span className="md:hidden font-bold text-primary text-lg block mb-2">2024</span>
+                <span className="md:hidden font-bold text-primary text-lg block mb-2">2026</span>
                 <h4 className="text-lg font-bold text-slate-900 mb-2">Digital Integration & Real-Time Dashboards</h4>
                 <p className="text-slate-600 leading-relaxed text-sm">
                   We embraced digital innovation by launching our custom portal, ensuring every student's application is tracked and managed with perfect precision from day one.
