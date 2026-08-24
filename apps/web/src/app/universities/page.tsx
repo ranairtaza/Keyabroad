@@ -10,10 +10,19 @@ import { Metadata } from 'next';
 
 export const revalidate = 3600;
 
-export const metadata: Metadata = {
-  title: 'Partner Universities | KeyAbroad',
-  description: 'Search and browse our global network of verified partner universities.',
-};
+export async function generateMetadata({ searchParams }: PageProps): Promise<Metadata> {
+  const resolvedParams = await searchParams;
+  const hasFilters = Object.keys(resolvedParams).filter(k => k !== 'page' && resolvedParams[k as keyof typeof resolvedParams]).length > 0;
+
+  return {
+    title: 'Partner Universities | KeyAbroad',
+    description: 'Search and browse our global network of verified partner universities.',
+    robots: {
+      index: !hasFilters,
+      follow: true,
+    }
+  };
+}
 
 interface PageProps {
   searchParams: Promise<{

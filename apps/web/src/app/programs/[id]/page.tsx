@@ -1,11 +1,5 @@
 import { getPublishedProgramById } from '@/lib/data/programs';
-import { notFound } from 'next/navigation';
-import { Metadata } from 'next';
-import { Building2, MapPin, GraduationCap, Banknote, Clock, ArrowRight } from 'lucide-react';
-import Link from 'next/link';
-import { Button } from '@keyabroad/ui/components/button';
-import { Card, CardContent } from '@keyabroad/ui/components/card';
-import { Badge } from '@keyabroad/ui/components/badge';
+import { notFound, permanentRedirect } from 'next/navigation';
 
 interface PageProps {
   params: Promise<{
@@ -13,161 +7,31 @@ interface PageProps {
   }>;
 }
 
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+export default async function LegacyProgramRedirectPage({ params }: PageProps) {
   const { id } = await params;
-  const program = await getPublishedProgramById(id);
   
-  if (!program) {
-    return { title: 'Program Not Found' };
+  // Validate UUID format
+  const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+  if (!uuidRegex.test(id)) {
+    notFound();
   }
 
-  const uni = Array.isArray(program.universities)
-    ? (program.universities[0] as any)
-    : (program.universities as any);
-
-  return {
-    title: `${program.name} at ${uni?.name} | KeyAbroad`,
-    description: `Details, requirements, and tuition for ${program.name} at ${uni?.name}.`,
-  };
-}
-
-export default async function ProgramDetailPage({ params }: PageProps) {
-  const { id } = await params;
   const program = await getPublishedProgramById(id);
 
   if (!program) {
     notFound();
   }
 
-  // Supabase returns relations as arrays; cast to single object
   const uni = Array.isArray(program.universities) 
     ? (program.universities[0] as any) 
     : (program.universities as any);
 
-  return (
-    <div className="flex flex-col w-full min-h-screen bg-slate-50">
-      {/* Hero Section */}
-      <section className="bg-[#0a1930] text-white pt-16 pb-12 relative overflow-hidden">
-        <div className="absolute inset-0 bg-black/20" />
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="mb-6 flex flex-wrap gap-2">
-            {program.degree_level && (
-              <Badge className="bg-blue-600 hover:bg-blue-700 text-white border-none capitalize">
-                {program.degree_level}
-              </Badge>
-            )}
-            {uni?.countries && (
-              <Badge variant="secondary" className="bg-slate-800 text-slate-200 border-slate-700">
-                <MapPin className="w-3 h-3 mr-1" />
-                {uni.countries.name}
-              </Badge>
-            )}
-          </div>
-          
-          <h1 className="text-3xl md:text-5xl font-bold text-white mb-6 leading-tight">
-            {program.name}
-          </h1>
-          
-          {uni && (
-            <div className="flex items-center gap-4 text-slate-300">
-              {uni.logo_url && (
-                <div className="w-12 h-12 bg-white rounded-lg flex items-center justify-center overflow-hidden p-1 shrink-0">
-                  <img src={uni.logo_url} alt={uni.name} className="w-full h-full object-contain" />
-                </div>
-              )}
-              <div>
-                <div className="text-lg font-medium text-white">{uni.name}</div>
-                <Link href={`/universities/${uni.slug}`} className="text-sm text-blue-400 hover:text-blue-300 flex items-center gap-1 mt-1">
-                  View University <ArrowRight className="w-3 h-3" />
-                </Link>
-              </div>
-            </div>
-          )}
-        </div>
-      </section>
+  if (!uni) {
+    notFound();
+  }
 
-      {/* Main Content Area */}
-      <section className="py-12 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full -mt-8 relative z-20">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          
-          {/* Key Details Cards */}
-          <div className="lg:col-span-2 space-y-6">
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <Card className="shadow-sm">
-                <CardContent className="p-6 flex flex-col items-center text-center">
-                  <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center mb-4">
-                    <Clock className="w-6 h-6" />
-                  </div>
-                  <div className="text-sm text-slate-500 font-medium mb-1">Duration</div>
-                  <div className="text-lg font-bold text-slate-900">{program.duration || 'Varies'}</div>
-                </CardContent>
-              </Card>
-              
-              <Card className="shadow-sm">
-                <CardContent className="p-6 flex flex-col items-center text-center">
-                  <div className="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-full flex items-center justify-center mb-4">
-                    <Banknote className="w-6 h-6" />
-                  </div>
-                  <div className="text-sm text-slate-500 font-medium mb-1">Tuition Fee (Per Year)</div>
-                  <div className="text-lg font-bold text-slate-900">
-                    {program.tuition_fee ? `${program.tuition_fee} ${program.currency}` : 'Contact Us'}
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card className="shadow-sm">
-                <CardContent className="p-6 flex flex-col items-center text-center">
-                  <div className="w-12 h-12 bg-purple-50 text-purple-600 rounded-full flex items-center justify-center mb-4">
-                    <GraduationCap className="w-6 h-6" />
-                  </div>
-                  <div className="text-sm text-slate-500 font-medium mb-1">Degree Level</div>
-                  <div className="text-lg font-bold text-slate-900 capitalize">{program.degree_level || 'N/A'}</div>
-                </CardContent>
-              </Card>
-            </div>
-
-            {/* Placeholder for future detailed requirements like IELTS/PTE from DB */}
-            <Card className="shadow-sm mt-8">
-              <CardContent className="p-8">
-                <h2 className="text-2xl font-bold text-slate-900 mb-6">Program Requirements</h2>
-                <div className="prose prose-slate max-w-none">
-                  <p className="text-slate-600">
-                    Detailed requirements including IELTS, PTE, and academic scores are currently being synced with the university database. 
-                    Please use the Eligibility Engine to see if your current profile matches this program's requirements.
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Sidebar CTA */}
-          <div className="space-y-6">
-            <Card className="shadow-lg border-blue-100 sticky top-24">
-              <CardContent className="p-8 text-center bg-gradient-to-b from-blue-50 to-white">
-                <Building2 className="w-12 h-12 text-blue-600 mx-auto mb-4" />
-                <h3 className="text-xl font-bold text-slate-900 mb-2">Apply for this Program</h3>
-                <p className="text-slate-600 text-sm mb-6">
-                  Ready to take the next step? Our expert counselors will guide you through the application and visa process.
-                </p>
-                
-                <div className="space-y-3">
-                  <Link href="/eligibility" className="block w-full">
-                    <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white py-6">
-                      Check My Eligibility
-                    </Button>
-                  </Link>
-                  <Link href="/contact" className="block w-full">
-                    <Button variant="outline" className="w-full py-6">
-                      Talk to an Expert
-                    </Button>
-                  </Link>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
-        </div>
-      </section>
-    </div>
-  );
+  const programSlug = (program as any).slug || program.id;
+  
+  // Permanent redirect to the new SEO-friendly canonical URL (HTTP 308)
+  permanentRedirect(`/programs/${uni.slug}/${programSlug}`);
 }

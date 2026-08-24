@@ -95,6 +95,7 @@ export async function getPublishedUniversityBySlug(slug: string) {
       programs (
         id,
         name,
+        slug,
         degree_level,
         duration,
         tuition_fee,

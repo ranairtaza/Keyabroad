@@ -5,6 +5,7 @@ export interface CompareItem {
   id: string;
   name: string;
   slug?: string;
+  university_slug?: string;
   type: 'university' | 'program';
   logo_url?: string;
   country?: string;

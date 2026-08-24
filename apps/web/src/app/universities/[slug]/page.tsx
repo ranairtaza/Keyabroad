@@ -25,8 +25,29 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     : (university.countries as any);
 
   return {
-    title: `${university.name} | KeyAbroad`,
-    description: `Discover programs, scholarships, and admissions requirements for ${university.name} in ${country?.name}.`,
+    title: `${university.name} - Admissions, Fees & Programs 2026 | KeyAbroad`,
+    description: `Discover programs, scholarships, and admissions requirements for ${university.name} in ${country?.name}. Apply now for 2026 intakes.`,
+    openGraph: {
+      title: `${university.name} | Study in ${country?.name}`,
+      description: `Explore programs, tuition fees, and scholarships at ${university.name}. Start your application with KeyAbroad.`,
+      url: `https://keyabroad.com/universities/${university.slug}`,
+      siteName: 'KeyAbroad',
+      images: [
+        {
+          url: university.logo_url || 'https://keyabroad.com/icon.png',
+          width: 800,
+          height: 600,
+          alt: `${university.name} logo`,
+        },
+      ],
+      type: 'website',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `${university.name} - Study in ${country?.name}`,
+      description: `Explore programs and scholarships at ${university.name}.`,
+      images: [university.logo_url || 'https://keyabroad.com/icon.png'],
+    }
   };
 }
 
@@ -45,8 +66,56 @@ export default async function UniversityDetailPage({ params }: PageProps) {
   const uniPrograms: any[] = Array.isArray(university.programs) ? university.programs : [];
   const uniScholarships: any[] = Array.isArray(university.scholarships) ? university.scholarships : [];
 
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          {
+            '@type': 'ListItem',
+            position: 1,
+            name: 'Home',
+            item: 'https://keyabroad.com',
+          },
+          {
+            '@type': 'ListItem',
+            position: 2,
+            name: 'Universities',
+            item: 'https://keyabroad.com/universities',
+          },
+          ...(uniCountry ? [{
+            '@type': 'ListItem',
+            position: 3,
+            name: uniCountry.name,
+            item: `https://keyabroad.com/destinations/${uniCountry.slug}`,
+          }] : []),
+          {
+            '@type': 'ListItem',
+            position: uniCountry ? 4 : 3,
+            name: university.name,
+          },
+        ],
+      },
+      {
+        '@type': 'EducationalOrganization',
+        name: university.name,
+        url: `https://keyabroad.com/universities/${university.slug}`,
+        logo: university.logo_url || 'https://keyabroad.com/icon.png',
+        address: {
+          '@type': 'PostalAddress',
+          addressCountry: uniCountry?.name || '',
+        },
+      }
+    ]
+  };
+
   return (
     <div className="flex flex-col w-full min-h-screen bg-slate-50">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       {/* Hero Section */}
       <section className="bg-white border-b border-slate-200 pt-16 pb-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -99,7 +168,7 @@ export default async function UniversityDetailPage({ params }: PageProps) {
               {university.programs && university.programs.length > 0 ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {university.programs.map((program: any) => (
-                    <Link key={program.id} href={`/programs/${program.id}`}>
+                    <Link key={program.id} href={`/programs/${university.slug}/${program.slug || program.id}`}>
                       <Card className="h-full hover:border-blue-300 hover:shadow-md transition-all cursor-pointer">
                         <CardHeader className="pb-2">
                           <CardTitle className="text-lg font-bold text-slate-900 group-hover:text-blue-600">

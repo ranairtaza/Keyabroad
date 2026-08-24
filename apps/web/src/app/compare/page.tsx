@@ -89,7 +89,11 @@ export default function ComparePage() {
                   <td className="p-6 border-r font-medium text-slate-700 bg-slate-50">Action</td>
                   {items.map((item) => (
                     <td key={item.id} className="p-6 text-center">
-                      <Link href={item.type === 'program' ? `/programs/${item.id}` : `/universities/${item.slug || item.id}`}>
+                      <Link href={
+                        item.type === 'program' 
+                          ? (item.university_slug && item.slug ? `/programs/${item.university_slug}/${item.slug}` : `/programs/${item.id}`) 
+                          : `/universities/${item.slug || item.id}`
+                      }>
                         <Button className="w-full flex items-center justify-center gap-2">
                           View Details <ArrowRight className="h-4 w-4" />
                         </Button>

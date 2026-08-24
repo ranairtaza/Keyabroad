@@ -106,6 +106,43 @@ export async function getPublishedPrograms(params: ProgramSearchParams) {
   };
 }
 
+export async function getPublishedProgramBySlug(slug: string) {
+  const supabase = await createClient();
+
+  const { data: program, error } = await supabase
+    .from('programs')
+    .select(`
+      id,
+      name,
+      slug,
+      degree_level,
+      duration,
+      tuition_fee,
+      currency,
+      universities (
+        id,
+        name,
+        slug,
+        logo_url,
+        url,
+        countries (
+          name,
+          slug,
+          flag_code
+        )
+      )
+    `)
+    .eq('slug', slug)
+    .single();
+
+  if (error) {
+    console.error(`Error fetching program ${slug}:`, error);
+    return null;
+  }
+
+  return program;
+}
+
 export async function getPublishedProgramById(id: string) {
   const supabase = await createClient();
 
@@ -120,6 +157,7 @@ export async function getPublishedProgramById(id: string) {
     .select(`
       id,
       name,
+      slug,
       degree_level,
       duration,
       tuition_fee,
