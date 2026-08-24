@@ -13,6 +13,25 @@ export async function GET() {
       );
     }
 
+    const { createClient: createServerClient } = await import("@/lib/auth/server");
+    const supabaseAuth = await createServerClient();
+    const { data: { user } } = await supabaseAuth.auth.getUser();
+    
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const { data: profile } = await supabaseAuth
+      .from('profiles')
+      .select('staff_role')
+      .eq('id', user.id)
+      .single();
+
+    const allowedRoles = ['super_admin', 'admin', 'branch_manager', 'counselor'];
+    if (!profile?.staff_role || !allowedRoles.includes(profile.staff_role)) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
     const supabaseAdmin = createClient(supabaseUrl, supabaseServiceRoleKey, {
       auth: {
         autoRefreshToken: false,

@@ -17,7 +17,27 @@ export async function POST(request: Request) {
       );
     }
 
-    // Create a Supabase client with the service role key
+    // 1. Authentication & Authorization
+    const { createClient: createServerClient } = await import("@/lib/auth/server");
+    const supabaseAuth = await createServerClient();
+    const { data: { user } } = await supabaseAuth.auth.getUser();
+    
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const { data: profile } = await supabaseAuth
+      .from('profiles')
+      .select('staff_role')
+      .eq('id', user.id)
+      .single();
+
+    const allowedRoles = ['super_admin', 'admin'];
+    if (!profile?.staff_role || !allowedRoles.includes(profile.staff_role)) {
+      return NextResponse.json({ error: 'Forbidden: Insufficient permissions to create employees' }, { status: 403 });
+    }
+
+    // 2. Create a Supabase client with the service role key for the actual creation
     const supabaseAdmin = createClient(supabaseUrl, supabaseServiceRoleKey, {
       auth: {
         autoRefreshToken: false,

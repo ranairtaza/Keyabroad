@@ -94,17 +94,17 @@ export default function Navbar() {
                 <button className="text-white group-hover:text-[#8dc63f] transition-colors font-bold text-[14px] xl:text-[15px] flex items-center py-2 outline-none">
                   More <ChevronDown className="ml-1 w-4 h-4" />
                 </button>
-                <div className="absolute top-full mt-[-8px] left-[-20px] w-48 bg-white rounded-b-xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 border border-slate-100 z-50">
-                  <div className="p-4 grid grid-cols-2 gap-2">
-                    <Link href="/about" className="px-4 py-2 text-[14px] font-bold text-slate-800 hover:text-[#8dc63f] hover:bg-slate-50 rounded-lg transition-colors block">About Us</Link>
-                    <Link href="/services" className="px-4 py-2 text-[14px] font-bold text-slate-800 hover:text-[#8dc63f] hover:bg-slate-50 rounded-lg transition-colors block">Premium Services</Link>
-                    <Link href="/scholarships" className="px-4 py-2 text-[14px] font-bold text-slate-800 hover:text-[#8dc63f] hover:bg-slate-50 rounded-lg transition-colors block">Scholarships</Link>
-                    <Link href="/compare" className="px-4 py-2 text-[14px] font-bold text-slate-800 hover:text-[#8dc63f] hover:bg-slate-50 rounded-lg transition-colors block">Compare Programs</Link>
-                    <Link href="/cost-calculator" className="px-4 py-2 text-[14px] font-bold text-slate-800 hover:text-[#8dc63f] hover:bg-slate-50 rounded-lg transition-colors block">Cost Calculator</Link>
-                    <Link href="/ai-advisor" className="px-4 py-2 text-[14px] font-bold text-slate-800 hover:text-[#8dc63f] hover:bg-slate-50 rounded-lg transition-colors block">AI Matcher</Link>
-                    <Link href="/teams" className="px-4 py-2 text-[14px] font-bold text-slate-800 hover:text-[#8dc63f] hover:bg-slate-50 rounded-lg transition-colors block">Team</Link>
-                    <Link href="/careers" className="px-4 py-2 text-[14px] font-bold text-slate-800 hover:text-[#8dc63f] hover:bg-slate-50 rounded-lg transition-colors block">Careers</Link>
-                    <Link href="/blog" className="px-4 py-2 text-[14px] font-bold text-slate-800 hover:text-[#8dc63f] hover:bg-slate-50 rounded-lg transition-colors block">Blog</Link>
+                <div className="absolute top-full mt-[-8px] left-[-20px] w-64 bg-white rounded-b-xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 border border-slate-100 z-50">
+                  <div className="py-3 flex flex-col">
+                    <Link href="/about" className="px-6 py-2.5 text-[15px] font-bold text-slate-800 hover:text-[#8dc63f] hover:bg-slate-50 transition-colors block">About Us</Link>
+                    <Link href="/services" className="px-6 py-2.5 text-[15px] font-bold text-slate-800 hover:text-[#8dc63f] hover:bg-slate-50 transition-colors block">Premium Services</Link>
+                    <Link href="/scholarships" className="px-6 py-2.5 text-[15px] font-bold text-slate-800 hover:text-[#8dc63f] hover:bg-slate-50 transition-colors block">Scholarships</Link>
+                    <Link href="/compare" className="px-6 py-2.5 text-[15px] font-bold text-slate-800 hover:text-[#8dc63f] hover:bg-slate-50 transition-colors block">Compare Programs</Link>
+                    <Link href="/cost-calculator" className="px-6 py-2.5 text-[15px] font-bold text-slate-800 hover:text-[#8dc63f] hover:bg-slate-50 transition-colors block">Cost Calculator</Link>
+                    <Link href="/ai-advisor" className="px-6 py-2.5 text-[15px] font-bold text-slate-800 hover:text-[#8dc63f] hover:bg-slate-50 transition-colors block">AI Matcher</Link>
+                    <Link href="/teams" className="px-6 py-2.5 text-[15px] font-bold text-slate-800 hover:text-[#8dc63f] hover:bg-slate-50 transition-colors block">Team</Link>
+                    <Link href="/careers" className="px-6 py-2.5 text-[15px] font-bold text-slate-800 hover:text-[#8dc63f] hover:bg-slate-50 transition-colors block">Careers</Link>
+                    <Link href="/blog" className="px-6 py-2.5 text-[15px] font-bold text-slate-800 hover:text-[#8dc63f] hover:bg-slate-50 transition-colors block">Blog</Link>
                   </div>
                 </div>
               </div>

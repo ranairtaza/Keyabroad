@@ -15,8 +15,8 @@ export async function generateMetadata({ searchParams }: PageProps): Promise<Met
   const hasFilters = Object.keys(resolvedParams).filter(k => k !== 'page' && resolvedParams[k as keyof typeof resolvedParams]).length > 0;
 
   return {
-    title: 'Partner Universities | KeyAbroad',
-    description: 'Search and browse our global network of verified partner universities.',
+    title: 'Major Universities | KeyAbroad',
+    description: 'Search and browse our global network of verified major universities.',
     robots: {
       index: !hasFilters,
       follow: true,
@@ -57,7 +57,7 @@ export default async function UniversitiesPage({ searchParams }: PageProps) {
       <section className="relative py-24 bg-[#0a1930] overflow-hidden">
         <div className="absolute inset-0 bg-black/20" />
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-4xl md:text-5xl font-bold text-white mb-6">Partner Universities</h1>
+          <h1 className="text-4xl md:text-5xl font-bold text-white mb-6">Major Universities</h1>
           <p className="text-xl text-blue-100 max-w-2xl mx-auto">
             Browse our global network of esteemed educational institutions.
           </p>

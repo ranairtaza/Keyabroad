@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import crypto from 'crypto';
 
 // We use the service role key to bypass RLS when creating tasks from a backend webhook
 const supabase = createClient(
@@ -9,8 +10,29 @@ const supabase = createClient(
 
 export async function POST(req: Request) {
   try {
+    const configuredSecret = process.env.SUPABASE_WEBHOOK_SECRET;
+    
+    // Fail closed if the secret is missing from the environment
+    if (!configuredSecret) {
+      console.error("CRITICAL: SUPABASE_WEBHOOK_SECRET is not configured.");
+      return NextResponse.json({ error: 'Service Unavailable' }, { status: 503 });
+    }
+
+    const providedSecret = req.headers.get('x-supabase-webhook-secret');
+    
+    if (!providedSecret) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    // Timing-safe comparison
+    const configuredBuffer = Buffer.from(configuredSecret);
+    const providedBuffer = Buffer.from(providedSecret);
+
+    if (configuredBuffer.length !== providedBuffer.length || !crypto.timingSafeEqual(configuredBuffer, providedBuffer)) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     const payload = await req.json();
-    console.log('Received Supabase Webhook:', payload);
 
     // payload from Supabase webhook: { type: 'INSERT' | 'UPDATE', table: 'enquiries', record: {...}, old_record: {...} }
     const { type, table, record, old_record } = payload;
@@ -67,7 +89,7 @@ export async function POST(req: Request) {
         
         // Execute Action: Send Email
         if (rule.action_type === 'send_email') {
-          console.log(`Triggering notification for: ${record.email} with template: ${rule.action_payload?.template}`);
+          console.log(`Triggering notification with template: ${rule.action_payload?.template}`);
           // In a real production environment, use absolute URL like process.env.NEXT_PUBLIC_SITE_URL
           // For now, we simulate an internal async call or just log if not possible.
           try {

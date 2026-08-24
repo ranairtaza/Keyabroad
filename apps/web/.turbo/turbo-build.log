@@ -1,99 +1,20 @@
 
 > web@0.1.0 prebuild
-> npm install --no-save @tailwindcss/oxide-linux-x64-gnu@4.3.2
+> npm install --no-save @tailwindcss/oxide-linux-x64-gnu@4.3.2 lightningcss-linux-x64-gnu
 
-
-up to date, audited 1174 packages in 12s
-
-188 packages are looking for funding
-  run `npm fund` for details
-
-8 vulnerabilities (1 moderate, 7 high)
-
-To address issues that do not require attention, run:
-  npm audit fix
-
-To address all issues possible (including breaking changes), run:
-  npm audit fix --force
-
-Some issues need review, and may require choosing
-a different dependency.
-
-Run `npm audit` for details.
-
-> web@0.1.0 build
-> next build
-
-▲ Next.js 16.2.11 (Turbopack)
-- Environments: .env.local
-
-⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
-  Creating an optimized production build ...
-✓ Compiled successfully in 26.6s
-  Running TypeScript ...
-  Finished TypeScript in 27.3s ...
-  Collecting page data using 7 workers ...
-  Generating static pages using 7 workers (0/54) ...
-  Generating static pages using 7 workers (13/54) 
-  Generating static pages using 7 workers (26/54) 
-  Generating static pages using 7 workers (40/54) 
-✓ Generating static pages using 7 workers (54/54) in 8.0s
-  Finalizing page optimization ...
-
-Route (app)
-┌ ○ /
-├ ○ /_not-found
-├ ○ /about
-├ ○ /ai-advisor
-├ ƒ /api/chat
-├ ƒ /api/debug-countries
-├ ƒ /api/health
-├ ƒ /api/messages
-├ ƒ /api/notify
-├ ○ /blog
-├ ƒ /blog/[slug]
-├ ○ /book-appointment
-├ ○ /careers
-├ ○ /compare
-├ ○ /contact
-├ ○ /cost-calculator
-├ ○ /counseling
-├ ○ /destinations
-├ ● /destinations/[country]
-│ ├ /destinations/united-kingdom
-│ ├ /destinations/united-states
-│ ├ /destinations/canada
-│ └ [+14 more paths]
-├ ○ /eligibility
-├ ○ /feedback
-├ ○ /icon.png
-├ ○ /language-tests
-├ ƒ /language-tests/[test]
-├ ○ /login
-├ ƒ /programs
-├ ƒ /programs/[id]
-├ ○ /robots.txt
-├ ƒ /scholarships
-├ ƒ /scholarships/[id]
-├ ○ /services
-├ ○ /sitemap.xml
-├ ○ /student
-├ ○ /student/applications
-├ ○ /student/dashboard
-├ ○ /student/documents
-├ ƒ /student/finance
-├ ƒ /student/finance/receipt/[id]
-├ ○ /student/messages
-├ ○ /student/profile
-├ ○ /teams
-├ ƒ /universities
-├ ƒ /universities/[slug]
-└ ○ /walk-in
-
-
-ƒ Proxy (Middleware)
-
-○  (Static)   prerendered as static content
-●  (SSG)      prerendered as static HTML (uses generateStaticParams)
-ƒ  (Dynamic)  server-rendered on demand
-
+npm error code EBADPLATFORM
+npm error notsup Unsupported platform for lightningcss-linux-x64-gnu@1.32.0: wanted {"os":"linux","cpu":"x64","libc":"glibc"} (current: {"os":"win32","cpu":"x64"})
+npm error notsup Valid os:    linux
+npm error notsup Actual os:   win32
+npm error notsup Valid cpu:   x64
+npm error notsup Actual cpu:  x64
+npm error notsup Valid libc:  glibc
+npm error notsup Actual libc: undefined
+npm error A complete log of this run can be found in: D:\npm-cache\_logs\2026-08-24T17_21_51_275Z-debug-0.log
+npm error Lifecycle script `build` failed with error:
+npm error code 1
+npm error path C:\Users\DeLL\OneDrive\Desktop\Keyabroad\apps\web
+npm error workspace web@0.1.0
+npm error location C:\Users\DeLL\OneDrive\Desktop\Keyabroad\apps\web
+npm error command failed
+npm error command C:\Windows\system32\cmd.exe /d /s /c npm install --no-save @tailwindcss/oxide-linux-x64-gnu@4.3.2 lightningcss-linux-x64-gnu

@@ -2,6 +2,7 @@ import { createClient } from "@/lib/auth/server";
 import { Receipt, Search, CreditCard, Download, Filter } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { Pagination } from "@/components/shared/Pagination";
 
 export default async function FeesPage({
   searchParams,
@@ -20,6 +21,12 @@ export default async function FeesPage({
   const q = typeof resolvedParams?.q === 'string' ? resolvedParams.q : '';
   const method = typeof resolvedParams?.method === 'string' ? resolvedParams.method : '';
   const status = typeof resolvedParams?.status === 'string' ? resolvedParams.status : '';
+  
+  const pageParam = typeof resolvedParams?.page === 'string' ? parseInt(resolvedParams.page, 10) : 1;
+  const page = isNaN(pageParam) || pageParam < 1 ? 1 : pageParam;
+  const PAGE_SIZE = 25;
+  const start = (page - 1) * PAGE_SIZE;
+  const end = start + PAGE_SIZE - 1;
 
   let query = supabase
     .from('payments')
@@ -27,19 +34,23 @@ export default async function FeesPage({
       id, amount, currency_code, method, reference_number, payment_date, status,
       received_by:profiles!payments_received_by_fkey(full_name),
       invoices ( id, invoice_number, students ( full_name ) )
-    `)
+    `, { count: 'exact' })
     .order('payment_date', { ascending: false });
 
   if (q) {
-    query = query.or(`reference_number.ilike.%${q}%`); // Student search needs advanced postgrest filtering, basic MVP string matches ref
+    query = query.or(`reference_number.ilike.%${q}%`); 
   }
   if (method && method !== 'ALL') query = query.eq('method', method);
   if (status && status !== 'ALL') query = query.eq('status', status);
 
-  const { data: payments, error } = await query;
-  if (error) console.error("Error fetching payments:", error);
+  const { data: payments, error, count } = await query.range(start, end);
+  
+  if (error) {
+    throw new Error(`Failed to fetch payments: ${error.message}`);
+  }
 
   const paymentList = payments || [];
+  const totalPages = count ? Math.ceil(count / PAGE_SIZE) : 0;
 
   return (
     <div className="space-y-6 max-w-7xl mx-auto pb-12">
@@ -153,6 +164,8 @@ export default async function FeesPage({
             </tbody>
           </table>
         </div>
+        
+        <Pagination currentPage={page} totalPages={totalPages} totalItems={count || 0} />
       </div>
     </div>
   );

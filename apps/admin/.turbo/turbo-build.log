@@ -1,120 +1,20 @@
 
 > admin@0.1.0 prebuild
-> npm install --no-save @tailwindcss/oxide-linux-x64-gnu@4.3.3
+> npm install --no-save @tailwindcss/oxide-linux-x64-gnu@4.3.3 lightningcss-linux-x64-gnu
 
-
-up to date, audited 1174 packages in 12s
-
-188 packages are looking for funding
-  run `npm fund` for details
-
-7 vulnerabilities (1 moderate, 6 high)
-
-To address issues that do not require attention, run:
-  npm audit fix
-
-Some issues need review, and may require choosing
-a different dependency.
-
-Run `npm audit` for details.
-
-> admin@0.1.0 build
-> next build
-
-▲ Next.js 16.2.11 (Turbopack)
-- Environments: .env.local
-
-⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
-  Creating an optimized production build ...
-✓ Compiled successfully in 41s
-  Running TypeScript ...
-  Finished TypeScript in 31.2s ...
-  Collecting page data using 7 workers ...
-  Generating static pages using 7 workers (0/64) ...
-  Generating static pages using 7 workers (16/64) 
-  Generating static pages using 7 workers (32/64) 
-  Generating static pages using 7 workers (48/64) 
-✓ Generating static pages using 7 workers (64/64) in 3.3s
-  Finalizing page optimization ...
-
-Route (app)
-┌ ○ /
-├ ○ /_not-found
-├ ƒ /analytics
-├ ƒ /analytics/applications
-├ ƒ /analytics/leads
-├ ƒ /analytics/revenue
-├ ƒ /analytics/team
-├ ƒ /api/ai/chat
-├ ƒ /api/ai/matcher
-├ ƒ /api/automations/check-invoices
-├ ƒ /api/automations/check-tasks
-├ ƒ /api/automations/mark-absent
-├ ƒ /api/automations/sla-check
-├ ƒ /api/automations/webhook
-├ ƒ /api/create-employee
-├ ƒ /api/export
-├ ƒ /api/health
-├ ƒ /api/health/ready
-├ ƒ /api/leads/webhook
-├ ƒ /api/messages
-├ ƒ /api/notify
-├ ƒ /api/notify/in-app
-├ ƒ /api/notify/list
-├ ƒ /api/notify/read
-├ ƒ /api/ocr
-├ ƒ /api/tasks/create
-├ ƒ /api/tasks/delete
-├ ƒ /api/tasks/list
-├ ƒ /api/tasks/update
-├ ƒ /api/time
-├ ○ /appointments
-├ ○ /attendance
-├ ○ /automations
-├ ○ /blogs
-├ ○ /campaigns
-├ ƒ /commissions
-├ ○ /cost-calculator-config
-├ ○ /course-matcher
-├ ○ /crm/audit
-├ ○ /crm/documents
-├ ○ /crm/leads
-├ ○ /crm/messages
-├ ƒ /crm/students/[id]
-├ ƒ /crm/tasks
-├ ○ /database
-├ ƒ /embed/reviews
-├ ○ /feedback
-├ ƒ /feedback/[id]
-├ ƒ /fees
-├ ○ /hr-operations
-├ ○ /icon.png
-├ ○ /integrations
-├ ƒ /invoices
-├ ƒ /invoices/[id]
-├ ƒ /invoices/[id]/pay
-├ ○ /invoices/create
-├ ○ /leads
-├ ○ /login
-├ ○ /master-records
-├ ○ /operations
-├ ƒ /operations/command-center
-├ ƒ /operations/performance
-├ ○ /operations/system-health
-├ ○ /pipeline
-├ ○ /pipeline/applications
-├ ƒ /receipt/[id]
-├ ○ /reviews
-├ ○ /settings
-├ ○ /tasks
-├ ○ /team
-├ ○ /universities
-├ ○ /universities/create
-└ ○ /visas
-
-
-ƒ Proxy (Middleware)
-
-○  (Static)   prerendered as static content
-ƒ  (Dynamic)  server-rendered on demand
-
+npm error code EBADPLATFORM
+npm error notsup Unsupported platform for lightningcss-linux-x64-gnu@1.32.0: wanted {"os":"linux","cpu":"x64","libc":"glibc"} (current: {"os":"win32","cpu":"x64"})
+npm error notsup Valid os:    linux
+npm error notsup Actual os:   win32
+npm error notsup Valid cpu:   x64
+npm error notsup Actual cpu:  x64
+npm error notsup Valid libc:  glibc
+npm error notsup Actual libc: undefined
+npm error A complete log of this run can be found in: D:\npm-cache\_logs\2026-08-24T17_21_51_101Z-debug-0.log
+npm error Lifecycle script `build` failed with error:
+npm error code 1
+npm error path C:\Users\DeLL\OneDrive\Desktop\Keyabroad\apps\admin
+npm error workspace admin@0.1.0
+npm error location C:\Users\DeLL\OneDrive\Desktop\Keyabroad\apps\admin
+npm error command failed
+npm error command C:\Windows\system32\cmd.exe /d /s /c npm install --no-save @tailwindcss/oxide-linux-x64-gnu@4.3.3 lightningcss-linux-x64-gnu

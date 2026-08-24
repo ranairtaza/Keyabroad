@@ -6,11 +6,12 @@ import { Badge } from "@/lib/ui/components/badge";
 import { CheckCircle2, Circle, AlertCircle, Clock, User } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { Pagination } from "@/components/shared/Pagination";
 
 export const revalidate = 0;
 
 interface TasksPageProps {
-  searchParams: Promise<{ filter?: string }>;
+  searchParams: Promise<{ filter?: string; page?: string }>;
 }
 
 export default async function TasksPage({ searchParams }: TasksPageProps) {
@@ -31,6 +32,12 @@ export default async function TasksPage({ searchParams }: TasksPageProps) {
   if (!user) redirect('/login');
 
   const filter = resolvedParams.filter || 'my_tasks';
+  
+  const pageParam = typeof resolvedParams.page === 'string' ? parseInt(resolvedParams.page, 10) : 1;
+  const page = isNaN(pageParam) || pageParam < 1 ? 1 : pageParam;
+  const PAGE_SIZE = 50;
+  const start = (page - 1) * PAGE_SIZE;
+  const end = start + PAGE_SIZE - 1;
 
   let query = supabase
     .from('crm_tasks')
@@ -41,7 +48,7 @@ export default async function TasksPage({ searchParams }: TasksPageProps) {
         first_name,
         last_name
       )
-    `)
+    `, { count: 'exact' })
     .order('due_date', { ascending: true });
 
   const now = new Date();
@@ -60,11 +67,13 @@ export default async function TasksPage({ searchParams }: TasksPageProps) {
     query = query.eq('priority', 'high').neq('status', 'completed');
   }
 
-  const { data: tasks, error } = await query.limit(50);
+  const { data: tasks, error, count } = await query.range(start, end);
 
   if (error) {
-    console.error(error);
+    throw new Error(`Failed to fetch tasks: ${error.message}`);
   }
+
+  const totalPages = count ? Math.ceil(count / PAGE_SIZE) : 0;
 
   return (
     <div className="p-8 max-w-5xl mx-auto space-y-6">
@@ -150,6 +159,8 @@ export default async function TasksPage({ searchParams }: TasksPageProps) {
             </Card>
           );
         })}
+        
+        <Pagination currentPage={page} totalPages={totalPages} totalItems={count || 0} />
       </div>
     </div>
   );

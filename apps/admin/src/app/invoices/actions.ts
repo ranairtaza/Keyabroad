@@ -4,10 +4,27 @@ import { createClient } from "@/lib/auth/server";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
-export async function createDraftInvoice(formData: FormData) {
+async function requireInvoicePermissions() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) throw new Error("Unauthorized");
+
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("staff_role")
+    .eq("id", user.id)
+    .single();
+
+  const allowedRoles = ["super_admin", "admin", "branch_manager", "counselor"];
+  if (!profile?.staff_role || !allowedRoles.includes(profile.staff_role)) {
+    throw new Error("Forbidden: Insufficient permissions");
+  }
+
+  return { supabase, user, profile };
+}
+
+export async function createDraftInvoice(formData: FormData) {
+  const { supabase, user } = await requireInvoicePermissions();
 
   const studentId = formData.get("student_id") as string;
   const currencyCode = formData.get("currency_code") as string;
@@ -60,7 +77,7 @@ export async function createDraftInvoice(formData: FormData) {
 }
 
 export async function issueInvoice(invoiceId: string) {
-  const supabase = await createClient();
+  const { supabase } = await requireInvoicePermissions();
   const { error } = await supabase
     .from("invoices")
     .update({ status: "ISSUED", issued_at: new Date().toISOString() })
@@ -73,7 +90,7 @@ export async function issueInvoice(invoiceId: string) {
 }
 
 export async function cancelInvoice(invoiceId: string) {
-  const supabase = await createClient();
+  const { supabase } = await requireInvoicePermissions();
   const { error } = await supabase
     .from("invoices")
     .update({ status: "CANCELLED" })
@@ -86,9 +103,7 @@ export async function cancelInvoice(invoiceId: string) {
 }
 
 export async function recordPaymentAction(formData: FormData) {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) throw new Error("Unauthorized");
+  const { supabase } = await requireInvoicePermissions();
 
   const invoiceId = formData.get("invoice_id") as string;
   const amount = parseFloat(formData.get("amount") as string);
@@ -117,9 +132,7 @@ export async function recordPaymentAction(formData: FormData) {
 }
 
 export async function reversePaymentAction(paymentId: string, invoiceId: string) {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) throw new Error("Unauthorized");
+  const { supabase } = await requireInvoicePermissions();
 
   // Since we don't have a reverse_payment RPC, we just securely update the status.
   // The enforce_amount_paid_immutability trigger on invoice updates will automatically recalculate balances.

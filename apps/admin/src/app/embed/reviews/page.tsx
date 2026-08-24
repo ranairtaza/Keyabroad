@@ -7,12 +7,12 @@ export const dynamic = 'force-dynamic';
 export default async function ReviewsEmbedPage() {
   const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
   );
 
   const { data: feedbacks } = await supabase
     .from("student_feedbacks")
-    .select("*, students(name, target_destination, university_applied)")
+    .select("*, students!inner(name, university_applied)") // Removed target_destination to minimize exposure, assuming name/uni is public for reviews
     .gte("rating", 4)
     .order("created_at", { ascending: false })
     .limit(6);

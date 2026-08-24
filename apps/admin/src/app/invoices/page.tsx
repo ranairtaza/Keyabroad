@@ -2,6 +2,7 @@ import { createClient } from "@/lib/auth/server";
 import { FileText, Plus, Search, Calendar, Filter } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { Pagination } from "@/components/shared/Pagination";
 
 export default async function InvoicesPage({
   searchParams,
@@ -20,6 +21,11 @@ export default async function InvoicesPage({
   // Extract search params safely
   const q = typeof resolvedParams?.q === 'string' ? resolvedParams.q : '';
   const status = typeof resolvedParams?.status === 'string' ? resolvedParams.status : '';
+  const pageParam = typeof resolvedParams?.page === 'string' ? parseInt(resolvedParams.page, 10) : 1;
+  const page = isNaN(pageParam) || pageParam < 1 ? 1 : pageParam;
+  const PAGE_SIZE = 25;
+  const start = (page - 1) * PAGE_SIZE;
+  const end = start + PAGE_SIZE - 1;
 
   // Start query
   let query = supabase
@@ -28,23 +34,24 @@ export default async function InvoicesPage({
       id, invoice_number, total_amount, amount_paid, status, due_date, currency_code, branch,
       students ( full_name, email ),
       assigned_counselor:profiles!invoices_assigned_counselor_id_fkey(full_name)
-    `)
+    `, { count: 'exact' })
     .order('created_at', { ascending: false });
 
   if (q) {
-    query = query.or(`invoice_number.ilike.%${q}%`); // student name search requires a different approach or RPC in postgrest, for MVP we search invoice_number
+    query = query.or(`invoice_number.ilike.%${q}%`); 
   }
   if (status && status !== 'ALL') {
     query = query.eq('status', status);
   }
 
-  const { data: invoices, error } = await query;
+  const { data: invoices, error, count } = await query.range(start, end);
 
   if (error) {
-    console.error("Error fetching invoices:", error);
+    throw new Error(`Failed to fetch invoices: ${error.message}`);
   }
 
   const invoiceList = invoices || [];
+  const totalPages = count ? Math.ceil(count / PAGE_SIZE) : 0;
 
   return (
     <div className="space-y-6 max-w-7xl mx-auto pb-12">
@@ -160,6 +167,8 @@ export default async function InvoicesPage({
             </tbody>
           </table>
         </div>
+        
+        <Pagination currentPage={page} totalPages={totalPages} totalItems={count || 0} />
       </div>
     </div>
   );

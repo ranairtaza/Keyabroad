@@ -133,7 +133,7 @@ export default async function CountryPage({ params }: PageProps) {
         {/* Right Column (Universities) */}
         <div className="lg:w-2/3">
           <div className="flex items-center justify-between mb-8">
-            <h2 className="text-3xl font-bold text-slate-900">Partner Universities</h2>
+            <h2 className="text-3xl font-bold text-slate-900">Major Universities</h2>
             <Badge variant="secondary" className="px-3 py-1 text-sm bg-blue-50 text-blue-700 hover:bg-blue-100">
               <Building2 className="h-4 w-4 mr-2" />
               {country.universities?.length || 0} Institutions
