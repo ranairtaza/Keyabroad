@@ -55,8 +55,8 @@ export default function CostCalculatorPage() {
 
   const fetchData = async () => {
     setLoading(true);
-    const { data: countriesData } = await supabase.from('countries').select('id, name, currency_code, exchange_rate_to_pkr, average_living_cost_per_year, visa_fee, health_insurance_cost, flight_ticket_cost, bank_statement_amount, embassy_fee, consultant_fee, miscellaneous_cost, scholarship_max_amount');
-    const { data: universitiesData } = await supabase.from('universities').select('id, name, country_id');
+    const { data: countriesData } = await supabase.from('countries').select('id, name, currency_code, exchange_rate_to_pkr, average_living_cost_per_year, visa_fee, health_insurance_cost, flight_ticket_cost');
+    const { data: universitiesData } = await supabase.from('universities').select('id, name, country_id, avg_bachelors_tuition, avg_masters_tuition, required_documents, application_fee');
     if (countriesData) {
       setCountries(countriesData as any);
       if (countriesData.length > 0) setSelectedCountryId(countriesData[0].id);
