@@ -6,8 +6,9 @@ import { redirect } from "next/navigation";
 export default async function InvoicesPage({
   searchParams,
 }: {
-  searchParams: { [key: string]: string | string[] | undefined };
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
+  const resolvedParams = await searchParams;
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return redirect('/login');
@@ -17,8 +18,8 @@ export default async function InvoicesPage({
   const canManage = role === 'super_admin' || role === 'admin' || role === 'branch_manager' || role === 'counselor';
 
   // Extract search params safely
-  const q = typeof searchParams?.q === 'string' ? searchParams.q : '';
-  const status = typeof searchParams?.status === 'string' ? searchParams.status : '';
+  const q = typeof resolvedParams?.q === 'string' ? resolvedParams.q : '';
+  const status = typeof resolvedParams?.status === 'string' ? resolvedParams.status : '';
 
   // Start query
   let query = supabase

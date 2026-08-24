@@ -1,16 +1,15 @@
 import type { Metadata } from "next";
-import Script from "next/script";
 import { Inter, Outfit } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import dynamic from 'next/dynamic';
 import PageTracker from "@/components/PageTracker";
 import { AIChatbot } from "@/components/ai/AIChatbot";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/next";
 import { ThemeProvider } from "next-themes";
 import { Toaster } from "@keyabroad/ui/components/sonner";
+import GoogleTagManager from "@/components/analytics/GoogleTagManager";
 
 const inter = Inter({
   variable: "--font-sans",
@@ -66,26 +65,8 @@ export default function RootLayout({
       className={`${inter.variable} ${outfit.variable} h-full antialiased`}
       suppressHydrationWarning
     >
-      <head>
-        <Script
-          strategy="afterInteractive"
-          src="https://www.googletagmanager.com/gtag/js?id=G-HXY2EHQNDX"
-        />
-        <Script
-          id="gtag-init"
-          strategy="afterInteractive"
-          dangerouslySetInnerHTML={{
-            __html: `
-              window.dataLayer = window.dataLayer || [];
-              function gtag(){dataLayer.push(arguments);}
-              gtag('js', new Date());
-
-              gtag('config', 'G-HXY2EHQNDX');
-            `,
-          }}
-        />
-      </head>
       <body className="min-h-full flex flex-col font-sans" suppressHydrationWarning>
+        <GoogleTagManager gtmId={process.env.NEXT_PUBLIC_GTM_ID} />
         <ThemeProvider
           attribute="class"
           defaultTheme="system"

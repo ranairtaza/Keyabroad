@@ -6,8 +6,9 @@ import { redirect } from "next/navigation";
 export default async function FeesPage({
   searchParams,
 }: {
-  searchParams: { [key: string]: string | string[] | undefined };
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
+  const resolvedParams = await searchParams;
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return redirect('/login');
@@ -16,9 +17,9 @@ export default async function FeesPage({
   const role = profile?.staff_role;
   const canManage = role === 'super_admin' || role === 'admin' || role === 'branch_manager' || role === 'counselor';
 
-  const q = typeof searchParams?.q === 'string' ? searchParams.q : '';
-  const method = typeof searchParams?.method === 'string' ? searchParams.method : '';
-  const status = typeof searchParams?.status === 'string' ? searchParams.status : '';
+  const q = typeof resolvedParams?.q === 'string' ? resolvedParams.q : '';
+  const method = typeof resolvedParams?.method === 'string' ? resolvedParams.method : '';
+  const status = typeof resolvedParams?.status === 'string' ? resolvedParams.status : '';
 
   let query = supabase
     .from('payments')

@@ -8,6 +8,20 @@ export async function GET(request: Request) {
   const endDate = searchParams.get('end');
 
   const supabase = await createClient();
+  
+  // Security Check: Enforce Authentication & Authorization
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+  
+  const { data: profile } = await supabase.from('profiles').select('staff_role').eq('id', user.id).single();
+  const canExport = profile?.staff_role === 'super_admin' || profile?.staff_role === 'admin' || profile?.staff_role === 'branch_manager';
+  
+  if (!canExport) {
+    return NextResponse.json({ error: "Forbidden: Insufficient permissions" }, { status: 403 });
+  }
+
   let data: any = null;
   let headers: string[] = [];
   let rows: string[][] = [];

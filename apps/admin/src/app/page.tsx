@@ -5,7 +5,7 @@ import Hover3DWrapper from "@/components/Hover3DWrapper";
 import AnimatedCounter from "@/components/AnimatedCounter";
 import MagneticButton from "@/components/MagneticButton";
 import AnalyticsChart from "@/components/AnalyticsChart";
-import { Users, FileText, CheckCircle, Clock, Phone } from "lucide-react";
+import { Users, FileText, CheckCircle, Clock, Phone, Download } from "lucide-react";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/auth/legacy";
 import { useRouter } from "next/navigation";
@@ -132,6 +132,14 @@ export default function Dashboard() {
         <motion.div variants={item} className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <h2 className="text-3xl font-bold text-slate-900 dark:text-white">Dashboard Overview</h2>
           <div className="flex flex-wrap gap-4 w-full md:w-auto">
+            <MagneticButton>
+              <button 
+                onClick={() => window.open('/api/export?type=leads', '_blank')}
+                className="flex-1 md:flex-none justify-center px-4 py-2 bg-slate-800 text-white rounded-lg hover:bg-slate-700 transition-colors shadow-sm border border-slate-700 text-sm font-medium flex items-center gap-2"
+              >
+                <Download size={16} /> Export Leads
+              </button>
+            </MagneticButton>
             <MagneticButton>
               <button 
                 onClick={() => router.push('/operations')}

@@ -10,10 +10,11 @@ import { redirect } from "next/navigation";
 export const revalidate = 0;
 
 interface TasksPageProps {
-  searchParams: { filter?: string };
+  searchParams: Promise<{ filter?: string }>;
 }
 
 export default async function TasksPage({ searchParams }: TasksPageProps) {
+  const resolvedParams = await searchParams;
   const cookieStore = await cookies();
   const supabase = createServerClient<Database>(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -29,7 +30,7 @@ export default async function TasksPage({ searchParams }: TasksPageProps) {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect('/login');
 
-  const filter = searchParams.filter || 'my_tasks';
+  const filter = resolvedParams.filter || 'my_tasks';
 
   let query = supabase
     .from('crm_tasks')

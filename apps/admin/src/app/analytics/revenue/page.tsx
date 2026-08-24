@@ -7,8 +7,9 @@ import AnalyticsCharts from "./AnalyticsCharts";
 export default async function RevenueAnalyticsPage({
   searchParams,
 }: {
-  searchParams: { [key: string]: string | string[] | undefined };
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
+  const resolvedParams = await searchParams;
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return redirect('/login');
@@ -25,7 +26,7 @@ export default async function RevenueAnalyticsPage({
     );
   }
 
-  const range = typeof searchParams.range === 'string' ? searchParams.range : 'all';
+  const range = typeof resolvedParams.range === 'string' ? resolvedParams.range : 'all';
   let startDate = null;
   let endDate = null;
   const now = new Date();
