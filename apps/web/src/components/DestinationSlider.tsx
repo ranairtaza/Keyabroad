@@ -72,8 +72,8 @@ export default function DestinationSlider() {
                       priority={index < 3}
                       className="object-cover transition-transform duration-700 group-hover:scale-110"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent" />
-                    <div className="absolute bottom-0 left-0 right-0 p-6" style={{ transform: "translateZ(30px)" }}>
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-80 group-hover:opacity-100 transition-opacity" />
+                    <div className="absolute bottom-0 left-0 right-0 p-6 backdrop-blur-[2px]" style={{ transform: "translateZ(30px)" }}>
                       <div className="flex items-center gap-3 mb-2">
                         {destination.flagCode && (
                           <img 
