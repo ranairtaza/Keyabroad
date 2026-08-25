@@ -12,6 +12,8 @@ type University = {
   intake: string;
   deadline: string;
   commission: string;
+  avg_bachelors_tuition: number;
+  avg_masters_tuition: number;
 };
 
 export default function UniversitiesPage() {
@@ -22,8 +24,9 @@ export default function UniversitiesPage() {
   
   // Modal state
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [newUni, setNewUni] = useState({
-    name: "", country: "UK", reqs: "", intake: "", deadline: "", commission: ""
+    name: "", country: "UK", reqs: "", intake: "", deadline: "", commission: "", avg_bachelors_tuition: 15000, avg_masters_tuition: 20000
   });
 
   const supabase = createClient();
@@ -39,19 +42,50 @@ export default function UniversitiesPage() {
     fetchUniversities();
   }, []);
 
-  const handleAddUniversity = async (e: React.FormEvent) => {
+  const handleSaveUniversity = async (e: React.FormEvent) => {
     e.preventDefault();
-    const { data, error } = await supabase.from('universities').insert([newUni]).select();
-    
-    if (error) {
-      toast.error("Failed to add university");
-      console.error(error);
-    } else if (data) {
-      toast.success("University added successfully!");
-      setUniversities([data[0], ...universities]);
-      setIsModalOpen(false);
-      setNewUni({ name: "", country: "UK", reqs: "", intake: "", deadline: "", commission: "" });
+    if (editingId) {
+      // Update existing
+      const { error } = await supabase.from('universities').update(newUni).eq('id', editingId);
+      if (error) {
+        toast.error("Failed to update university");
+      } else {
+        toast.success("University updated successfully!");
+        setUniversities(universities.map(u => u.id === editingId ? { ...u, ...newUni } : u));
+        closeModal();
+      }
+    } else {
+      // Add new
+      const { data, error } = await supabase.from('universities').insert([newUni]).select();
+      if (error) {
+        toast.error("Failed to add university");
+      } else if (data) {
+        toast.success("University added successfully!");
+        setUniversities([data[0], ...universities]);
+        closeModal();
+      }
     }
+  };
+
+  const openEditModal = (uni: University) => {
+    setEditingId(uni.id);
+    setNewUni({
+      name: uni.name || "",
+      country: uni.country || "UK",
+      reqs: uni.reqs || "",
+      intake: uni.intake || "",
+      deadline: uni.deadline || "",
+      commission: uni.commission || "",
+      avg_bachelors_tuition: uni.avg_bachelors_tuition || 0,
+      avg_masters_tuition: uni.avg_masters_tuition || 0
+    });
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setEditingId(null);
+    setNewUni({ name: "", country: "UK", reqs: "", intake: "", deadline: "", commission: "", avg_bachelors_tuition: 15000, avg_masters_tuition: 20000 });
   };
 
   const filtered = universities.filter(u => 
@@ -67,7 +101,7 @@ export default function UniversitiesPage() {
           <p className="text-slate-500">Track partner universities, intake deadlines, and entry requirements in real-time.</p>
         </div>
         <button 
-          onClick={() => setIsModalOpen(true)}
+          onClick={() => { setEditingId(null); setIsModalOpen(true); }}
           className="bg-primary hover:bg-blue-600 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center gap-2 shadow-sm"
         >
           <Plus size={18} /> Add University
@@ -112,8 +146,13 @@ export default function UniversitiesPage() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
           {filtered.map(uni => (
-            <div key={uni.id} className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow">
-              <h3 className="text-xl font-bold text-slate-800 dark:text-white mb-4">{uni.name}</h3>
+            <div key={uni.id} className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow relative">
+              <div className="flex justify-between items-start mb-4">
+                <h3 className="text-xl font-bold text-slate-800 dark:text-white">{uni.name}</h3>
+                <button onClick={() => openEditModal(uni)} className="text-sm font-medium text-blue-600 hover:text-blue-700 bg-blue-50 px-3 py-1 rounded-full">
+                  Edit
+                </button>
+              </div>
               
               <div className="space-y-3">
                 <div className="flex items-start gap-3 text-slate-600 dark:text-slate-400">
@@ -131,9 +170,16 @@ export default function UniversitiesPage() {
                     <span className="text-red-500 font-medium">Deadline: {uni.deadline}</span>
                   </div>
                 </div>
-                <div className="flex items-start gap-3 text-slate-600 dark:text-slate-400">
+                <div className="flex items-start gap-3 text-slate-600 dark:text-slate-400 pt-2 border-t border-slate-100 dark:border-slate-800">
                   <Banknote size={18} className="mt-0.5 text-green-500 flex-shrink-0" />
-                  <span className="text-sm"><strong className="text-slate-700 dark:text-slate-300">Est. Commission:</strong> {uni.commission}</span>
+                  <div className="text-sm w-full">
+                    <div className="flex justify-between mb-1">
+                      <span>Bachelors Avg:</span> <strong>${uni.avg_bachelors_tuition || 0}</strong>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Masters Avg:</span> <strong>${uni.avg_masters_tuition || 0}</strong>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -146,18 +192,18 @@ export default function UniversitiesPage() {
         </div>
       )}
 
-      {/* Add University Modal */}
+      {/* Add/Edit University Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-white dark:bg-slate-900 rounded-2xl w-full max-w-md shadow-2xl overflow-hidden border border-slate-200 dark:border-slate-800">
-            <div className="p-6 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-950/50">
-              <h2 className="text-xl font-bold text-slate-900 dark:text-white">Add New University</h2>
-              <button onClick={() => setIsModalOpen(false)} className="text-slate-400 hover:text-slate-600">
+          <div className="bg-white dark:bg-slate-900 rounded-2xl w-full max-w-md shadow-2xl overflow-hidden border border-slate-200 dark:border-slate-800 max-h-[90vh] flex flex-col">
+            <div className="p-6 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-950/50 flex-shrink-0">
+              <h2 className="text-xl font-bold text-slate-900 dark:text-white">{editingId ? "Edit University" : "Add New University"}</h2>
+              <button onClick={closeModal} className="text-slate-400 hover:text-slate-600">
                 <X size={20} />
               </button>
             </div>
             
-            <form onSubmit={handleAddUniversity} className="p-6 space-y-4">
+            <form onSubmit={handleSaveUniversity} className="p-6 space-y-4 overflow-y-auto">
               <div>
                 <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">University Name</label>
                 <input required type="text" value={newUni.name} onChange={e => setNewUni({...newUni, name: e.target.value})} className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg px-3 py-2 text-slate-900 dark:text-white focus:outline-none focus:border-primary" placeholder="e.g. Oxford University" />
@@ -170,7 +216,9 @@ export default function UniversitiesPage() {
                   <option value="USA">USA</option>
                   <option value="Canada">Canada</option>
                   <option value="Australia">Australia</option>
+                  <option value="New Zealand">New Zealand</option>
                   <option value="Germany">Germany</option>
+                  <option value="Ireland">Ireland</option>
                   <option value="Sweden">Sweden</option>
                   <option value="Cyprus">Cyprus</option>
                   <option value="Finland">Finland</option>
@@ -198,13 +246,24 @@ export default function UniversitiesPage() {
                 <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Est. Commission</label>
                 <input required type="text" value={newUni.commission} onChange={e => setNewUni({...newUni, commission: e.target.value})} className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg px-3 py-2 text-slate-900 dark:text-white focus:outline-none focus:border-primary" placeholder="e.g. $1,500" />
               </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Bachelors Avg Tuition</label>
+                  <input required type="number" value={newUni.avg_bachelors_tuition} onChange={e => setNewUni({...newUni, avg_bachelors_tuition: Number(e.target.value)})} className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg px-3 py-2 text-slate-900 dark:text-white focus:outline-none focus:border-primary" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Masters Avg Tuition</label>
+                  <input required type="number" value={newUni.avg_masters_tuition} onChange={e => setNewUni({...newUni, avg_masters_tuition: Number(e.target.value)})} className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg px-3 py-2 text-slate-900 dark:text-white focus:outline-none focus:border-primary" />
+                </div>
+              </div>
               
-              <div className="pt-4 flex justify-end gap-3">
-                <button type="button" onClick={() => setIsModalOpen(false)} className="px-4 py-2 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg font-medium transition-colors">
+              <div className="pt-4 flex justify-end gap-3 flex-shrink-0">
+                <button type="button" onClick={closeModal} className="px-4 py-2 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg font-medium transition-colors">
                   Cancel
                 </button>
                 <button type="submit" className="bg-primary hover:bg-blue-600 text-white px-4 py-2 rounded-lg font-medium shadow-md shadow-primary/20 transition-colors">
-                  Save University
+                  {editingId ? "Save Changes" : "Save University"}
                 </button>
               </div>
             </form>
