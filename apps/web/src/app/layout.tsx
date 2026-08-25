@@ -46,11 +46,6 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "KeyAbroad | Study Abroad Consultants",
     description: "Your trusted partner for overseas education, university admissions, scholarships, and student visas.",
-  },
-  icons: {
-    icon: '/keyabroad.png',
-    shortcut: '/keyabroad.png',
-    apple: '/keyabroad.png',
   }
 };
 
