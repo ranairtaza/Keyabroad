@@ -4,7 +4,6 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "prebuild": "npm install --no-save @tailwindcss/oxide-linux-x64-gnu@4.3.2 lightningcss-linux-x64-gnu",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
@@ -75,6 +74,7 @@
     "typescript": "^5"
   },
   "optionalDependencies": {
-    "@tailwindcss/oxide-linux-x64-gnu": "4.3.2"
+    "@tailwindcss/oxide-linux-x64-gnu": "4.3.2",
+    "lightningcss-linux-x64-gnu": "^1.32.0"
   }
 }
