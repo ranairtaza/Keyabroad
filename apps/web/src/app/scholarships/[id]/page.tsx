@@ -5,7 +5,7 @@ import { Button } from '@keyabroad/ui/components/button';
 import { Banknote, Building2, MapPin, CalendarClock, Globe } from 'lucide-react';
 import { Metadata } from 'next';
 
-export const revalidate = 3600;
+export const revalidate = 0;
 
 interface PageProps {
   params: Promise<{

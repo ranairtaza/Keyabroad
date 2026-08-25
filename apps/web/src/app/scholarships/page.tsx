@@ -8,7 +8,7 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 import Link from 'next/link';
 import { Metadata } from 'next';
 
-export const revalidate = 3600;
+export const revalidate = 0;
 
 export const metadata: Metadata = {
   title: 'Scholarships & Funding | KeyAbroad',
