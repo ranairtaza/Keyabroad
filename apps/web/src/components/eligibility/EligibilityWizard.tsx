@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@keyabroad/ui/componen
 import { Input } from '@keyabroad/ui/components/input';
 import { Label } from '@keyabroad/ui/components/label';
 import { CheckCircle2, ArrowRight, ArrowLeft, Loader2, Sparkles, AlertCircle } from 'lucide-react';
+import { useEffect } from 'react';
 import { supabase } from '@keyabroad/auth/legacy';
 import Link from 'next/link';
 
@@ -31,6 +32,15 @@ export function EligibilityWizard() {
   const [step, setStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [result, setResult] = useState<EligibilityResult | null>(null);
+  const [countries, setCountries] = useState<{ id: string, name: string }[]>([]);
+
+  useEffect(() => {
+    async function fetchCountries() {
+      const { data } = await supabase.from('countries').select('id, name').order('name');
+      if (data) setCountries(data);
+    }
+    fetchCountries();
+  }, []);
 
   const [formData, setFormData] = useState<EligibilitySubmission>({
     firstName: '',
@@ -217,7 +227,7 @@ export function EligibilityWizard() {
             <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
               <h2 className="text-2xl font-semibold text-slate-900 mb-6">Budget & Preferences</h2>
               <div className="space-y-2">
-                <Label htmlFor="budget">Annual Budget (in USD) *</Label>
+                <Label htmlFor="budget">Annual Budget (in PKR) *</Label>
                 <Input id="budget" name="budget" type="number" min="0" value={formData.budget || ''} onChange={handleChange} required />
                 <p className="text-xs text-slate-500">Includes tuition and estimated living expenses.</p>
               </div>
@@ -231,8 +241,9 @@ export function EligibilityWizard() {
                   className="flex h-10 w-full items-center justify-between rounded-md border border-slate-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
                   <option value="">Any Destination</option>
-                  <option value="98f12a32-1234-5678-90ab-cdef12345678">United Kingdom</option>
-                  <option value="98f12a32-1234-5678-90ab-cdef12345679">United States</option>
+                  {countries.map(c => (
+                    <option key={c.id} value={c.id}>{c.name}</option>
+                  ))}
                 </select>
               </div>
             </div>
