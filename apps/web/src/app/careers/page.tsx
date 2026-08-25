@@ -1,16 +1,20 @@
 import { Metadata } from 'next';
 import { Button } from '@keyabroad/ui/components/button';
 import { Card, CardContent } from '@keyabroad/ui/components/card';
-import { Briefcase, Globe, Heart, Rocket, Target, Users, Mail } from 'lucide-react';
+import { Briefcase, Globe, Heart, Rocket, Target, Users, Mail, MapPin, Building } from 'lucide-react';
 import { EmptyState } from '@/components/shared/EmptyState';
 import Link from 'next/link';
+import { createClient } from '@keyabroad/auth/server';
 
 export const metadata: Metadata = {
   title: 'Careers | KeyAbroad',
   description: 'Join KeyAbroad and build the future of global education. Explore our open positions and career opportunities.',
 };
 
-export default function CareersPage() {
+export default async function CareersPage() {
+  const supabase = createClient();
+  const { data: jobs } = await supabase.from('jobs').select('*').eq('status', 'published').order('created_at', { ascending: false });
+
   return (
     <div className="flex flex-col w-full min-h-screen bg-slate-50 pb-16">
       {/* Hero Section */}
@@ -128,20 +132,47 @@ export default function CareersPage() {
           </p>
         </div>
 
-        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-8 md:p-12">
-          <EmptyState 
-            title="No open positions right now"
-            description="We are not actively hiring at this moment, but we are always looking for great talent. Send us your CV and tell us where you think you can contribute!"
-            iconType="university"
-          />
-          <div className="mt-8 flex justify-center">
-            <Button size="lg" className="bg-primary hover:bg-primary/90 text-white shadow-md" asChild>
-              <a href="mailto:careers@keyabroad.com">
-                <Mail className="mr-2 h-4 w-4" /> Send us your CV
-              </a>
-            </Button>
+        {!jobs || jobs.length === 0 ? (
+          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-8 md:p-12">
+            <EmptyState 
+              title="No open positions right now"
+              description="We are not actively hiring at this moment, but we are always looking for great talent. Send us your CV and tell us where you think you can contribute!"
+              iconType="university"
+            />
+            <div className="mt-8 flex justify-center">
+              <Button size="lg" className="bg-primary hover:bg-primary/90 text-white shadow-md" asChild>
+                <a href="mailto:careers@keyabroad.com">
+                  <Mail className="mr-2 h-4 w-4" /> Send us your CV
+                </a>
+              </Button>
+            </div>
           </div>
-        </div>
+        ) : (
+          <div className="space-y-6">
+            {jobs.map((job) => (
+              <Card key={job.id} className="border-slate-200 shadow-sm hover:shadow-md transition-shadow">
+                <CardContent className="p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+                  <div>
+                    <h3 className="text-2xl font-bold text-slate-900 mb-2">{job.title}</h3>
+                    <div className="flex flex-wrap items-center gap-4 text-slate-600 mb-4">
+                      <div className="flex items-center gap-1.5"><Building size={16}/> {job.department}</div>
+                      <div className="flex items-center gap-1.5"><MapPin size={16}/> {job.location}</div>
+                      <div className="flex items-center gap-1.5"><Briefcase size={16}/> {job.employment_type}</div>
+                    </div>
+                    <p className="text-slate-600 line-clamp-2">{job.description}</p>
+                  </div>
+                  <div className="flex-shrink-0">
+                    <Button size="lg" className="bg-primary hover:bg-primary/90 text-white shadow-md w-full md:w-auto" asChild>
+                      <a href={`mailto:careers@keyabroad.com?subject=Application for ${encodeURIComponent(job.title)}`}>
+                        Apply Now <Mail className="ml-2 h-4 w-4" />
+                      </a>
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        )}
       </section>
 
       {/* FAQ Section */}
