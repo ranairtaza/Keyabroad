@@ -31,9 +31,8 @@ export default async function InvoicesPage({
   let query = supabase
     .from('invoices')
     .select(`
-      id, invoice_number, total_amount, amount_paid, status, due_date, currency_code, branch,
-      students ( full_name, email ),
-      assigned_counselor:profiles!invoices_assigned_counselor_id_fkey(full_name)
+      id, invoice_number, total_amount, amount_paid, status, due_date, currency_code, branch, assigned_counselor_id,
+      students ( full_name, email )
     `, { count: 'exact' })
     .order('created_at', { ascending: false });
 
@@ -51,6 +50,21 @@ export default async function InvoicesPage({
   }
 
   const invoiceList = invoices || [];
+  
+  // Fetch counselor names separately to avoid FK join issues
+  const counselorIds = invoiceList.map((i: any) => i.assigned_counselor_id).filter(Boolean);
+  if (counselorIds.length > 0) {
+    const { data: profiles } = await supabase.from('profiles').select('id, full_name').in('id', counselorIds);
+    if (profiles) {
+      invoiceList.forEach((inv: any) => {
+        if (inv.assigned_counselor_id) {
+          const profile = profiles.find((p: any) => p.id === inv.assigned_counselor_id);
+          inv.assigned_counselor = profile ? { full_name: profile.full_name } : null;
+        }
+      });
+    }
+  }
+
   const totalPages = count ? Math.ceil(count / PAGE_SIZE) : 0;
 
   return (
