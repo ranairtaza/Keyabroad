@@ -216,7 +216,7 @@ export default function PipelinePage() {
                 </div>
                 <div className="p-4 flex-1 overflow-y-auto space-y-4 custom-scrollbar">
                   {colStudents.map(student => (
-                    <Hover3DWrapper key={student.id} intensity="strong">
+                    <div key={student.id}>
                       <motion.div 
                         draggable
                         onDragStart={(e: any) => e.dataTransfer.setData("studentId", student.id)}
@@ -225,7 +225,7 @@ export default function PipelinePage() {
                       >
                         <div className="flex justify-between items-start">
                           <h4 className="font-bold text-white">{student.name}</h4>
-                          <button onClick={() => handleDelete(student.id)} className="text-red-500/50 hover:text-red-500"><Trash2 size={14}/></button>
+                          <button onClick={() => handleDelete(student.id)} className="text-red-500/50 hover:text-red-500 p-2 -m-2 z-30 relative"><Trash2 size={16}/></button>
                         </div>
                         <div className="mt-2 text-sm text-slate-400 flex flex-col gap-1">
                           <div className="flex justify-between">
@@ -253,7 +253,7 @@ export default function PipelinePage() {
                           </div>
                         </div>
                       </motion.div>
-                    </Hover3DWrapper>
+                    </div>
                   ))}
                   {colStudents.length === 0 && (
                     <div className="text-center text-slate-500 text-sm py-8 border-2 border-dashed border-slate-800 rounded-xl">
@@ -293,7 +293,7 @@ export default function PipelinePage() {
                 </div>
                 <div className="p-4 flex-1 overflow-y-auto space-y-4 custom-scrollbar">
                   {colStudents.map(student => (
-                    <Hover3DWrapper key={student.id} intensity="strong">
+                    <div key={student.id}>
                       <motion.div 
                         draggable
                         onDragStart={(e: any) => e.dataTransfer.setData("studentId", student.id)}
@@ -302,7 +302,7 @@ export default function PipelinePage() {
                       >
                         <div className="flex justify-between items-start">
                           <h4 className="font-bold text-white">{student.name}</h4>
-                          <button onClick={() => handleDelete(student.id)} className="text-red-500/50 hover:text-red-500"><Trash2 size={14}/></button>
+                          <button onClick={() => handleDelete(student.id)} className="text-red-500/50 hover:text-red-500 p-2 -m-2 z-30 relative"><Trash2 size={16}/></button>
                         </div>
                         <div className="mt-2 text-sm text-slate-400 flex flex-col gap-1">
                           <div className="flex justify-between items-center">
@@ -330,7 +330,7 @@ export default function PipelinePage() {
                           </div>
                         </div>
                       </motion.div>
-                    </Hover3DWrapper>
+                    </div>
                   ))}
                   {colStudents.length === 0 && (
                     <div className="text-center text-slate-500 text-sm py-8 border-2 border-dashed border-slate-800 rounded-xl">
