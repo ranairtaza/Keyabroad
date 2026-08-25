@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useRole } from "./RoleContext";
 import { useSidebar } from "./SidebarContext";
-import { LayoutDashboard, Users, Kanban, CheckSquare, Settings, LogOut, BarChart3, Network, Database, Globe, Clock, Receipt, Star, Plane, FileText, Megaphone, Zap, Cable, Activity, FileSpreadsheet, X, Building, Calculator, ChevronDown, ChevronRight } from "lucide-react";
+import { LayoutDashboard, Users, Kanban, CheckSquare, Settings, LogOut, BarChart3, Network, Database, Globe, Clock, Receipt, Star, Plane, FileText, Megaphone, Zap, Cable, Activity, FileSpreadsheet, X, Building, Calculator, ChevronDown, ChevronRight, Banknote } from "lucide-react";
 import { useState } from "react";
 
 export default function Sidebar() {
@@ -45,6 +45,7 @@ export default function Sidebar() {
     { name: "Reviews & Feedback", href: "/reviews", icon: Star },
     ...(canManageBlogs ? [{ name: "Blogs", href: "/blogs", icon: Globe }] : []),
     { name: "Daily Operations", href: "/operations", icon: CheckSquare },
+    { name: "Scholarships & Funding", href: "/scholarships", icon: Banknote },
     { name: "Cost Config", href: "/cost-calculator-config", icon: Calculator },
     ...(canViewHROps ? [{ name: "HR Operations", href: "/hr-operations", icon: Activity }] : []),
     { name: "Tasks", href: "/tasks", icon: CheckSquare },
