@@ -79,8 +79,8 @@ export default function Home() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 divide-x divide-slate-100">
             {[
               { label: "Visa Success Rate", value: 98, suffix: "%" },
-              { label: "Major Universities", value: 500, suffix: "+" },
-              { label: "Students Placed", value: 10000, suffix: "+" },
+              { label: "Major Universities", value: 100, suffix: "+" },
+              { label: "Students Placed", value: 5000, suffix: "+" },
               { label: "Scholarships Secured", value: 5, prefix: "$", suffix: "M+" },
             ].map((stat, i) => (
               <div key={i} className="text-center px-4">

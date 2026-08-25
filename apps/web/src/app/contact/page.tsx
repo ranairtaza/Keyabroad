@@ -22,27 +22,27 @@ export default function ContactPage() {
               <h2 className="text-2xl font-bold text-slate-900 mb-8 font-heading">Our Location</h2>
               <div className="space-y-6">
                 <div className="flex items-start">
-                  <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center shrink-0 mr-4">
+                  <a href="https://www.google.com/maps/search/?api=1&query=54+Ali+Rd,+Kohinoor+City,+Faisalabad,+38000,+Pakistan" target="_blank" rel="noopener noreferrer" className="w-12 h-12 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center shrink-0 mr-4 hover:bg-blue-100 transition-colors">
                     <MapPin />
-                  </div>
+                  </a>
                   <div>
                     <h3 className="font-bold text-slate-900 mb-1">Head Office</h3>
                     <p className="text-slate-600">54 Ali Rd, Kohinoor City<br />Faisalabad, 38000<br />Pakistan</p>
                   </div>
                 </div>
                 <div className="flex items-start">
-                  <div className="w-12 h-12 bg-green-50 text-green-600 rounded-xl flex items-center justify-center shrink-0 mr-4">
+                  <a href="tel:+923217777897" className="w-12 h-12 bg-green-50 text-green-600 rounded-xl flex items-center justify-center shrink-0 mr-4 hover:bg-green-100 transition-colors">
                     <Phone />
-                  </div>
+                  </a>
                   <div>
                     <h3 className="font-bold text-slate-900 mb-1">Phone / WhatsApp</h3>
-                    <a href="https://wa.me/923217777897" className="text-slate-600 hover:text-green-600 transition-colors">+92 321 7777 897</a>
+                    <a href="tel:+923217777897" className="text-slate-600 hover:text-green-600 transition-colors">+92 321 7777 897</a>
                   </div>
                 </div>
                 <div className="flex items-start">
-                  <div className="w-12 h-12 bg-purple-50 text-purple-600 rounded-xl flex items-center justify-center shrink-0 mr-4">
+                  <a href="mailto:admissions@keyabroad.com" className="w-12 h-12 bg-purple-50 text-purple-600 rounded-xl flex items-center justify-center shrink-0 mr-4 hover:bg-purple-100 transition-colors">
                     <Mail />
-                  </div>
+                  </a>
                   <div>
                     <h3 className="font-bold text-slate-900 mb-1">Email Address</h3>
                     <a href="mailto:admissions@keyabroad.com" className="text-slate-600 hover:text-purple-600 transition-colors">admissions@keyabroad.com</a>
