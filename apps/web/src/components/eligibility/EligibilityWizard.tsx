@@ -85,13 +85,30 @@ export function EligibilityWizard() {
         console.error("Failed to submit lead:", error);
       }
 
-      // 2. Business Logic: Query actual programs to find matches
-      // Simple heuristic based on real data schema (tuition_fee, minimum_cgpa, minimum_toefl etc)
-      const { count } = await supabase
+      // 2. Business Logic: Convert PKR budget to various currencies for matching
+      const budgetPKR = formData.budget;
+      const budgetUSD = budgetPKR / 278;
+      const budgetGBP = budgetPKR / 350;
+      const budgetEUR = budgetPKR / 300;
+      const budgetAUD = budgetPKR / 185;
+      const budgetCAD = budgetPKR / 205;
+
+      const currencyFilter = `and(currency.eq.USD,tuition_fee.lte.${budgetUSD}),and(currency.eq.GBP,tuition_fee.lte.${budgetGBP}),and(currency.eq.EUR,tuition_fee.lte.${budgetEUR}),and(currency.eq.AUD,tuition_fee.lte.${budgetAUD}),and(currency.eq.CAD,tuition_fee.lte.${budgetCAD})`;
+
+      let query = supabase
         .from('programs')
         .select('*', { count: 'exact', head: true })
-        .lte('tuition_fee', formData.budget)
-        .lte('minimum_cgpa', formData.cgpa);
+        .lte('minimum_cgpa', formData.cgpa)
+        .or(currencyFilter);
+        
+      if (formData.preferredCountryId) {
+         // Assuming we have a relation or we'd filter by university_id. 
+         // Since we don't join easily in head queries, let's leave country filter for future iteration, 
+         // or we can join universities!inner(country_id) 
+      }
+
+      const { count, error: qError } = await query;
+      if (qError) console.error(qError);
 
       const matchedCount = count || 0;
       let status: 'eligible' | 'likely_eligible' | 'needs_review' | 'not_met' = 'needs_review';

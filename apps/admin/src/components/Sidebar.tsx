@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useRole } from "./RoleContext";
 import { useSidebar } from "./SidebarContext";
-import { LayoutDashboard, Users, Kanban, CheckSquare, Settings, LogOut, BarChart3, Network, Database, Globe, Clock, Receipt, Star, Plane, FileText, Megaphone, Zap, Cable, Activity, FileSpreadsheet, X, Building, Calculator, ChevronDown, ChevronRight, Banknote } from "lucide-react";
+import { LayoutDashboard, Users, Kanban, CheckSquare, Settings, LogOut, BarChart3, Network, Database, Globe, Clock, Receipt, Star, Plane, FileText, Megaphone, Zap, Cable, Activity, FileSpreadsheet, X, Building, Calculator, ChevronDown, ChevronRight, Banknote, GraduationCap } from "lucide-react";
 import { useState } from "react";
 
 export default function Sidebar() {
@@ -33,6 +33,7 @@ export default function Sidebar() {
   const links = [
     { name: "Student Database", href: "/database", icon: Database },
     { name: "Master Records", href: "/master-records", icon: FileSpreadsheet },
+    { name: "Programs", href: "/programs", icon: GraduationCap },
     { name: "Leads", href: "/leads", icon: Users },
     { name: "Pipeline", href: "/pipeline", icon: Kanban },
     { name: "Visa Processing", href: "/visas", icon: Plane },
