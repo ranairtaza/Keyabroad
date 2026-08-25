@@ -130,10 +130,10 @@ export default function CostCalculatorPage() {
           </p>
         </div>
 
-        <div className="grid lg:grid-cols-12 gap-8">
+        <div className="grid lg:grid-cols-12 gap-8 mb-8">
           {/* Controls */}
-          <div className="lg:col-span-5 space-y-8">
-            <Card className="p-6 md:p-8 bg-white border-slate-200 shadow-xl shadow-slate-200/50 rounded-3xl">
+          <div className="lg:col-span-6 space-y-8">
+            <Card className="p-6 md:p-8 bg-white border-slate-200 shadow-xl shadow-slate-200/50 rounded-3xl h-full">
               
               {/* Destination */}
               <div className="mb-8">
@@ -199,7 +199,7 @@ export default function CostCalculatorPage() {
           </div>
 
           {/* Results Display */}
-          <div className="lg:col-span-7">
+          <div className="lg:col-span-6">
             <div className="sticky top-28 space-y-6">
               
               <Card className="p-8 bg-slate-900 border-slate-800 text-white rounded-3xl shadow-2xl relative overflow-hidden">
@@ -321,16 +321,18 @@ export default function CostCalculatorPage() {
                 </Card>
               )}
 
-              <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm text-center">
-                <h3 className="font-bold text-slate-800 mb-2">Ready to start your journey?</h3>
-                <p className="text-sm text-slate-600 mb-6">Book a free counseling session with our experts to discuss these costs and explore scholarship options in detail.</p>
-                <Button className="w-full sm:w-auto">
-                  Book Free Consultation <ArrowRight className="ml-2 w-4 h-4" />
-                </Button>
-              </div>
-
+              {/* End of Results Display */}
             </div>
           </div>
+        </div>
+
+        {/* Full-width Book Consultation Box */}
+        <div className="bg-white p-8 md:p-12 rounded-3xl border border-slate-200 shadow-lg shadow-slate-200/50 text-center max-w-4xl mx-auto">
+          <h3 className="text-2xl font-bold text-slate-800 mb-4 font-heading">Ready to start your journey?</h3>
+          <p className="text-lg text-slate-600 mb-8 max-w-2xl mx-auto">Book a free counseling session with our experts to discuss these costs and explore scholarship options in detail.</p>
+          <Button size="lg" className="w-full sm:w-auto text-lg px-8">
+            Book Free Consultation <ArrowRight className="ml-2 w-5 h-5" />
+          </Button>
         </div>
       </div>
     </div>
