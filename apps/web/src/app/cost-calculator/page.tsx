@@ -41,12 +41,6 @@ export default function CostCalculatorPage() {
   const [selectedCountryId, setSelectedCountryId] = useState<string>("");
   const [selectedUniversityId, setSelectedUniversityId] = useState<string>("");
   const [degree, setDegree] = useState<"bachelors" | "masters">("masters");
-  const [scholarship, setScholarship] = useState(0);
-  
-  // Custom Expenses
-  const [customExpenses, setCustomExpenses] = useState<{name: string, amount: number}[]>([]);
-  const [newExpenseName, setNewExpenseName] = useState("");
-  const [newExpenseAmount, setNewExpenseAmount] = useState("");
 
   // Live Exchange Rate
   const [liveExchangeRate, setLiveExchangeRate] = useState<number | null>(null);
@@ -89,18 +83,6 @@ export default function CostCalculatorPage() {
     }
   }, [selectedCountryId, selectedCountry?.currency_code]);
 
-  const addCustomExpense = () => {
-    if (newExpenseName && newExpenseAmount && Number(newExpenseAmount) > 0) {
-      setCustomExpenses([...customExpenses, { name: newExpenseName, amount: Number(newExpenseAmount) }]);
-      setNewExpenseName("");
-      setNewExpenseAmount("");
-    }
-  };
-
-  const removeCustomExpense = (index: number) => {
-    setCustomExpenses(customExpenses.filter((_, i) => i !== index));
-  };
-
   if (loading) {
     return <div className="min-h-screen bg-slate-50 flex items-center justify-center">Loading Cost Calculator...</div>;
   }
@@ -117,9 +99,8 @@ export default function CostCalculatorPage() {
     ? (degree === "masters" ? (selectedUniversity.avg_masters_tuition || 0) : (selectedUniversity.avg_bachelors_tuition || 0)) 
     : 15000;
     
-  const discountedTuition = Math.max(0, avgTuition - scholarship);
+  const discountedTuition = avgTuition;
   
-  const totalCustom = customExpenses.reduce((sum, exp) => sum + exp.amount, 0);
   const livingCost = selectedCountry.average_living_cost_per_year || 0;
   const visaFee = selectedCountry.visa_fee || 0;
   const healthInsurance = selectedCountry.health_insurance_cost || 0;
@@ -130,12 +111,8 @@ export default function CostCalculatorPage() {
   const consultantFee = selectedCountry.consultant_fee || 0;
   const miscCost = selectedCountry.miscellaneous_cost || 0;
   
-  const totalForeign = discountedTuition + livingCost + visaFee + healthInsurance + flightTicket + applicationFee + bankStatement + embassyFee + consultantFee + miscCost + totalCustom;
+  const totalForeign = discountedTuition + livingCost + visaFee + healthInsurance + flightTicket + applicationFee + bankStatement + embassyFee + consultantFee + miscCost;
   const totalPKR = totalForeign * exchangeRate;
-
-  const scholarshipMax = selectedCountry.scholarship_max_amount && selectedCountry.scholarship_max_amount > 0 
-    ? selectedCountry.scholarship_max_amount 
-    : totalForeign || avgTuition;
 
   const formatPKR = (val: number) => new Intl.NumberFormat('en-PK', { maximumFractionDigits: 0 }).format(val);
   const formatForeign = (val: number) => new Intl.NumberFormat('en-US', { maximumFractionDigits: 0 }).format(val);
@@ -218,62 +195,6 @@ export default function CostCalculatorPage() {
                 </div>
               </div>
 
-              {/* Scholarship */}
-              <div>
-                <label className="block text-sm font-bold text-slate-700 mb-2 uppercase tracking-wider flex justify-between">
-                  <span>4. Expected Scholarship</span>
-                  <span className="text-primary">{currency} {formatForeign(scholarship)}</span>
-                </label>
-                <p className="text-xs text-slate-400 mb-4">Move the slider to estimate cost with a scholarship.</p>
-                <input 
-                  type="range" 
-                  min="0" 
-                  max={scholarshipMax} 
-                  step="500" 
-                  value={scholarship}
-                  onChange={(e) => setScholarship(Number(e.target.value))}
-                  className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-primary"
-                />
-              </div>
-
-              {/* Custom Expenses */}
-              <div className="pt-6 border-t border-slate-200 mt-8">
-                <label className="block text-sm font-bold text-slate-700 mb-4 uppercase tracking-wider">5. Add Custom Expenses</label>
-                <p className="text-xs text-slate-400 mb-4">Add flights, health insurance, or miscellaneous fees ({currency}).</p>
-                <div className="flex gap-2 mb-4">
-                  <Input 
-                    placeholder="e.g. Flight Ticket" 
-                    value={newExpenseName} 
-                    onChange={e => setNewExpenseName(e.target.value)}
-                    className="flex-1"
-                  />
-                  <Input 
-                    type="number" 
-                    placeholder="Amount" 
-                    value={newExpenseAmount} 
-                    onChange={e => setNewExpenseAmount(e.target.value)}
-                    className="w-24"
-                  />
-                  <Button onClick={addCustomExpense} variant="secondary" size="icon"><Plus className="w-4 h-4" /></Button>
-                </div>
-                
-                {customExpenses.length > 0 && (
-                  <div className="space-y-2">
-                    {customExpenses.map((exp, idx) => (
-                      <div key={idx} className="flex justify-between items-center bg-slate-50 px-3 py-2 rounded-lg border border-slate-200 text-sm">
-                        <span className="font-medium text-slate-700">{exp.name}</span>
-                        <div className="flex items-center gap-3">
-                          <span className="text-slate-900 font-bold">{currency} {formatForeign(exp.amount)}</span>
-                          <button onClick={() => removeCustomExpense(idx)} className="text-red-400 hover:text-red-600">
-                            <X className="w-4 h-4" />
-                          </button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-
             </Card>
           </div>
 
@@ -327,22 +248,6 @@ export default function CostCalculatorPage() {
                       </div>
                     </div>
 
-                    {scholarship > 0 && (
-                      <div className="flex items-center justify-between group">
-                        <div className="flex items-center gap-4">
-                          <div className="w-10 h-10 rounded-xl bg-green-500/10 flex items-center justify-center text-green-400 group-hover:bg-green-400 group-hover:text-slate-900 transition-colors">
-                            <ArrowRight size={20} />
-                          </div>
-                          <div>
-                            <p className="font-medium text-green-400">Scholarship Applied</p>
-                          </div>
-                        </div>
-                        <div className="text-right">
-                          <p className="font-bold text-green-400">-{currency} {formatForeign(scholarship)}</p>
-                        </div>
-                      </div>
-                    )}
-
                     <div className="flex items-center justify-between group">
                       <div className="flex items-center gap-4">
                         <div className="w-10 h-10 rounded-xl bg-slate-800 flex items-center justify-center text-blue-400 group-hover:bg-blue-400 group-hover:text-white transition-colors">
@@ -392,23 +297,6 @@ export default function CostCalculatorPage() {
                         <span className="font-medium">{currency || ''} {formatForeign(miscCost || 0)}</span>
                       </div>
                     </div>
-
-                    {customExpenses && customExpenses.length > 0 && (
-                      <div className="flex items-center justify-between group">
-                        <div className="flex items-center gap-4">
-                          <div className="w-10 h-10 rounded-xl bg-slate-800 flex items-center justify-center text-purple-400 group-hover:bg-purple-400 group-hover:text-white transition-colors">
-                            <Plus size={20} />
-                          </div>
-                          <div>
-                            <p className="font-medium text-white group-hover:text-purple-400 transition-colors">Custom Expenses</p>
-                            <p className="text-xs text-slate-400">{customExpenses.length} items added</p>
-                          </div>
-                        </div>
-                        <div className="text-right">
-                          <p className="font-bold">{currency || ''} {formatForeign(totalCustom || 0)}</p>
-                        </div>
-                      </div>
-                    )}
                   </div>
                 </div>
               </Card>
