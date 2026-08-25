@@ -19,7 +19,7 @@ export default function Home() {
       <section className="relative overflow-hidden bg-slate-900 text-white pt-24 pb-32 lg:pt-36 lg:pb-40">
         <div className="absolute inset-0 z-0 opacity-20">
           <Image 
-            src="https://images.unsplash.com/photo-1523050854058-8df90110c9f1" 
+            src="https://images.unsplash.com/photo-1541339907198-e08756dedf3f?q=80&w=2070" 
             alt="University campus" 
             fill 
             className="object-cover"
