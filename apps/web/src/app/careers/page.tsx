@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 };
 
 export default async function CareersPage() {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: jobs } = await supabase.from('jobs').select('*').eq('status', 'published').order('created_at', { ascending: false });
 
   return (
