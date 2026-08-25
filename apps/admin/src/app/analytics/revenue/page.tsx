@@ -16,8 +16,8 @@ export default async function RevenueAnalyticsPage({
 
   const { data: profile } = await supabase.from('profiles').select('staff_role').eq('id', user.id).single();
   const role = profile?.staff_role;
-  const canManage = role === 'super_admin' || role === 'admin' || role === 'branch_manager';
-
+  const canManage = role === 'super_admin' || role === 'admin' || role === 'branch_manager' || role === 'owner';
+  
   if (!canManage) {
     return (
       <div className="p-12 text-center text-slate-400">
