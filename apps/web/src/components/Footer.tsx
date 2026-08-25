@@ -91,7 +91,6 @@ export default function Footer() {
                 { name: 'Office Walk-in', href: '/walk-in' },
                 { name: 'Blog', href: '/blog' },
                 { name: 'Contact Us', href: '/contact' },
-                { name: 'Student Login', href: '/login' },
               ].map((link) => (
                 <li key={link.name}>
                   <Link 
