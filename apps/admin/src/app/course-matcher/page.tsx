@@ -24,10 +24,11 @@ export default function CourseMatcherPage() {
   const { role } = useRole();
   const isAdmin = role === 'owner';
   const [universities, setUniversities] = useState<University[]>([]);
+  const [countriesData, setCountriesData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [newUni, setNewUni] = useState({ name: "", country: "", tuition_fee: "", min_ielts: "", min_pte: "", subjects: "", intakes: "", gpa_requirement: "", work_rights: "" });
+  const [newUni, setNewUni] = useState({ name: "", country_id: "", tuition_fee: "", min_ielts: "", min_pte: "", subjects: "", intakes: "", gpa_requirement: "", work_rights: "" });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Filters
@@ -50,6 +51,10 @@ export default function CourseMatcherPage() {
     if (data) {
       setUniversities(data);
     }
+    const { data: cData } = await supabase.from('countries').select('id, name');
+    if (cData) {
+      setCountriesData(cData);
+    }
     setLoading(false);
   };
 
@@ -59,7 +64,7 @@ export default function CourseMatcherPage() {
 
   const handleAddUniversity = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newUni.name || !newUni.country) {
+    if (!newUni.name || !newUni.country_id) {
       toast.error("Name and Country are required.");
       return;
     }
@@ -67,9 +72,12 @@ export default function CourseMatcherPage() {
     setIsSubmitting(true);
     const subjectsArray = newUni.subjects.split(',').map(s => s.trim()).filter(s => s !== "");
     
+    const selectedCountryObj = countriesData.find(c => c.id === newUni.country_id);
+    
     const { error } = await supabase.from('universities').insert([{
       name: newUni.name,
-      country: newUni.country,
+      country: selectedCountryObj ? selectedCountryObj.name : "",
+      country_id: newUni.country_id,
       tuition_fee: newUni.tuition_fee ? Number(newUni.tuition_fee) : 0,
       min_ielts: newUni.min_ielts ? Number(newUni.min_ielts) : 0,
       min_pte: newUni.min_pte ? Number(newUni.min_pte) : 0,
@@ -86,7 +94,7 @@ export default function CourseMatcherPage() {
     } else {
       toast.success("University added successfully!");
       setIsAddModalOpen(false);
-      setNewUni({ name: "", country: "", tuition_fee: "", min_ielts: "", min_pte: "", subjects: "", intakes: "", gpa_requirement: "", work_rights: "" });
+      setNewUni({ name: "", country_id: "", tuition_fee: "", min_ielts: "", min_pte: "", subjects: "", intakes: "", gpa_requirement: "", work_rights: "" });
       fetchUniversities();
     }
   };
@@ -465,7 +473,17 @@ Work Rights: ${uni.work_rights || 'N/A'}`;
                 
                 <div className="space-y-1.5">
                   <label className="text-sm font-medium text-slate-400">Country *</label>
-                  <input required type="text" value={newUni.country} onChange={e => setNewUni({...newUni, country: e.target.value})} className="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-primary" placeholder="e.g. USA" />
+                  <select 
+                    required 
+                    value={newUni.country_id} 
+                    onChange={e => setNewUni({...newUni, country_id: e.target.value})} 
+                    className="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-primary"
+                  >
+                    <option value="">Select Country...</option>
+                    {countriesData.map(c => (
+                      <option key={c.id} value={c.id}>{c.name}</option>
+                    ))}
+                  </select>
                 </div>
 
                 <div className="space-y-1.5">
