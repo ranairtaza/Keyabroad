@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { motion, Variants } from "framer-motion";
 import Hover3DWrapper from "@/components/Hover3DWrapper";
-import { Clock, CheckCircle2, AlertCircle, FileText } from "lucide-react";
+import { Clock, CheckCircle2, AlertCircle, FileText, Download } from "lucide-react";
 import toast from "react-hot-toast";
 import { createClient } from "@/lib/auth/client";
 import { useRole } from "@/components/RoleContext";
@@ -283,6 +283,35 @@ export default function AttendancePage() {
     return { present, leave, absent };
   };
 
+  const handleExportCSV = () => {
+    const monthName = new Date(selectedYear, selectedMonth).toLocaleString('en-US', { month: 'long' });
+    let csvContent = "data:text/csv;charset=utf-8,";
+    csvContent += "Employee Name,Role,Date,Status,Check In,Check Out\n";
+
+    employees.forEach(emp => {
+      const empLogs = monthlyLogs.filter(log => String(log.employee_id) === String(emp.id));
+      empLogs.forEach(log => {
+        const date = new Date(log.date).toLocaleDateString('en-US');
+        const status = log.status;
+        const checkIn = log.status === 'present' ? formatTime(log.created_at) : '-';
+        const checkOut = log.status === 'present' ? formatTime(log.check_out_time) : '-';
+        
+        const cleanName = `"${(emp.name || '').replace(/"/g, '""')}"`;
+        const cleanRole = `"${(emp.role || '').replace(/"/g, '""')}"`;
+        
+        csvContent += `${cleanName},${cleanRole},${date},${status},${checkIn},${checkOut}\n`;
+      });
+    });
+
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", `Attendance_Report_${monthName}_${selectedYear}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   const container: any = {
     hidden: { opacity: 0 },
     show: { opacity: 1, transition: { staggerChildren: 0.1 } }
@@ -514,6 +543,13 @@ export default function AttendancePage() {
                     <option key={year} value={year}>{year}</option>
                   ))}
                 </select>
+                <button 
+                  onClick={handleExportCSV}
+                  className="px-3 py-2 bg-primary text-white rounded-lg text-sm font-medium hover:bg-blue-600 transition-colors flex items-center gap-2 shadow-sm"
+                  title="Export detailed report to CSV (Excel)"
+                >
+                  <Download size={16} /> <span className="hidden sm:inline">Export</span>
+                </button>
               </div>
             </div>
             
