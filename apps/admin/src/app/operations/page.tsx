@@ -15,7 +15,7 @@ export default function OperationsPage() {
   const [walkIns, setWalkIns] = useState<any[]>([]);
   const [attendance, setAttendance] = useState<any[]>([]);
   const [workLogs, setWorkLogs] = useState<any[]>([]);
-  const [newLog, setNewLog] = useState({ type: "", name: "", details: "", phone: "" });
+  const [newLog, setNewLog] = useState({ type: "", name: "", details: "", phone: "", email: "", location: "" });
 
 
 
@@ -105,14 +105,16 @@ export default function OperationsPage() {
 
   const handleCreateLog = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (newLog.type === "walk-in") {
-      const { error } = await supabase.from('enquiries').insert([{
-        full_name: newLog.name,
-        inquiry_type: newLog.details,
-        phone_number: newLog.phone,
-        status: 'pending'
-      }]);
-      if (error) {
+      if (newLog.type === "walk-in") {
+        const { error } = await supabase.from('enquiries').insert([{
+          full_name: newLog.name,
+          inquiry_type: newLog.details,
+          phone_number: newLog.phone,
+          email: newLog.email,
+          city: newLog.location,
+          status: 'pending'
+        }]);
+        if (error) {
         toast.error("Failed to save log.");
         return;
       }
@@ -326,10 +328,20 @@ export default function OperationsPage() {
                 </div>
 
                 {newLog.type === 'walk-in' && (
-                  <div className="space-y-2">
-                    <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Phone Number (Optional)</label>
-                    <input type="tel" value={newLog.phone} onChange={e => setNewLog({...newLog, phone: e.target.value})} placeholder="e.g. 0300 1234567" className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all" />
-                  </div>
+                  <>
+                    <div className="space-y-2">
+                      <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Email Address <span className="text-red-500">*</span></label>
+                      <input type="email" required value={newLog.email} onChange={e => setNewLog({...newLog, email: e.target.value})} placeholder="student@example.com" className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all" />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Phone Number <span className="text-red-500">*</span></label>
+                      <input type="tel" required value={newLog.phone} onChange={e => setNewLog({...newLog, phone: e.target.value})} placeholder="e.g. 0300 1234567" className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all" />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Desired Destination / Location <span className="text-red-500">*</span></label>
+                      <input type="text" required value={newLog.location} onChange={e => setNewLog({...newLog, location: e.target.value})} placeholder="e.g. UK, Australia" className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all" />
+                    </div>
+                  </>
                 )}
 
                 <div className="space-y-2">
