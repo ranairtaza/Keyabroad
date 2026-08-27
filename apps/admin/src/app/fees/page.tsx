@@ -15,8 +15,8 @@ export default async function FeesPage({
   if (!user) return redirect('/login');
 
   const { data: profile } = await supabase.from('profiles').select('staff_role').eq('id', user.id).single();
-  const role = profile?.staff_role;
-  const canManage = role === 'super_admin' || role === 'admin' || role === 'branch_manager' || role === 'counselor';
+  const role = profile?.staff_role?.toLowerCase() || '';
+  const canManage = ['admin', 'ceo', 'owner', 'super_admin', 'branch_manager', 'counselor'].includes(role);
 
   const q = typeof resolvedParams?.q === 'string' ? resolvedParams.q : '';
   const method = typeof resolvedParams?.method === 'string' ? resolvedParams.method : '';

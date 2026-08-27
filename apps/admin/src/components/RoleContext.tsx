@@ -57,7 +57,7 @@ export function RoleProvider({ children }: { children: React.ReactNode }) {
             
           const { data: profiles, error } = await supabase
             .from('profiles')
-            .select('role, full_name, avatar_url, designation, phone')
+            .select('role, staff_role, full_name, avatar_url, designation, phone')
             .eq('email', session.user.email)
             .limit(1);
             
@@ -67,11 +67,12 @@ export function RoleProvider({ children }: { children: React.ReactNode }) {
           const tm = teamMembers?.[0];
           
           const profileRole = profile?.role?.trim().toLowerCase();
+          const staffRole = profile?.staff_role?.trim().toLowerCase();
           const tmRole = tm?.role?.trim().toLowerCase();
           const designation = tm?.role || profile?.designation;
           
           const isOwner = 
-            profileRole === 'admin' || 
+            profileRole === 'admin' || staffRole === 'admin' || staffRole === 'ceo' || staffRole === 'owner' || staffRole === 'super_admin' || 
             session.user.email === 'junaid@keyabroad.com' || 
             (tmRole && (tmRole.includes('admin') || tmRole.includes('ceo') || tmRole.includes('founder')));
 
