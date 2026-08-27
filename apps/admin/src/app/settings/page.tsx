@@ -84,12 +84,34 @@ export default function SettingsPage() {
   };
 
   const handleChangePassword = async () => {
+    if (!currentPassword) {
+      toast.error("Please enter your current password.");
+      return;
+    }
     if (!newPassword || newPassword.length < 6) {
       toast.error("New password must be at least 6 characters long.");
       return;
     }
+    if (!currentUser?.email) {
+      toast.error("Could not determine user email.");
+      return;
+    }
     
     setIsChangingPassword(true);
+    
+    // Step 1: Re-authenticate with current password to get a fresh session
+    const { error: signInError } = await supabase.auth.signInWithPassword({
+      email: currentUser.email,
+      password: currentPassword,
+    });
+    
+    if (signInError) {
+      toast.error("Incorrect current password.");
+      setIsChangingPassword(false);
+      return;
+    }
+
+    // Step 2: Update the password with the newly refreshed session
     const { error } = await supabase.auth.updateUser({
       password: newPassword
     });

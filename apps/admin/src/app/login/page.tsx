@@ -16,14 +16,18 @@ export default function LoginPage() {
   const router = useRouter();
   const supabase = createClient();
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    const emailValue = formData.get("email") as string;
+    const passwordValue = formData.get("password") as string;
+    
     setLoading(true);
     
     try {
       const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
+        email: emailValue,
+        password: passwordValue,
       });
 
       if (error) {
@@ -113,9 +117,9 @@ export default function LoginPage() {
                 <Mail className="absolute left-3 top-3 text-slate-500" size={18} />
                 <input 
                   type="email" 
+                  name="email"
                   required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  defaultValue={email}
                   placeholder="name@keyabroad.com"
                   className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 pl-10 pr-4 text-slate-900 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
                 />
@@ -131,9 +135,9 @@ export default function LoginPage() {
                 <Lock className="absolute left-3 top-3 text-slate-500" size={18} />
                 <input 
                   type="password" 
+                  name="password"
                   required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  defaultValue={password}
                   placeholder="••••••••"
                   className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 pl-10 pr-4 text-slate-900 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
                 />
