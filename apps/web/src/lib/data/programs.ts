@@ -31,6 +31,9 @@ export async function getPublishedPrograms(params: ProgramSearchParams) {
       ielts_requirement,
       pte_requirement,
       intake_months,
+      intakes,
+      gpa_requirement,
+      work_rights,
       universities!inner (
         name,
         slug,

@@ -11,6 +11,9 @@ interface ProgramCardProps {
     duration: string | null;
     tuition_fee: number | null;
     currency: string | null;
+    intakes?: string[] | null;
+    gpa_requirement?: string | null;
+    work_rights?: string | null;
     universities: {
       name: string;
       slug: string;
@@ -72,6 +75,9 @@ export function ProgramCard({ program }: ProgramCardProps) {
                 currency: program.currency || undefined,
                 degree_level: program.degree_level || undefined,
                 duration: program.duration || undefined,
+                intakes: program.intakes || undefined,
+                gpa_requirement: program.gpa_requirement || undefined,
+                work_rights: program.work_rights || undefined,
               }}
             />
           </div>

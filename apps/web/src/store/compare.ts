@@ -13,6 +13,9 @@ export interface CompareItem {
   currency?: string;
   degree_level?: string;
   duration?: string;
+  intakes?: string[];
+  gpa_requirement?: string;
+  work_rights?: string;
 }
 
 interface CompareStore {

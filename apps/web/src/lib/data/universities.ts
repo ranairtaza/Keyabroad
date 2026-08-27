@@ -25,6 +25,9 @@ export async function getPublishedUniversities(params: UniversitySearchParams) {
       city,
       ranking,
       intake_months,
+      intakes,
+      gpa_requirement,
+      work_rights,
       countries!inner (
         name,
         slug
@@ -99,7 +102,10 @@ export async function getPublishedUniversityBySlug(slug: string) {
         degree_level,
         duration,
         tuition_fee,
-        currency
+        currency,
+        intakes,
+        gpa_requirement,
+        work_rights
       ),
       scholarships (
         id,

@@ -86,6 +86,30 @@ export default function ComparePage() {
                   ))}
                 </tr>
                 <tr>
+                  <td className="p-6 border-b border-slate-200 border-r font-medium text-slate-700 bg-slate-50">Intakes</td>
+                  {items.map((item) => (
+                    <td key={item.id} className="p-6 border-b border-slate-200 text-center">
+                      {item.intakes?.length ? item.intakes.join(', ') : 'N/A'}
+                    </td>
+                  ))}
+                </tr>
+                <tr>
+                  <td className="p-6 border-b border-slate-200 border-r font-medium text-slate-700 bg-slate-50">Min GPA</td>
+                  {items.map((item) => (
+                    <td key={item.id} className="p-6 border-b border-slate-200 text-center">
+                      {item.gpa_requirement || 'N/A'}
+                    </td>
+                  ))}
+                </tr>
+                <tr>
+                  <td className="p-6 border-b border-slate-200 border-r font-medium text-slate-700 bg-slate-50">Work Rights</td>
+                  {items.map((item) => (
+                    <td key={item.id} className="p-6 border-b border-slate-200 text-center">
+                      {item.work_rights || 'N/A'}
+                    </td>
+                  ))}
+                </tr>
+                <tr>
                   <td className="p-6 border-r font-medium text-slate-700 bg-slate-50">Action</td>
                   {items.map((item) => (
                     <td key={item.id} className="p-6 text-center">

@@ -13,7 +13,10 @@ interface UniversityCardProps {
     city?: string | null;
     ranking?: number | null;
     intake_months?: string[] | null;
-    countries: {
+    intakes?: string[] | null;
+    gpa_requirement?: string | null;
+    work_rights?: string | null;
+    countries?: {
       name: string;
       slug: string;
     } | null;
@@ -75,6 +78,9 @@ export function UniversityCard({ university }: UniversityCardProps) {
                 type: 'university',
                 country: university.countries?.name,
                 logo_url: university.logo_url || undefined,
+                intakes: university.intakes || university.intake_months || undefined,
+                gpa_requirement: university.gpa_requirement || undefined,
+                work_rights: university.work_rights || undefined,
               }}
             />
           </div>
