@@ -53,7 +53,6 @@ export default function Sidebar() {
     { name: "Tasks", href: "/tasks", icon: CheckSquare },
     { name: "Attendance", href: "/attendance", icon: Clock },
     { name: "Team Directory", href: "/team", icon: Network },
-    { name: "Integrations", href: "/integrations", icon: Cable },
     { name: "Settings", href: "/settings", icon: Settings },
   ];
 
