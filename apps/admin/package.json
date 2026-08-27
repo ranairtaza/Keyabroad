@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "prebuild": "npm install --no-save @tailwindcss/oxide-linux-x64-gnu@4.3.3 lightningcss-linux-x64-gnu",
+    "prebuild": "node -e \"if(process.platform === 'linux') { require('child_process').execSync('npm install --no-save @tailwindcss/oxide-linux-x64-gnu@4.3.3 lightningcss-linux-x64-gnu', {stdio: 'inherit'}) }\"",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
