@@ -15,6 +15,9 @@ interface University {
   min_ielts: number;
   min_pte: number;
   subjects_offered: string[];
+  intakes: string[];
+  gpa_requirement: string;
+  work_rights: string;
 }
 
 export default function CourseMatcherPage() {
@@ -24,7 +27,7 @@ export default function CourseMatcherPage() {
   const [loading, setLoading] = useState(true);
   
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [newUni, setNewUni] = useState({ name: "", country: "", tuition_fee: "", min_ielts: "", min_pte: "", subjects: "" });
+  const [newUni, setNewUni] = useState({ name: "", country: "", tuition_fee: "", min_ielts: "", min_pte: "", subjects: "", intakes: "", gpa_requirement: "", work_rights: "" });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Filters
@@ -70,7 +73,10 @@ export default function CourseMatcherPage() {
       tuition_fee: newUni.tuition_fee ? Number(newUni.tuition_fee) : 0,
       min_ielts: newUni.min_ielts ? Number(newUni.min_ielts) : 0,
       min_pte: newUni.min_pte ? Number(newUni.min_pte) : 0,
-      subjects_offered: subjectsArray
+      subjects_offered: subjectsArray,
+      intakes: newUni.intakes.split(',').map(i => i.trim()).filter(i => i !== ""),
+      gpa_requirement: newUni.gpa_requirement,
+      work_rights: newUni.work_rights
     }]);
 
     setIsSubmitting(false);
@@ -80,7 +86,7 @@ export default function CourseMatcherPage() {
     } else {
       toast.success("University added successfully!");
       setIsAddModalOpen(false);
-      setNewUni({ name: "", country: "", tuition_fee: "", min_ielts: "", min_pte: "", subjects: "" });
+      setNewUni({ name: "", country: "", tuition_fee: "", min_ielts: "", min_pte: "", subjects: "", intakes: "", gpa_requirement: "", work_rights: "" });
       fetchUniversities();
     }
   };
@@ -95,7 +101,10 @@ export default function CourseMatcherPage() {
     const requirements = `Tuition Fee: $${uni.tuition_fee}
 Minimum IELTS: ${uni.min_ielts}
 Minimum PTE: ${uni.min_pte}
-Subjects Offered: ${uni.subjects_offered.join(', ')}`;
+Subjects Offered: ${uni.subjects_offered.join(', ')}
+Intakes: ${uni.intakes?.join(', ') || 'N/A'}
+GPA Required: ${uni.gpa_requirement || 'N/A'}
+Work Rights: ${uni.work_rights || 'N/A'}`;
 
     try {
       const res = await fetch('/api/ai/matcher', {
@@ -300,6 +309,24 @@ Subjects Offered: ${uni.subjects_offered.join(', ')}`;
                       </div>
                     </div>
 
+                    <div className="grid grid-cols-2 gap-3 mb-4 relative z-10">
+                      <div className="bg-slate-950 rounded-lg p-2.5 border border-slate-800">
+                        <div className="text-[10px] text-slate-500 uppercase tracking-wider mb-0.5">Intakes</div>
+                        <div className="font-semibold text-white text-sm truncate">{uni.intakes?.join(', ') || 'N/A'}</div>
+                      </div>
+                      <div className="bg-slate-950 rounded-lg p-2.5 border border-slate-800 flex justify-around">
+                        <div>
+                          <div className="text-[10px] text-slate-500 uppercase tracking-wider mb-0.5">Min GPA</div>
+                          <div className="font-semibold text-white text-sm truncate">{uni.gpa_requirement || 'N/A'}</div>
+                        </div>
+                        <div className="w-px bg-slate-800 h-full"></div>
+                        <div>
+                          <div className="text-[10px] text-slate-500 uppercase tracking-wider mb-0.5">Work</div>
+                          <div className="font-semibold text-white text-sm truncate">{uni.work_rights || 'N/A'}</div>
+                        </div>
+                      </div>
+                    </div>
+
                     <div className="relative z-10 mb-6">
                       <div className="text-[10px] text-slate-500 uppercase tracking-wider mb-2">Key Subjects</div>
                       <div className="flex flex-wrap gap-1.5">
@@ -460,6 +487,22 @@ Subjects Offered: ${uni.subjects_offered.join(', ')}`;
                 <div className="space-y-1.5">
                   <label className="text-sm font-medium text-slate-400">Key Subjects (Comma Separated)</label>
                   <input type="text" value={newUni.subjects} onChange={e => setNewUni({...newUni, subjects: e.target.value})} className="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-primary" placeholder="e.g. Business, IT, Engineering" />
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-1.5">
+                    <label className="text-sm font-medium text-slate-400">Intakes (Comma Separated)</label>
+                    <input type="text" value={newUni.intakes} onChange={e => setNewUni({...newUni, intakes: e.target.value})} className="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-primary" placeholder="e.g. Jan, Sep" />
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="text-sm font-medium text-slate-400">Min GPA Requirement</label>
+                    <input type="text" value={newUni.gpa_requirement} onChange={e => setNewUni({...newUni, gpa_requirement: e.target.value})} className="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-primary" placeholder="e.g. 2.5/4.0" />
+                  </div>
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="text-sm font-medium text-slate-400">Post-Study Work Rights</label>
+                  <input type="text" value={newUni.work_rights} onChange={e => setNewUni({...newUni, work_rights: e.target.value})} className="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-primary" placeholder="e.g. 2 Years" />
                 </div>
 
                 <div className="pt-4 flex justify-end gap-3">
