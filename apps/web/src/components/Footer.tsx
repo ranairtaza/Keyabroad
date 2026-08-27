@@ -38,19 +38,6 @@ export default function Footer() {
                 <FaTiktok size={18} />
               </a>
             </div>
-            {/* ICEF Agency Status Logo */}
-            <div className="mt-8">
-              <a href="https://www.icef.com/agency/" target="_blank" rel="noopener noreferrer" className="inline-block bg-white p-2 rounded-lg">
-                <Image 
-                  src="/icef-logo.png" 
-                  alt="ICEF Agency Status" 
-                  width={120} 
-                  height={120} 
-                  className="object-contain"
-                  unoptimized
-                />
-              </a>
-            </div>
           </div>
 
           {/* Explore */}

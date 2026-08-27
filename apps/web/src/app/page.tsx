@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
+import Script from "next/script";
 import { ArrowRight, Globe2, GraduationCap, Search, Sparkles, Building2, MapPin, CheckCircle2, ChevronRight, Calculator } from "lucide-react";
 import { Button } from "@keyabroad/ui/components/button";
 import { Input } from "@keyabroad/ui/components/input";
@@ -98,18 +99,10 @@ export default function Home() {
       <section className="py-12 bg-white border-t border-slate-100">
         <div className="container mx-auto px-4 text-center">
           <p className="text-sm font-semibold tracking-widest text-slate-400 uppercase mb-8">Globally Recognized & Accredited</p>
-          <div className="flex justify-center items-center opacity-80 hover:opacity-100 transition-opacity">
-            <a href="https://www.icef.com/agency/" target="_blank" rel="noopener noreferrer">
-              <Image 
-                src="/icef-logo.png" 
-                alt="ICEF Agency Status — International Consultants for Education and Fairs" 
-                width={240} 
-                height={160} 
-                className="object-contain drop-shadow-md"
-                unoptimized
-              />
-            </a>
-          </div>
+            <div className="flex justify-center items-center opacity-80 hover:opacity-100 transition-opacity min-h-[160px]">
+              <span id='iasBadge' data-account-id='6902'></span>
+              <Script strategy="lazyOnload" src="https://www-cdn.icef.com/scripts/iasbadgeid.js" crossOrigin="anonymous" />
+            </div>
         </div>
       </section>
 
