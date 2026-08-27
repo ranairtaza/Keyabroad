@@ -15,7 +15,7 @@ export default function OperationsPage() {
   const [walkIns, setWalkIns] = useState<any[]>([]);
   const [attendance, setAttendance] = useState<any[]>([]);
   const [workLogs, setWorkLogs] = useState<any[]>([]);
-  const [newLog, setNewLog] = useState({ type: "", name: "", details: "" });
+  const [newLog, setNewLog] = useState({ type: "", name: "", details: "", phone: "" });
 
 
 
@@ -109,6 +109,7 @@ export default function OperationsPage() {
       const { error } = await supabase.from('enquiries').insert([{
         full_name: newLog.name,
         inquiry_type: newLog.details,
+        phone_number: newLog.phone,
         status: 'pending'
       }]);
       if (error) {
@@ -134,7 +135,7 @@ export default function OperationsPage() {
       toast.success("Log saved successfully!");
     }
     setIsModalOpen(false);
-    setNewLog({ type: "", name: "", details: "" });
+    setNewLog({ type: "", name: "", details: "", phone: "" });
   };
 
   const container: any = {
@@ -323,6 +324,13 @@ export default function OperationsPage() {
                   </label>
                   <input type="text" required value={newLog.name} onChange={e => setNewLog({...newLog, name: e.target.value})} placeholder={newLog.type === 'work-log' ? "E.g. Completed 5 follow-ups" : "Enter name"} className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all" />
                 </div>
+
+                {newLog.type === 'walk-in' && (
+                  <div className="space-y-2">
+                    <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Phone Number (Optional)</label>
+                    <input type="tel" value={newLog.phone} onChange={e => setNewLog({...newLog, phone: e.target.value})} placeholder="e.g. 0300 1234567" className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all" />
+                  </div>
+                )}
 
                 <div className="space-y-2">
                   <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Details</label>
