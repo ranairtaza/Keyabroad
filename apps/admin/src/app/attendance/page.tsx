@@ -238,6 +238,29 @@ export default function AttendancePage() {
     setSubmitting(false);
   };
 
+
+  const handleBackfillAbsent = async () => {
+    setSubmitting(true);
+    try {
+      const res = await fetch('/api/automations/mark-absent', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ date: manageDate }),
+      });
+      const data = await res.json();
+      if (data.success || data.message) {
+        toast.success(data.message || 'Done');
+        await fetchManageLogs(manageDate);
+        fetchActiveEmployees();
+      } else {
+        toast.error(data.error || 'Failed to backfill absents');
+      }
+    } catch (e) {
+      toast.error('Network error');
+    }
+    setSubmitting(false);
+  };
+
   const formatTime = (isoString: string | null) => {
     if (!isoString) return "N/A";
     return new Date(isoString).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
@@ -455,7 +478,7 @@ export default function AttendancePage() {
                 <h3 className="font-bold text-slate-900 dark:text-white text-xl">Manage Attendance</h3>
                 <p className="text-slate-500 text-sm mt-1">Override staff attendance records for any specific day.</p>
               </div>
-              <div>
+              <div className="flex items-center gap-2">
                 <input 
                   type="date" 
                   value={manageDate}
@@ -463,6 +486,14 @@ export default function AttendancePage() {
                   onChange={(e) => setManageDate(e.target.value)}
                   className="px-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary/50"
                 />
+                <button
+                  onClick={handleBackfillAbsent}
+                  disabled={submitting}
+                  title={`Auto-mark employees with no record on ${manageDate} as Absent`}
+                  className="px-3 py-2 bg-red-600 hover:bg-red-700 disabled:opacity-50 text-white text-sm font-semibold rounded-lg transition-colors whitespace-nowrap"
+                >
+                  Auto-mark Absents
+                </button>
               </div>
             </div>
             

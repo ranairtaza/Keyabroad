@@ -16,7 +16,7 @@ interface ProgramCardProps {
     work_rights?: string | null;
     universities: {
       name: string;
-      slug: string;
+      id: string;
       logo_url: string | null;
       countries?: {
         name: string;
@@ -27,7 +27,7 @@ interface ProgramCardProps {
 
 export function ProgramCard({ program }: ProgramCardProps) {
   return (
-    <Link href={`/programs/${program.universities?.slug}/${(program as any).slug || program.id}`} className="group block h-full">
+    <Link href={`/programs/${program.universities?.id}/${(program as any).slug || program.id}`} className="group block h-full">
       <Card className="h-full transition-all duration-300 hover:shadow-xl hover:-translate-y-1 border-slate-200 hover:border-blue-300 flex flex-col">
         <CardHeader className="pb-2">
           <CardTitle className="text-lg font-bold text-slate-900 group-hover:text-blue-600 transition-colors line-clamp-2">
@@ -68,7 +68,7 @@ export function ProgramCard({ program }: ProgramCardProps) {
                 id: program.id,
                 name: program.name,
                 slug: (program as any).slug,
-                university_slug: program.universities?.slug,
+                university_slug: program.universities?.id,
                 type: 'program',
                 country: program.universities?.countries?.name,
                 tuition_fee: program.tuition_fee || undefined,

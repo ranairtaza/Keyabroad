@@ -36,7 +36,6 @@ export async function getPublishedPrograms(params: ProgramSearchParams) {
       work_rights,
       universities!inner (
         name,
-        slug,
         logo_url,
         countries!inner (
           name,
@@ -47,7 +46,8 @@ export async function getPublishedPrograms(params: ProgramSearchParams) {
 
   // Apply filters
   if (params.search) {
-    query = query.ilike('name', `%${params.search}%`);
+    const searchTrimmed = params.search.trim();
+    query = query.ilike('name', `%${searchTrimmed}%`);
   }
   
   if (params.country) {
@@ -125,7 +125,6 @@ export async function getPublishedProgramBySlug(slug: string) {
       universities (
         id,
         name,
-        slug,
         logo_url,
         url,
         countries (
@@ -168,7 +167,6 @@ export async function getPublishedProgramById(id: string) {
       universities (
         id,
         name,
-        slug,
         logo_url,
         url,
         countries (

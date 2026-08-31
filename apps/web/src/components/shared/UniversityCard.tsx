@@ -8,7 +8,6 @@ interface UniversityCardProps {
   university: {
     id: string;
     name: string;
-    slug: string;
     logo_url: string | null;
     city?: string | null;
     ranking?: number | null;
@@ -25,7 +24,7 @@ interface UniversityCardProps {
 
 export function UniversityCard({ university }: UniversityCardProps) {
   return (
-    <Link href={`/universities/${university.slug}`} className="group h-full block">
+    <Link href={`/universities/${university.id}`} className="group h-full block">
       <Card className="relative h-full transition-all duration-300 hover:shadow-xl hover:-translate-y-1 border-slate-200 hover:border-blue-300 flex flex-col">
         <CardHeader className="pb-3 items-center text-center">
           {/* Ranking badge */}
@@ -74,7 +73,6 @@ export function UniversityCard({ university }: UniversityCardProps) {
               item={{
                 id: university.id,
                 name: university.name,
-                slug: university.slug,
                 type: 'university',
                 country: university.countries?.name,
                 logo_url: university.logo_url || undefined,

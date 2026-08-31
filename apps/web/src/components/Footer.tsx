@@ -97,13 +97,13 @@ export default function Footer() {
             <h3 className="text-sm font-semibold tracking-widest uppercase text-white mb-8">Contact Us</h3>
             <ul className="space-y-6">
               <li className="flex items-start group">
-                <a href="https://www.google.com/maps/search/?api=1&query=54+Ali+Rd,+Kohinoor+City,+Faisalabad,+38000,+Pakistan" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center mr-4 flex-shrink-0 group-hover:bg-slate-700 transition-colors">
+                <a href="https://www.google.com/maps/search/?api=1&query=54+Ali+Rd,+Kohinoor+City,+Faisalabad,+38000,+Pakistan" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center mr-4 flex-shrink-0 group-hover:bg-slate-700 transition-colors" aria-label="View on Google Maps">
                   <MapPin className="text-secondary" size={18} />
                 </a>
                 <span className="text-slate-400 mt-2 leading-relaxed">54 Ali Rd, Kohinoor City Faisalabad, 38000, Pakistan</span>
               </li>
               <li className="flex items-center group">
-                <a href="mailto:admissions@keyabroad.com" className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center mr-4 flex-shrink-0 group-hover:bg-slate-700 transition-colors">
+                <a href="mailto:admissions@keyabroad.com" className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center mr-4 flex-shrink-0 group-hover:bg-slate-700 transition-colors" aria-label="Email Admissions">
                   <Mail className="text-secondary" size={18} />
                 </a>
                 <a href="mailto:admissions@keyabroad.com" className="text-slate-400 hover:text-white transition-colors mt-1">
@@ -111,7 +111,7 @@ export default function Footer() {
                 </a>
               </li>
               <li className="flex items-center group">
-                <a href="tel:+923217777897" className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center mr-4 flex-shrink-0 group-hover:bg-slate-700 transition-colors">
+                <a href="tel:+923217777897" className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center mr-4 flex-shrink-0 group-hover:bg-slate-700 transition-colors" aria-label="Call Admissions">
                   <Phone className="text-secondary" size={18} />
                 </a>
                 <a href="tel:+923217777897" className="text-slate-400 hover:text-white transition-colors mt-1">

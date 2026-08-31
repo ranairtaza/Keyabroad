@@ -13,7 +13,7 @@ export class EligibilityEngine {
    * STRICT SECURITY BOUNDARY: The AI is purely an explanation engine and has ZERO 
    * authority to determine or alter the 'status'.
    */
-  async evaluate(studentProfile: string, universityRequirements: string): Promise<FinalMatchResult> {
+  async evaluate(studentProfile: string, fieldOfInterest: string, universityRequirements: string): Promise<FinalMatchResult> {
     // 1. DETERMINISTIC ENGINE (The Source of Truth)
     // In a full implementation, this uses rule-based parsing or numerical comparisons.
     // We simulate a strict deterministic engine here based on test keywords to satisfy the tests.
@@ -41,13 +41,17 @@ export class EligibilityEngine {
       AUTHORITATIVE_STATUS: ${authoritativeStatus}
       
       CRITICAL RULE: You must explain the outcome based strictly on this status. Do not contradict it.
+      CRITICAL RULE: Based on the student's Field of Interest and the University Requirements (Specifically Subjects Offered), generate 1 to 3 realistic, plausible program names that this student should apply for at this university.
     `;
 
     const userPrompt = `
       STUDENT PROFILE:
       ${studentProfile}
 
-      UNIVERSITY REQUIREMENTS:
+      FIELD OF INTEREST:
+      ${fieldOfInterest}
+
+      UNIVERSITY REQUIREMENTS (including Subjects Offered):
       ${universityRequirements}
     `;
 

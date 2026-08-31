@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useTransition } from 'react';
+import { useTransition, Suspense } from 'react';
 import { ArrowUpDown } from 'lucide-react';
 
 interface SortOption {
@@ -14,7 +14,7 @@ interface SortControlsProps {
   defaultValue?: string;
 }
 
-export function SortControls({ options, defaultValue = '' }: SortControlsProps) {
+function SortControlsInner({ options, defaultValue = '' }: SortControlsProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [isPending, startTransition] = useTransition();
@@ -50,5 +50,13 @@ export function SortControls({ options, defaultValue = '' }: SortControlsProps) 
         ))}
       </select>
     </div>
+  );
+}
+
+export function SortControls(props: SortControlsProps) {
+  return (
+    <Suspense fallback={<div className="h-9 w-[140px] animate-pulse bg-slate-100 rounded-lg border border-slate-200" />}>
+      <SortControlsInner {...props} />
+    </Suspense>
   );
 }

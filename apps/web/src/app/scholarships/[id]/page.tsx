@@ -20,6 +20,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   if (!scholarship) return { title: 'Scholarship Not Found' };
 
   return {
+    alternates: {
+      canonical: `/scholarships/${scholarship.id}`,
+    },
     title: `${scholarship.name} | KeyAbroad`,
     description: scholarship.description || `Learn about the ${scholarship.name} financial aid opportunity.`,
   };

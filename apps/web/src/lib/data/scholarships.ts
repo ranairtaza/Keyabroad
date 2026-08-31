@@ -26,8 +26,7 @@ export async function getPublishedScholarships(params: ScholarshipSearchParams) 
       deadline,
       description,
       universities (
-        name,
-        slug
+        name
       ),
       countries (
         name,
@@ -37,7 +36,8 @@ export async function getPublishedScholarships(params: ScholarshipSearchParams) 
 
   // Apply filters
   if (params.search) {
-    query = query.ilike('name', `%${params.search}%`);
+    const searchTrimmed = params.search.trim();
+    query = query.ilike('name', `%${searchTrimmed}%`);
   }
 
   if (params.country) {
@@ -110,7 +110,6 @@ export async function getPublishedScholarshipById(id: string) {
       universities (
         id,
         name,
-        slug,
         logo_url
       ),
       countries (

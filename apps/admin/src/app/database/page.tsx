@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { Search, Filter, Mail, Phone, MapPin, Book, Calendar, ChevronDown, Upload, X, FileSpreadsheet, CheckCircle2, FileText, Plus, Trash2 } from "lucide-react";
+import { Search, Filter, Mail, Phone, MapPin, Book, Calendar, ChevronDown, Upload, X, FileSpreadsheet, CheckCircle2, FileText, Plus, Trash2, QrCode } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import toast from "react-hot-toast";
 import { supabase } from "@/lib/auth/legacy";
@@ -49,6 +49,9 @@ export default function StudentDatabasePage() {
   // Profile / Edit Modal State
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
   const [selectedStudentForProfile, setSelectedStudentForProfile] = useState<StudentRecord | null>(null);
+
+  // QR Modal State
+  const [isQrModalOpen, setIsQrModalOpen] = useState(false);
 
   // Follow-up Modal State
   const [isFollowUpModalOpen, setIsFollowUpModalOpen] = useState(false);
@@ -242,6 +245,12 @@ export default function StudentDatabasePage() {
           <div className="text-slate-400 font-medium bg-slate-900 border border-slate-800 px-4 py-2.5 rounded-lg shadow-sm">
             Total Records: <span className="text-white font-bold ml-1">{filteredStudents.length}</span>
           </div>
+          <button 
+            onClick={() => setIsQrModalOpen(true)}
+            className="flex items-center gap-2 bg-slate-800 hover:bg-slate-700 text-white px-4 py-2.5 rounded-lg shadow-md transition-all font-bold border border-slate-700"
+          >
+            <QrCode size={18} className="text-primary" /> Walk-In QR
+          </button>
           <button 
             onClick={() => setIsModalOpen(true)}
             className="flex items-center gap-2 bg-primary hover:bg-blue-600 text-white px-4 py-2.5 rounded-lg shadow-md hover:shadow-lg transition-all font-bold"

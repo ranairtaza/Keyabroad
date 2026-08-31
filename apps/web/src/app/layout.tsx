@@ -25,12 +25,9 @@ const outfit = Outfit({
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://keyabroad.com'),
-  alternates: {
-    canonical: '/',
-  },
   title: {
     template: '%s | KeyAbroad',
-    default: 'KeyAbroad | Study Abroad Consultants',
+    default: 'KeyAbroad | Best Study Abroad Consultants & Visa Experts',
   },
   description: "Your trusted partner for overseas education, university admissions, scholarships, and student visas. Start your international journey with KeyAbroad.",
   keywords: ["study abroad", "international education", "study overseas", "student visa", "study in UK", "study in USA"],
@@ -62,6 +59,23 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col font-sans" suppressHydrationWarning>
         <GoogleTagManager gtmId={process.env.NEXT_PUBLIC_GTM_ID} />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "EducationalOrganization",
+              "name": "KeyAbroad",
+              "url": "https://keyabroad.com",
+              "logo": "https://keyabroad.com/keyabroad-with-tagline.png",
+              "description": "Your trusted partner for overseas education, university admissions, scholarships, and student visas.",
+              "sameAs": [
+                "https://www.facebook.com/keyabroad",
+                "https://www.instagram.com/keyabroad"
+              ]
+            })
+          }}
+        />
         <ThemeProvider
           attribute="class"
           defaultTheme="system"

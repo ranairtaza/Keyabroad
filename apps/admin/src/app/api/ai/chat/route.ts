@@ -65,6 +65,7 @@ export async function POST(req: Request) {
     // The AI Engine evaluates purely for explanation generation. The status is deterministically controlled.
     const result = await engine.evaluate(
       JSON.stringify(student), 
+      "General",
       "University requirements context..." // Typically fetched dynamically based on user query
     );
 

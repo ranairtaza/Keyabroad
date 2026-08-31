@@ -12,6 +12,14 @@ import { AnimatedCounter } from '@/components/shared/AnimatedCounter';
 const DestinationSlider = dynamic(() => import("@/components/DestinationSlider"), { ssr: true });
 const Reviews = dynamic(() => import("@/components/Reviews"), { ssr: true });
 
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  alternates: {
+    canonical: '/',
+  },
+};
+
 export default function Home() {
   return (
     <div className="flex flex-col w-full min-h-screen">
@@ -23,9 +31,11 @@ export default function Home() {
             src="https://images.unsplash.com/photo-1541339907198-e08756dedf3f?q=80&w=2070" 
             alt="University campus" 
             fill 
+            sizes="100vw"
+            quality={60}
             className="object-cover"
             priority
-            unoptimized
+            fetchPriority="high"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/80 to-slate-900/40" />
         </div>
@@ -61,16 +71,17 @@ export default function Home() {
       {/* 2. UNIVERSITY SEARCH */}
       <section className="relative z-20 -mt-12 container mx-auto px-4">
         <Card className="shadow-2xl border-0 ring-1 ring-slate-200 p-2 md:p-4 bg-white/95 backdrop-blur rounded-2xl max-w-4xl mx-auto">
-          <div className="flex flex-col md:flex-row gap-3">
+          <form action="/universities" method="GET" className="flex flex-col md:flex-row gap-3">
             <div className="relative flex-grow">
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5" />
               <Input 
+                name="search"
                 placeholder="Search universities or programs..." 
                 className="pl-12 h-14 text-lg bg-slate-50 border-transparent focus-visible:ring-primary/20 rounded-xl"
               />
             </div>
-            <Button size="lg" className="h-14 px-8 rounded-xl shrink-0">Search</Button>
-          </div>
+            <Button type="submit" size="lg" className="h-14 px-8 rounded-xl shrink-0">Search</Button>
+          </form>
         </Card>
       </section>
 
@@ -98,10 +109,17 @@ export default function Home() {
       {/* 3.5 ACCREDITATIONS */}
       <section className="py-12 bg-white border-t border-slate-100">
         <div className="container mx-auto px-4 text-center">
-          <p className="text-sm font-semibold tracking-widest text-slate-400 uppercase mb-8">Globally Recognized & Accredited</p>
+          <p className="text-sm font-semibold tracking-widest text-slate-500 uppercase mb-8">Globally Recognized & Accredited</p>
             <div className="flex justify-center items-center opacity-80 hover:opacity-100 transition-opacity min-h-[160px]">
-              <span id='iasBadge' data-account-id='6902'></span>
-              <Script strategy="lazyOnload" src="https://www-cdn.icef.com/scripts/iasbadgeid.js" crossOrigin="anonymous" />
+              <Link href="https://www.icef.com/agency/6902" target="_blank" rel="noopener noreferrer">
+                <Image 
+                  src="https://icef-api-production.s3.eu-central-1.amazonaws.com/ias_material/001bG0000051BucQAE_badge.png"
+                  alt="ICEF Accredited Agency"
+                  width={120}
+                  height={141}
+                  className="w-[120px] h-auto"
+                />
+              </Link>
             </div>
         </div>
       </section>
@@ -156,8 +174,9 @@ export default function Home() {
                 alt="Students studying"
                 width={600}
                 height={700}
+                quality={60}
+                sizes="(max-width: 768px) 100vw, 600px"
                 className="rounded-[3rem] relative z-10 object-cover shadow-2xl"
-                unoptimized
               />
             </div>
           </div>

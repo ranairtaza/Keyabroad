@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useTransition, useState, useEffect } from 'react';
+import { useTransition, useState, useEffect, Suspense } from 'react';
 import { Button } from '@keyabroad/ui/components/button';
 import { Input } from '@keyabroad/ui/components/input';
 import { Label } from '@keyabroad/ui/components/label';
@@ -11,7 +11,7 @@ interface AdvancedFiltersProps {
   type: 'universities' | 'programs' | 'scholarships';
 }
 
-export function AdvancedFilters({ type }: AdvancedFiltersProps) {
+function AdvancedFiltersInner({ type }: AdvancedFiltersProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [isPending, startTransition] = useTransition();
@@ -57,8 +57,9 @@ export function AdvancedFilters({ type }: AdvancedFiltersProps) {
     const params = new URLSearchParams(searchParams.toString());
     
     Object.entries(filters).forEach(([key, value]) => {
-      if (value) {
-        params.set(key, value);
+      const val = typeof value === 'string' ? value.trim() : value;
+      if (val) {
+        params.set(key, val);
       } else {
         params.delete(key);
       }
@@ -78,9 +79,9 @@ export function AdvancedFilters({ type }: AdvancedFiltersProps) {
   };
 
   return (
-    <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+    <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800">
       <div className="flex items-center justify-between mb-6">
-        <h3 className="font-bold text-slate-900 flex items-center gap-2">
+        <h3 className="font-bold text-slate-900 dark:text-white flex items-center gap-2">
           <SlidersHorizontal className="h-5 w-5" />
           Filters
         </h3>
@@ -98,6 +99,7 @@ export function AdvancedFilters({ type }: AdvancedFiltersProps) {
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
             <Input 
+              title={filters.search}
               placeholder="e.g. Oxford, Business..." 
               className="pl-9"
               value={filters.search}
@@ -111,7 +113,7 @@ export function AdvancedFilters({ type }: AdvancedFiltersProps) {
           <div className="space-y-2">
             <Label>Country</Label>
             <select 
-              className="flex h-10 w-full items-center justify-between rounded-md border border-slate-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="flex h-10 w-full items-center justify-between rounded-md border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 px-3 py-2 text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
               value={filters.country}
               onChange={(e) => updateFilters('country', e.target.value)}
             >
@@ -130,7 +132,7 @@ export function AdvancedFilters({ type }: AdvancedFiltersProps) {
             <div className="space-y-2">
               <Label>Degree Level</Label>
               <select 
-                className="flex h-10 w-full items-center justify-between rounded-md border border-slate-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="flex h-10 w-full items-center justify-between rounded-md border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 px-3 py-2 text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                 value={filters.degree}
                 onChange={(e) => updateFilters('degree', e.target.value)}
               >
@@ -173,7 +175,7 @@ export function AdvancedFilters({ type }: AdvancedFiltersProps) {
             <div className="space-y-2">
               <Label>Intake Month</Label>
               <select 
-                className="flex h-10 w-full items-center justify-between rounded-md border border-slate-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="flex h-10 w-full items-center justify-between rounded-md border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 px-3 py-2 text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                 value={filters.intake}
                 onChange={(e) => updateFilters('intake', e.target.value)}
               >
@@ -193,7 +195,7 @@ export function AdvancedFilters({ type }: AdvancedFiltersProps) {
             <div className="space-y-2">
               <Label>Country</Label>
               <select
-                className="flex h-10 w-full items-center justify-between rounded-md border border-slate-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="flex h-10 w-full items-center justify-between rounded-md border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 px-3 py-2 text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                 value={filters.country}
                 onChange={(e) => updateFilters('country', e.target.value)}
               >
@@ -237,5 +239,13 @@ export function AdvancedFilters({ type }: AdvancedFiltersProps) {
         </Button>
       </div>
     </div>
+  );
+}
+
+export function AdvancedFilters({ type }: AdvancedFiltersProps) {
+  return (
+    <Suspense fallback={<div className="h-[400px] w-full animate-pulse bg-slate-100 dark:bg-slate-800 rounded-2xl" />}>
+      <AdvancedFiltersInner type={type} />
+    </Suspense>
   );
 }

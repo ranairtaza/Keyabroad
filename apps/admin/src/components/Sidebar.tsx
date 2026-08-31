@@ -38,11 +38,11 @@ export default function Sidebar() {
     { name: "Pipeline", href: "/pipeline", icon: Kanban },
     { name: "Visa Processing", href: "/visas", icon: Plane },
     { name: "Appointments", href: "/appointments", icon: Clock },
-    { name: "Campaigns", href: "/campaigns", icon: Megaphone },
-    { name: "Automations", href: "/automations", icon: Zap },
+    // { name: "Campaigns", href: "/campaigns", icon: Megaphone },
+    // { name: "Automations", href: "/automations", icon: Zap },
     ...(canViewFees ? [{ name: "Fees & Revenue", href: "/fees", icon: Receipt }] : []),
     ...(canViewFees ? [{ name: "Invoices", href: "/invoices", icon: FileText }] : []),
-    ...(canViewFees ? [{ name: "Commissions", href: "/commissions", icon: Building }] : []),
+    // ...(canViewFees ? [{ name: "Commissions", href: "/commissions", icon: Building }] : []),
     { name: "Reviews & Feedback", href: "/reviews", icon: Star },
     { name: "Careers & Hiring", href: "/jobs", icon: Briefcase },
     ...(canManageBlogs ? [{ name: "Blogs", href: "/blogs", icon: Globe }] : []),
@@ -53,6 +53,7 @@ export default function Sidebar() {
     { name: "Tasks", href: "/tasks", icon: CheckSquare },
     { name: "Attendance", href: "/attendance", icon: Clock },
     { name: "Team Directory", href: "/team", icon: Network },
+    { name: "Integrations", href: "/integrations", icon: Cable },
     { name: "Settings", href: "/settings", icon: Settings },
   ];
 

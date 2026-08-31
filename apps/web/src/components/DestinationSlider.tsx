@@ -69,6 +69,7 @@ export default function DestinationSlider() {
                       alt={destination.name}
                       fill
                       sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                      quality={60}
                       priority={index < 3}
                       className="object-cover transition-transform duration-700 group-hover:scale-110"
                     />
@@ -79,7 +80,8 @@ export default function DestinationSlider() {
                           <img 
                             src={`https://flagcdn.com/w40/${destination.flagCode.toLowerCase()}.png`} 
                             srcSet={`https://flagcdn.com/w80/${destination.flagCode.toLowerCase()}.png 2x`}
-                            width="32" 
+                            width="32"
+                            height="24"
                             alt={`${destination.name} flag`}
                             className="rounded shadow-sm"
                           />

@@ -72,7 +72,6 @@ export async function getPublishedCountryBySlug(slug: string) {
       universities(
         id,
         name,
-        slug,
         logo_url,
         url
       )

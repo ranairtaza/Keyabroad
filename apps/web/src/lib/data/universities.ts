@@ -20,7 +20,6 @@ export async function getPublishedUniversities(params: UniversitySearchParams) {
     .select(`
       id,
       name,
-      slug,
       logo_url,
       city,
       ranking,
@@ -36,7 +35,8 @@ export async function getPublishedUniversities(params: UniversitySearchParams) {
 
   // Apply filters
   if (params.search) {
-    query = query.ilike('name', `%${params.search}%`);
+    const searchTrimmed = params.search.trim();
+    query = query.ilike('name', `%${searchTrimmed}%`);
   }
   
   if (params.country) {
@@ -80,7 +80,7 @@ export async function getPublishedUniversities(params: UniversitySearchParams) {
 }
 
 
-export async function getPublishedUniversityBySlug(slug: string) {
+export async function getPublishedUniversityById(id: string) {
   const supabase = await createClient();
 
   const { data: university, error } = await supabase
@@ -88,7 +88,6 @@ export async function getPublishedUniversityBySlug(slug: string) {
     .select(`
       id,
       name,
-      slug,
       logo_url,
       url,
       countries (
@@ -116,11 +115,11 @@ export async function getPublishedUniversityBySlug(slug: string) {
         description
       )
     `)
-    .eq('slug', slug)
+    .eq('id', id)
     .single();
 
   if (error) {
-    console.error(`Error fetching university ${slug}:`, error);
+    console.error(`Error fetching university ${id}:`, error);
     return null;
   }
 

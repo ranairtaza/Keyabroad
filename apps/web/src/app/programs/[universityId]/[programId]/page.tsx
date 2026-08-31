@@ -1,4 +1,4 @@
-import { getPublishedProgramBySlug } from '@/lib/data/programs';
+import { getPublishedProgramById } from '@/lib/data/programs';
 import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
 import { Building2, MapPin, GraduationCap, Banknote, Clock, ArrowRight } from 'lucide-react';
@@ -9,14 +9,14 @@ import { Badge } from '@keyabroad/ui/components/badge';
 
 interface PageProps {
   params: Promise<{
-    universitySlug: string;
-    programSlug: string;
+    universityId: string;
+    programId: string;
   }>;
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  const { universitySlug, programSlug } = await params;
-  const program = await getPublishedProgramBySlug(programSlug);
+  const { universityId, programId } = await params;
+  const program = await getPublishedProgramById(programId);
   
   if (!program) {
     return { title: 'Program Not Found' };
@@ -26,18 +26,20 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     ? (program.universities[0] as any)
     : (program.universities as any);
 
-  // Validate that the URL university matches the program's university
-  if (uni?.slug !== universitySlug) {
+  if (uni?.id !== universityId) {
     return { title: 'Program Not Found' };
   }
 
   return {
+    alternates: {
+      canonical: `/programs/${universityId}/${program.id}`,
+    },
     title: `${program.name} at ${uni?.name} - Admissions 2026 | KeyAbroad`,
     description: `Get full details on the ${program.name} at ${uni?.name}. View tuition fees (${program.tuition_fee} ${program.currency}), duration, and start your application today.`,
     openGraph: {
       title: `${program.name} at ${uni?.name}`,
       description: `Study ${program.name} at ${uni?.name}. View requirements, fees, and apply through KeyAbroad.`,
-      url: `https://keyabroad.com/programs/${universitySlug}/${programSlug}`,
+      url: `https://keyabroad.com/programs/${universityId}/${programId}`,
       siteName: 'KeyAbroad',
       images: [
         {
@@ -59,8 +61,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 }
 
 export default async function ProgramDetailPage({ params }: PageProps) {
-  const { universitySlug, programSlug } = await params;
-  const program = await getPublishedProgramBySlug(programSlug);
+  const { universityId, programId } = await params;
+  const program = await getPublishedProgramById(programId);
 
   if (!program) {
     notFound();
@@ -70,7 +72,7 @@ export default async function ProgramDetailPage({ params }: PageProps) {
     ? (program.universities[0] as any) 
     : (program.universities as any);
 
-  if (uni?.slug !== universitySlug) {
+  if (uni?.id !== universityId) {
     notFound();
   }
 
@@ -96,7 +98,7 @@ export default async function ProgramDetailPage({ params }: PageProps) {
             '@type': 'ListItem',
             position: 3,
             name: uni.name,
-            item: `https://keyabroad.com/universities/${uni.slug}`,
+            item: `https://keyabroad.com/universities/${uni.id}`,
           }] : []),
           {
             '@type': 'ListItem',
@@ -112,7 +114,7 @@ export default async function ProgramDetailPage({ params }: PageProps) {
         provider: {
           '@type': 'EducationalOrganization',
           name: uni?.name,
-          sameAs: uni?.url || `https://keyabroad.com/universities/${uni?.slug}`,
+          sameAs: uni?.url || `https://keyabroad.com/universities/${uni?.id}`,
         },
         hasCourseInstance: [
           {
@@ -162,7 +164,7 @@ export default async function ProgramDetailPage({ params }: PageProps) {
               )}
               <div>
                 <div className="text-lg font-medium text-white">{uni.name}</div>
-                <Link href={`/universities/${uni.slug}`} className="text-sm text-blue-400 hover:text-blue-300 flex items-center gap-1 mt-1">
+                <Link href={`/universities/${uni.id}`} className="text-sm text-blue-400 hover:text-blue-300 flex items-center gap-1 mt-1">
                   View University <ArrowRight className="w-3 h-3" />
                 </Link>
               </div>

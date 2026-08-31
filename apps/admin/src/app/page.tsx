@@ -35,21 +35,21 @@ export default function Dashboard() {
 
   useEffect(() => {
     async function fetchData() {
-      // 1. Fetch Total Leads (from enquiries table)
-      const { count: enquiriesCount } = await supabase.from('enquiries').select('*', { count: 'exact', head: true });
-      setTotalLeads(enquiriesCount || 0);
+      // 1. Fetch Total Leads (from crm_leads table)
+      const { count: leadsCount } = await supabase.from('crm_leads').select('*', { count: 'exact', head: true });
+      setTotalLeads(leadsCount || 0);
 
-      // 2. Fetch Active Applications and Visas Approved (from students table)
-      const { data: studentsData } = await supabase.from('students').select('admissions_stage, language_stage');
+      // 2. Fetch Active Applications and Visas Approved (from student_applications table)
+      const { data: appsData } = await supabase.from('student_applications').select('status');
       
       let activeCount = 0;
       let visaCount = 0;
       
-      if (studentsData) {
-        studentsData.forEach(student => {
-          if (student.admissions_stage === 'Visa Approved') {
+      if (appsData) {
+        appsData.forEach(app => {
+          if (app.status === 'visa_approved') {
             visaCount++;
-          } else if (student.admissions_stage !== 'Completed' && student.language_stage !== 'Completed') {
+          } else if (app.status !== 'rejected' && app.status !== 'withdrawn' && app.status !== 'completed' && app.status !== 'visa_approved') {
             activeCount++;
           }
         });
@@ -58,9 +58,9 @@ export default function Dashboard() {
       setActiveApps(activeCount);
       setVisasApproved(visaCount);
 
-      // 3. Fetch Live Activity (Recent Leads and Appointments)
+      // 3. Fetch Live Activity (Recent Leads and Audit Logs)
       const { data: recentLeads } = await supabase
-        .from('enquiries')
+        .from('crm_leads')
         .select('*')
         .order('created_at', { ascending: false })
         .limit(5);
@@ -72,8 +72,8 @@ export default function Dashboard() {
         .limit(5);
         
       const { data: recentActivities } = await supabase
-        .from('activity_logs')
-        .select('*')
+        .from('audit_logs')
+        .select('*, profiles(full_name)')
         .order('created_at', { ascending: false })
         .limit(10);
 
@@ -89,10 +89,11 @@ export default function Dashboard() {
 
       // 4. Fetch Pending Follow-ups
       const { data: todayFollowUps } = await supabase
-        .from('follow_ups')
-        .select('*')
-        .eq('status', 'pending')
-        .order('follow_up_date', { ascending: true })
+        .from('crm_tasks')
+        .select('*, crm_leads(full_name, phone)')
+        .eq('task_type', 'follow_up')
+        .neq('status', 'completed')
+        .order('due_date', { ascending: true })
         .limit(10);
       
       if (todayFollowUps) {
@@ -231,7 +232,7 @@ export default function Dashboard() {
                         <div>
                           <p className="text-sm text-slate-700 dark:text-slate-200">
                             {act.type === 'activity' ? (
-                              <><strong>{act.employee_name}</strong> {act.description}</>
+                              <><strong>{act.profiles?.full_name || 'System'}</strong> {act.action} {act.resource_type}</>
                             ) : (
                               <><strong>{act.full_name || act.student_name || act.name || 'A Student'}</strong> {act.type === 'appointment' ? 'booked a new consultation appointment.' : `registered as a new lead for ${act.inquiry_type || act.purpose || act.language_test || 'consultation'}.`}</>
                             )}
@@ -265,12 +266,12 @@ export default function Dashboard() {
                     followUps.map((fu, index) => (
                       <motion.div key={fu.id || index} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.2 * index }} className="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-slate-200 dark:border-slate-700">
                         <div className="flex justify-between items-start mb-2">
-                          <h4 className="font-bold text-sm text-slate-900 dark:text-white">{fu.student_name}</h4>
-                          <span className="text-[10px] uppercase font-bold text-slate-500 bg-slate-200 dark:bg-slate-700 px-2 py-0.5 rounded-full">{fu.counselor_name}</span>
+                          <h4 className="font-bold text-sm text-slate-900 dark:text-white">{fu.crm_leads?.full_name || fu.title || 'Follow Up'}</h4>
+                          <span className="text-[10px] uppercase font-bold text-slate-500 bg-slate-200 dark:bg-slate-700 px-2 py-0.5 rounded-full">{fu.assigned_to_id || 'System'}</span>
                         </div>
-                        <p className="text-xs text-slate-600 dark:text-slate-400 mb-2">{fu.notes}</p>
+                        <p className="text-xs text-slate-600 dark:text-slate-400 mb-2">{fu.description}</p>
                         <div className="flex items-center gap-2 text-xs font-medium text-slate-500 bg-white dark:bg-slate-900 p-2 rounded-lg border border-slate-200 dark:border-slate-700">
-                          <Phone size={12} className="text-primary" /> {fu.phone}
+                          <Phone size={12} className="text-primary" /> {fu.crm_leads?.phone || 'No phone'}
                         </div>
                       </motion.div>
                     ))

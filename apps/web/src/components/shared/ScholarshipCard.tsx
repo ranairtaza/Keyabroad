@@ -13,7 +13,6 @@ interface ScholarshipCardProps {
     description: string | null;
     universities: {
       name: string;
-      slug: string;
     } | null;
     countries: {
       name: string;

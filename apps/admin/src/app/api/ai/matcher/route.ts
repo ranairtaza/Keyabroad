@@ -5,6 +5,7 @@ import { z } from 'zod';
 
 const aiMatcherSchema = z.object({
   studentProfile: z.string().min(5, "Student profile must be at least 5 characters"),
+  fieldOfInterest: z.string().min(2, "Field of interest must be at least 2 characters"),
   universityRequirements: z.string().min(5, "University requirements must be at least 5 characters")
 });
 
@@ -39,7 +40,7 @@ export async function POST(req: Request) {
       );
     }
 
-    const { studentProfile, universityRequirements } = validationResult.data;
+    const { studentProfile, fieldOfInterest, universityRequirements } = validationResult.data;
 
     // 3. Business Logic
     const apiKey = process.env.OPENAI_API_KEY;
@@ -53,7 +54,7 @@ export async function POST(req: Request) {
     const aiService = new AIService(apiKey);
     const engine = new EligibilityEngine(aiService);
 
-    const result = await engine.evaluate(studentProfile, universityRequirements);
+    const result = await engine.evaluate(studentProfile, fieldOfInterest, universityRequirements);
 
     return NextResponse.json(result);
   } catch (error: any) {

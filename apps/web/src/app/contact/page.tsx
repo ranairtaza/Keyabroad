@@ -22,7 +22,7 @@ export default function ContactPage() {
               <h2 className="text-2xl font-bold text-slate-900 mb-8 font-heading">Our Location</h2>
               <div className="space-y-6">
                 <div className="flex items-start">
-                  <a href="https://www.google.com/maps/search/?api=1&query=54+Ali+Rd,+Kohinoor+City,+Faisalabad,+38000,+Pakistan" target="_blank" rel="noopener noreferrer" className="w-12 h-12 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center shrink-0 mr-4 hover:bg-blue-100 transition-colors">
+                  <a href="https://www.google.com/maps/search/?api=1&query=54+Ali+Rd,+Kohinoor+City,+Faisalabad,+38000,+Pakistan" target="_blank" rel="noopener noreferrer" className="w-12 h-12 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center shrink-0 mr-4 hover:bg-blue-100 transition-colors" aria-label="View on Google Maps">
                     <MapPin />
                   </a>
                   <div>

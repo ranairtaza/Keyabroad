@@ -74,15 +74,14 @@ export default async function sitemap({ id }: { id: number }): Promise<MetadataR
     try {
       const { data: universities } = await supabase
         .from('universities')
-        .select('slug, updated_at')
+        .select('id, updated_at')
         .eq('is_published', true)
-        .not('slug', 'is', null)
         .limit(CHUNK_SIZE); // Assuming universities < 1000 for now. Can be chunked similarly if needed.
         
       if (universities) {
         routes = routes.concat(
           universities.map((uni: any) => ({
-            url: `${baseUrl}/universities/${uni.slug}`,
+            url: `${baseUrl}/universities/${uni.id}`,
             lastModified: uni.updated_at ? new Date(uni.updated_at) : new Date(),
             changeFrequency: 'weekly' as const,
             priority: 0.7,
@@ -101,9 +100,8 @@ export default async function sitemap({ id }: { id: number }): Promise<MetadataR
 
     const { data: programs } = await supabase
       .from('programs')
-      .select('id, slug, updated_at, universities!inner(slug)')
+      .select('id, updated_at, universities!inner(id)')
       .eq('is_published', true)
-      .not('slug', 'is', null)
       .not('tuition_fee', 'is', null)
       .not('duration', 'is', null)
       .range(startOffset, endOffset);
@@ -111,9 +109,9 @@ export default async function sitemap({ id }: { id: number }): Promise<MetadataR
     if (programs) {
       routes = routes.concat(
         programs.map((prog: any) => {
-          const uniSlug = Array.isArray(prog.universities) ? prog.universities[0]?.slug : prog.universities?.slug;
+          const uniId = Array.isArray(prog.universities) ? prog.universities[0]?.id : prog.universities?.id;
           return {
-            url: `${baseUrl}/programs/${uniSlug}/${prog.slug || prog.id}`,
+            url: `${baseUrl}/programs/${uniId}/${prog.id}`,
             lastModified: prog.updated_at ? new Date(prog.updated_at) : new Date(),
             changeFrequency: 'weekly' as const,
             priority: 0.6,

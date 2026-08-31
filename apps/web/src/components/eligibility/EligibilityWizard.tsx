@@ -151,14 +151,14 @@ export function EligibilityWizard() {
   ];
 
   return (
-    <div className="max-w-3xl mx-auto py-16 px-4 sm:px-6 lg:px-8">
+    <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
       {/* Header */}
       <div className="text-center mb-12">
-        <h1 className="text-4xl font-bold text-slate-900 mb-4 flex items-center justify-center gap-3">
-          <Sparkles className="h-8 w-8 text-blue-600" />
+        <h1 className="text-4xl md:text-5xl font-bold text-slate-900 dark:text-white mb-4 flex items-center justify-center gap-3">
+          <Sparkles className="h-8 w-8 text-blue-600 dark:text-blue-400" />
           Check Your Eligibility
         </h1>
-        <p className="text-lg text-slate-600">
+        <p className="text-lg text-slate-600 dark:text-slate-300">
           Answer a few quick questions to discover your likelihood of admission to top universities globally.
         </p>
       </div>
@@ -170,15 +170,15 @@ export function EligibilityWizard() {
             {steps.map((s) => (
               <span
                 key={s.id}
-                className={`text-xs font-medium uppercase tracking-wider ${
-                  step >= s.id ? 'text-blue-600' : 'text-slate-400'
+                className={`text-xs font-medium uppercase tracking-wider transition-colors duration-300 ${
+                  step >= s.id ? 'text-blue-600 dark:text-blue-400' : 'text-slate-400 dark:text-slate-500'
                 }`}
               >
                 {s.title}
               </span>
             ))}
           </div>
-          <div className="h-2 w-full bg-slate-200 rounded-full overflow-hidden flex">
+          <div className="h-2 w-full bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden flex">
             <div
               className="h-full bg-blue-600 transition-all duration-300"
               style={{ width: `${((step - 1) / (steps.length - 1)) * 100}%` }}
@@ -188,11 +188,11 @@ export function EligibilityWizard() {
       )}
 
       {/* Forms */}
-      <Card className="border-slate-200 shadow-xl bg-white/80 backdrop-blur-sm">
-        <CardContent className="p-8">
+      <Card className="border-slate-200 dark:border-slate-800 shadow-2xl bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl">
+        <CardContent className="p-6 md:p-10">
           {step === 1 && (
             <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-              <h2 className="text-2xl font-semibold text-slate-900 mb-6">Let's start with your details</h2>
+              <h2 className="text-2xl font-semibold text-slate-900 dark:text-white mb-6">Let's start with your details</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
                   <Label htmlFor="firstName">First Name *</Label>
@@ -216,11 +216,11 @@ export function EligibilityWizard() {
 
           {step === 2 && (
             <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-              <h2 className="text-2xl font-semibold text-slate-900 mb-6">Your Academic Profile</h2>
+              <h2 className="text-2xl font-semibold text-slate-900 dark:text-white mb-6">Your Academic Profile</h2>
               <div className="space-y-2">
                 <Label htmlFor="cgpa">Latest Degree CGPA (out of 4.0) *</Label>
                 <Input id="cgpa" name="cgpa" type="number" step="0.01" min="0" max="4.0" value={formData.cgpa || ''} onChange={handleChange} required />
-                <p className="text-xs text-slate-500">Enter your equivalent GPA if grading is different.</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400">Enter your equivalent GPA if grading is different.</p>
               </div>
               <div className="space-y-2">
                 <Label htmlFor="studyGapYears">Study Gap (in years)</Label>
@@ -231,22 +231,22 @@ export function EligibilityWizard() {
 
           {step === 3 && (
             <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-              <h2 className="text-2xl font-semibold text-slate-900 mb-6">English Proficiency</h2>
+              <h2 className="text-2xl font-semibold text-slate-900 dark:text-white mb-6">English Proficiency</h2>
               <div className="space-y-2">
                 <Label htmlFor="ieltsScore">IELTS Band Score</Label>
                 <Input id="ieltsScore" name="ieltsScore" type="number" step="0.5" min="0" max="9.0" value={formData.ieltsScore || ''} onChange={handleChange} />
-                <p className="text-xs text-slate-500">Leave blank if you haven't taken it yet or plan to take PTE/TOEFL.</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400">Leave blank if you haven't taken it yet or plan to take PTE/TOEFL.</p>
               </div>
             </div>
           )}
 
           {step === 4 && (
             <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-              <h2 className="text-2xl font-semibold text-slate-900 mb-6">Budget & Preferences</h2>
+              <h2 className="text-2xl font-semibold text-slate-900 dark:text-white mb-6">Budget & Preferences</h2>
               <div className="space-y-2">
                 <Label htmlFor="budget">Annual Budget (in PKR) *</Label>
                 <Input id="budget" name="budget" type="number" min="0" value={formData.budget || ''} onChange={handleChange} required />
-                <p className="text-xs text-slate-500">Includes tuition and estimated living expenses.</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400">Includes tuition and estimated living expenses.</p>
               </div>
               <div className="space-y-2">
                 <Label htmlFor="preferredCountryId">Preferred Destination</Label>
@@ -255,7 +255,7 @@ export function EligibilityWizard() {
                   name="preferredCountryId"
                   value={formData.preferredCountryId}
                   onChange={handleChange}
-                  className="flex h-10 w-full items-center justify-between rounded-md border border-slate-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="flex h-10 w-full items-center justify-between rounded-md border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-900 dark:text-white"
                 >
                   <option value="">Any Destination</option>
                   {countries.map(c => (
@@ -285,23 +285,23 @@ export function EligibilityWizard() {
               </div>
               
               <div>
-                <h2 className="text-3xl font-bold text-slate-900 mb-2">
+                <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-2">
                   {result.status === 'eligible' && 'Great News!'}
                   {result.status === 'likely_eligible' && 'Good Prospects!'}
                   {result.status === 'needs_review' && 'Profile Review Needed'}
                   {result.status === 'not_met' && 'Alternative Pathways Available'}
                 </h2>
-                <p className="text-lg text-slate-600 mb-6">
-                  Based on your profile, you match with <span className="font-bold text-slate-900">{result.matchedPrograms} programs</span> in our database.
+                <p className="text-lg text-slate-600 dark:text-slate-300 mb-6">
+                  Based on your profile, you match with <span className="font-bold text-slate-900 dark:text-white">{result.matchedPrograms} programs</span> in our database.
                 </p>
               </div>
 
-              <div className="bg-slate-50 border border-slate-200 rounded-xl p-6 text-left space-y-4">
-                <h3 className="font-semibold text-slate-900">Counselor Insights:</h3>
+              <div className="bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl p-6 text-left space-y-4">
+                <h3 className="font-semibold text-slate-900 dark:text-white">Counselor Insights:</h3>
                 <ul className="space-y-3">
                   {result.suggestions.map((suggestion, idx) => (
-                    <li key={idx} className="flex items-start gap-2 text-slate-700">
-                      <div className="mt-1 h-2 w-2 bg-blue-600 rounded-full shrink-0" />
+                    <li key={idx} className="flex items-start gap-2 text-slate-700 dark:text-slate-300">
+                      <div className="mt-1.5 h-2 w-2 bg-blue-600 dark:bg-blue-400 rounded-full shrink-0" />
                       {suggestion}
                     </li>
                   ))}
@@ -320,12 +320,12 @@ export function EligibilityWizard() {
 
         {/* Footer Actions */}
         {step < 5 && (
-          <div className="border-t border-slate-100 bg-slate-50/50 p-6 flex items-center justify-between rounded-b-xl">
+          <div className="border-t border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/20 p-6 flex items-center justify-between rounded-b-xl">
             <Button
               variant="ghost"
               onClick={handlePrev}
               disabled={step === 1 || isSubmitting}
-              className="text-slate-500"
+              className="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
             >
               <ArrowLeft className="mr-2 h-4 w-4" /> Back
             </Button>

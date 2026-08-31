@@ -41,6 +41,7 @@ export default function CourseMatcherPage() {
 
 
   const [studentProfile, setStudentProfile] = useState("");
+  const [fieldOfInterest, setFieldOfInterest] = useState("");
   const [matchResult, setMatchResult] = useState<any>(null);
   const [isMatchModalOpen, setIsMatchModalOpen] = useState(false);
   const [evaluatingUni, setEvaluatingUni] = useState<string | null>(null);
@@ -104,6 +105,10 @@ export default function CourseMatcherPage() {
       toast.error("Please enter a student profile description first.");
       return;
     }
+    if (!fieldOfInterest.trim()) {
+      toast.error("Please enter a field of interest first.");
+      return;
+    }
 
     setEvaluatingUni(uni.id);
     const requirements = `Tuition Fee: $${uni.tuition_fee}
@@ -118,7 +123,7 @@ Work Rights: ${uni.work_rights || 'N/A'}`;
       const res = await fetch('/api/ai/matcher', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ studentProfile, universityRequirements: requirements })
+        body: JSON.stringify({ studentProfile, fieldOfInterest, universityRequirements: requirements })
       });
 
       const data = await res.json();
@@ -174,13 +179,28 @@ Work Rights: ${uni.work_rights || 'N/A'}`;
              <h3 className="font-bold text-white mb-4 flex items-center gap-2">
               <BookOpen size={18} className="text-primary" /> Student Profile
             </h3>
-            <textarea
-              rows={4}
-              placeholder="e.g. Student has IELTS 5.5, budget $30k, wants to study IT in USA..."
-              value={studentProfile}
-              onChange={(e) => setStudentProfile(e.target.value)}
-              className="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-white focus:outline-none focus:border-primary text-sm resize-none"
-            />
+            <div className="space-y-3">
+              <div>
+                <label className="text-xs font-medium text-slate-400 mb-1 block">Field of Interest *</label>
+                <input 
+                  type="text" 
+                  placeholder="e.g. Computer Science, Business"
+                  value={fieldOfInterest} 
+                  onChange={e => setFieldOfInterest(e.target.value)}
+                  className="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-white focus:outline-none focus:border-primary text-sm"
+                />
+              </div>
+              <div>
+                <label className="text-xs font-medium text-slate-400 mb-1 block">Profile Details *</label>
+                <textarea
+                  rows={4}
+                  placeholder="e.g. Student has IELTS 5.5, budget $30k..."
+                  value={studentProfile}
+                  onChange={(e) => setStudentProfile(e.target.value)}
+                  className="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-white focus:outline-none focus:border-primary text-sm resize-none"
+                />
+              </div>
+            </div>
           </div>
 
           <div className="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-sm sticky top-4">
@@ -411,6 +431,22 @@ Work Rights: ${uni.work_rights || 'N/A'}`;
                     {matchResult.explanation}
                   </p>
                 </div>
+
+                {/* Recommended Programs */}
+                {matchResult.recommended_programs && matchResult.recommended_programs.length > 0 && (
+                  <div>
+                    <h4 className="text-xs font-bold text-primary uppercase tracking-wider mb-2 flex items-center gap-2">
+                      <GraduationCap size={14} /> Recommended Programs
+                    </h4>
+                    <div className="bg-slate-950 p-4 rounded-lg border border-primary/20">
+                      <ul className="list-disc list-inside text-sm text-white space-y-2 font-medium">
+                        {matchResult.recommended_programs.map((prog: string, i: number) => (
+                          <li key={i}>{prog}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                )}
 
                 {/* Criteria Breakdown */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

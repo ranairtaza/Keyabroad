@@ -168,22 +168,20 @@ export function RoleProvider({ children }: { children: React.ReactNode }) {
           let icon = '';
           const isHighPriority = newRow.priority === 'High';
           
-          if (payload.table === 'registrations') {
+          if (payload.table === 'crm_leads') {
             title = 'New Lead Assigned';
-            body = `Lead: ${newRow.student_name || newRow.name || 'New Student'}`;
+            body = `Lead: ${newRow.full_name || newRow.name || 'New Student'}`;
             icon = '📋';
-          } else if (payload.table === 'enquiries') {
-            title = 'Walk-In Ticket Assigned';
-            body = `Walk-In: ${newRow.full_name || newRow.name || 'New Client'}`;
-            icon = '🎫';
-          } else if (payload.table === 'office_tasks') {
-            title = 'New Office Task Assigned';
-            body = `Task: ${newRow.title || newRow.description || 'New Task'}`;
-            icon = '📝';
-          } else if (payload.table === 'follow_ups') {
-            title = 'New Follow-Up Assigned';
-            body = `Follow-Up: ${newRow.student_name || newRow.name || 'New Student'}`;
-            icon = '📞';
+          } else if (payload.table === 'crm_tasks') {
+            if (newRow.task_type === 'follow_up') {
+              title = 'New Follow-Up Assigned';
+              body = `Follow-Up: ${newRow.title || newRow.description || 'New Student'}`;
+              icon = '📞';
+            } else {
+              title = 'New Task Assigned';
+              body = `Task: ${newRow.title || newRow.description || 'New Task'}`;
+              icon = '📝';
+            }
           }
 
           if (title) {
@@ -233,10 +231,9 @@ export function RoleProvider({ children }: { children: React.ReactNode }) {
 
     const taskSubscription = supabase
       .channel('task-notifications')
-      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'registrations' }, handleTaskEvent)
-      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'enquiries' }, handleTaskEvent)
-      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'office_tasks' }, handleTaskEvent)
-      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'follow_ups' }, handleTaskEvent)
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'crm_leads' }, handleTaskEvent)
+      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'crm_leads' }, handleTaskEvent)
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'crm_tasks' }, handleTaskEvent)
       .subscribe();
 
     return () => {
@@ -250,24 +247,17 @@ export function RoleProvider({ children }: { children: React.ReactNode }) {
     
     const checkReminders = async () => {
       try {
-        const tables = ['office_tasks', 'follow_ups', 'registrations', 'enquiries'];
         const now = new Date();
         const fifteenMinutesFromNow = new Date(now.getTime() + 15 * 60000);
         
-        let allPendingTasks: any[] = [];
+        const { data, error } = await supabase
+          .from('crm_tasks')
+          .select('*')
+          .neq('status', 'completed');
+          
+        let allPendingTasks = data || [];
         
-        for (const table of tables) {
-          const { data, error } = await supabase
-            .from(table)
-            .select('*')
-            .eq('status', 'pending');
-            
-          if (data && !error) {
-            allPendingTasks = [...allPendingTasks, ...data.map(t => ({...t, _table: table}))];
-          }
-        }
-        
-        const myTasks = allPendingTasks.filter(t => (t.assignee === currentUser.name || t.counselor_name === currentUser.name || t.assigned_to === currentUser.name));
+        const myTasks = allPendingTasks.filter(t => (t.assignee === currentUser.name || t.assigned_to_id === currentUser.id || t.assigned_to === currentUser.name || t.counselor_name === currentUser.name));
         const remindedTasks = JSON.parse(sessionStorage.getItem('remindedTasksMap') || '{}');
         
         myTasks.forEach(task => {

@@ -1,4 +1,4 @@
-import { getPublishedUniversityBySlug } from '@/lib/data/universities';
+import { getPublishedUniversityById } from '@/lib/data/universities';
 import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
 import { Building2, MapPin, Globe, GraduationCap, Banknote, Calendar } from 'lucide-react';
@@ -8,13 +8,13 @@ import { Card, CardContent, CardHeader, CardTitle } from '@keyabroad/ui/componen
 
 interface PageProps {
   params: Promise<{
-    slug: string;
+    id: string;
   }>;
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  const { slug } = await params;
-  const university = await getPublishedUniversityBySlug(slug);
+  const { id } = await params;
+  const university = await getPublishedUniversityById(id);
   
   if (!university) {
     return { title: 'University Not Found' };
@@ -25,12 +25,15 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     : (university.countries as any);
 
   return {
+    alternates: {
+      canonical: `/universities/${university.id}`,
+    },
     title: `${university.name} - Admissions, Fees & Programs 2026 | KeyAbroad`,
     description: `Discover programs, scholarships, and admissions requirements for ${university.name} in ${country?.name}. Apply now for 2026 intakes.`,
     openGraph: {
       title: `${university.name} | Study in ${country?.name}`,
       description: `Explore programs, tuition fees, and scholarships at ${university.name}. Start your application with KeyAbroad.`,
-      url: `https://keyabroad.com/universities/${university.slug}`,
+      url: `https://keyabroad.com/universities/${university.id}`,
       siteName: 'KeyAbroad',
       images: [
         {
@@ -52,8 +55,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 }
 
 export default async function UniversityDetailPage({ params }: PageProps) {
-  const { slug } = await params;
-  const university = await getPublishedUniversityBySlug(slug);
+  const { id } = await params;
+  const university = await getPublishedUniversityById(id);
 
   if (!university) {
     notFound();
@@ -100,7 +103,7 @@ export default async function UniversityDetailPage({ params }: PageProps) {
       {
         '@type': 'EducationalOrganization',
         name: university.name,
-        url: `https://keyabroad.com/universities/${university.slug}`,
+        url: `https://keyabroad.com/universities/${university.id}`,
         logo: university.logo_url || 'https://keyabroad.com/icon.png',
         address: {
           '@type': 'PostalAddress',
@@ -168,7 +171,7 @@ export default async function UniversityDetailPage({ params }: PageProps) {
               {university.programs && university.programs.length > 0 ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {university.programs.map((program: any) => (
-                    <Link key={program.id} href={`/programs/${university.slug}/${program.slug || program.id}`}>
+                    <Link key={program.id} href={`/programs/${university.id}/${program.slug || program.id}`}>
                       <Card className="h-full hover:border-blue-300 hover:shadow-md transition-all cursor-pointer">
                         <CardHeader className="pb-2">
                           <CardTitle className="text-lg font-bold text-slate-900 group-hover:text-blue-600">
