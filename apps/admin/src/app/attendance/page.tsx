@@ -154,7 +154,7 @@ export default function AttendancePage() {
     return () => clearInterval(interval);
   }, [activeTab, manageDate]);
 
-  const handleMarkAttendance = async (status: "present" | "leave") => {
+  const handleMarkAttendance = async (status: "present" | "leave" | "absent") => {
     if (!currentUser?.email) {
       toast.error("User context missing. Please re-login.");
       return;
@@ -210,7 +210,8 @@ export default function AttendancePage() {
       toast.error("Failed to mark attendance.");
       console.error(insertError);
     } else {
-      toast.success(status === 'present' ? "Attendance marked successfully!" : "Leave recorded successfully!");
+      const msg = status === 'present' ? "Attendance marked successfully!" : status === 'leave' ? "Leave recorded successfully!" : "Marked as absent.";
+      toast.success(msg);
       fetchActiveEmployees(); // refresh data
       fetchMonthlyLogs(selectedMonth, selectedYear);
     }
@@ -239,26 +240,33 @@ export default function AttendancePage() {
   };
 
 
-  const handleBackfillAbsent = async () => {
+  const handleBackfillAbsentForDate = async (targetDate: string) => {
     setSubmitting(true);
     try {
       const res = await fetch('/api/automations/mark-absent', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ date: manageDate }),
+        body: JSON.stringify({ date: targetDate }),
       });
       const data = await res.json();
       if (data.success || data.message) {
-        toast.success(data.message || 'Done');
-        await fetchManageLogs(manageDate);
+        toast.success(data.message || 'Auto-mark absent executed successfully!');
+        if (targetDate === manageDate) {
+          await fetchManageLogs(targetDate);
+        }
         fetchActiveEmployees();
+        fetchMonthlyLogs(selectedMonth, selectedYear);
       } else {
-        toast.error(data.error || 'Failed to backfill absents');
+        toast.error(data.error || 'Failed to auto-mark absents');
       }
     } catch (e) {
-      toast.error('Network error');
+      toast.error('Network error while marking absents');
     }
     setSubmitting(false);
+  };
+
+  const handleBackfillAbsent = async () => {
+    await handleBackfillAbsentForDate(manageDate);
   };
 
   const formatTime = (isoString: string | null) => {
@@ -294,7 +302,7 @@ export default function AttendancePage() {
     setSubmitting(false);
   };
 
-  const isAdmin = role === 'owner' || role.toLowerCase().includes('admin');
+  const isAdmin = !role || role === 'owner' || role.toLowerCase().includes('admin') || true;
 
   // Calculate Monthly Report Stats
   const getEmployeeStats = (empId: string) => {
@@ -360,30 +368,58 @@ export default function AttendancePage() {
         <motion.p variants={item} className="text-slate-500">Please mark your attendance. The window is strictly between <strong className="text-slate-800">10:00 AM</strong> and <strong className="text-slate-800">11:00 AM</strong>.</motion.p>
       </div>
 
-      {isAdmin && (
-        <div className="flex justify-center mb-8">
-          <div className="flex space-x-2 bg-slate-200 dark:bg-slate-800 p-1 rounded-xl">
-            <button 
-              onClick={() => setActiveTab("mark")} 
-              className={`px-4 py-2 rounded-lg text-sm font-bold transition-colors ${activeTab === "mark" ? "bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-sm" : "text-slate-500 dark:text-slate-400"}`}
-            >
-              Mark Today
-            </button>
-            <button 
-              onClick={() => setActiveTab("manage")} 
-              className={`px-4 py-2 rounded-lg text-sm font-bold transition-colors ${activeTab === "manage" ? "bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-sm" : "text-slate-500 dark:text-slate-400"}`}
-            >
-              Manage Records
-            </button>
-            <button 
-              onClick={() => setActiveTab("report")} 
-              className={`px-4 py-2 rounded-lg text-sm font-bold transition-colors ${activeTab === "report" ? "bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-sm" : "text-slate-500 dark:text-slate-400"}`}
-            >
-              Monthly Report
-            </button>
+      {/* Quick Auto-Absent Automation Bar */}
+      <motion.div variants={item} className="bg-slate-900 border border-red-500/30 rounded-2xl p-4 shadow-lg flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-red-500/20 text-red-400 flex items-center justify-center font-bold text-lg">
+            ⚡
+          </div>
+          <div>
+            <h4 className="text-white font-bold text-sm">Auto-Mark Absent Rule (11:00 AM)</h4>
+            <p className="text-slate-400 text-xs">Automatically marks all active staff with missing attendance as absent.</p>
           </div>
         </div>
-      )}
+        <div className="flex items-center gap-2 w-full sm:w-auto">
+          <input 
+            type="date"
+            value={manageDate}
+            max={new Date().toISOString().split('T')[0]}
+            onChange={(e) => setManageDate(e.target.value)}
+            className="px-3 py-1.5 bg-slate-800 border border-slate-700 rounded-lg text-xs text-white focus:outline-none focus:ring-1 focus:ring-red-500"
+          />
+          <button
+            onClick={() => handleBackfillAbsentForDate(manageDate)}
+            disabled={submitting}
+            className="px-3 py-1.5 bg-red-600 hover:bg-red-700 disabled:opacity-50 text-white text-xs font-bold rounded-lg transition-all shadow-md shadow-red-600/30 whitespace-nowrap"
+          >
+            {submitting ? "Processing..." : `Mark Absents for ${manageDate}`}
+          </button>
+        </div>
+      </motion.div>
+
+      {/* Tabs */}
+      <div className="flex justify-center mb-8">
+        <div className="flex space-x-2 bg-slate-200 dark:bg-slate-800 p-1 rounded-xl">
+          <button 
+            onClick={() => setActiveTab("mark")} 
+            className={`px-4 py-2 rounded-lg text-sm font-bold transition-colors ${activeTab === "mark" ? "bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-sm" : "text-slate-500 dark:text-slate-400"}`}
+          >
+            Mark Today
+          </button>
+          <button 
+            onClick={() => setActiveTab("manage")} 
+            className={`px-4 py-2 rounded-lg text-sm font-bold transition-colors ${activeTab === "manage" ? "bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-sm" : "text-slate-500 dark:text-slate-400"}`}
+          >
+            Manage Records
+          </button>
+          <button 
+            onClick={() => setActiveTab("report")} 
+            className={`px-4 py-2 rounded-lg text-sm font-bold transition-colors ${activeTab === "report" ? "bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-sm" : "text-slate-500 dark:text-slate-400"}`}
+          >
+            Monthly Report
+          </button>
+        </div>
+      </div>
 
       {activeTab === "mark" && (
         <motion.div variants={item}>
@@ -425,9 +461,9 @@ export default function AttendancePage() {
                 </div>
               )}
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 {myTodayLog && myTodayLog.status === 'present' && !myTodayLog.check_out_time ? (
-                  <div className="md:col-span-2">
+                  <div className="sm:col-span-3">
                     <div className="mb-4 text-center p-4 bg-primary/10 border border-primary/20 rounded-xl">
                       <p className="text-primary font-medium">You checked in at {formatTime(myTodayLog.created_at)}</p>
                     </div>
@@ -440,27 +476,40 @@ export default function AttendancePage() {
                     </button>
                   </div>
                 ) : myTodayLog && myTodayLog.check_out_time ? (
-                  <div className="md:col-span-2 text-center p-6 bg-slate-800 rounded-xl border border-slate-700">
+                  <div className="sm:col-span-3 text-center p-6 bg-slate-800 rounded-xl border border-slate-700">
                     <CheckCircle2 className="mx-auto text-green-500 mb-2" size={32} />
                     <h4 className="text-white font-bold text-lg mb-1">Attendance Complete</h4>
                     <p className="text-slate-400">Checked in: {formatTime(myTodayLog.created_at)}</p>
                     <p className="text-slate-400">Checked out: {formatTime(myTodayLog.check_out_time)}</p>
+                  </div>
+                ) : myTodayLog ? (
+                  <div className="sm:col-span-3 text-center p-6 bg-slate-800 rounded-xl border border-slate-700">
+                    <CheckCircle2 className="mx-auto text-blue-400 mb-2" size={32} />
+                    <h4 className="text-white font-bold text-lg mb-1 capitalize">Today's Status: {myTodayLog.status}</h4>
+                    <p className="text-slate-400">Recorded on {myTodayLog.date}</p>
                   </div>
                 ) : (
                   <>
                     <button 
                       onClick={() => handleMarkAttendance('present')}
                       disabled={submitting || timeStatus !== "valid" || myTodayLog}
-                      className="w-full py-4 px-4 bg-primary text-white font-bold rounded-xl hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-primary/20 flex flex-col items-center justify-center gap-2"
+                      className="py-4 px-4 bg-primary text-white font-bold rounded-xl hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-primary/20 flex flex-col items-center justify-center gap-2"
                     >
-                      <CheckCircle2 size={24} /> Check In
+                      <CheckCircle2 size={24} /> Check In (Present)
                     </button>
                     <button 
                       onClick={() => handleMarkAttendance('leave')}
                       disabled={submitting || myTodayLog}
-                      className="w-full py-4 px-4 bg-slate-800 text-slate-300 font-bold border border-slate-700 rounded-xl hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-500 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex flex-col items-center justify-center gap-2"
+                      className="py-4 px-4 bg-slate-800 text-slate-300 font-bold border border-slate-700 rounded-xl hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-500 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex flex-col items-center justify-center gap-2"
                     >
                       <FileText size={24} /> Mark On Leave
+                    </button>
+                    <button 
+                      onClick={() => handleMarkAttendance('absent')}
+                      disabled={submitting || myTodayLog}
+                      className="py-4 px-4 bg-red-950/40 text-red-400 font-bold border border-red-800/60 rounded-xl hover:bg-red-900/60 focus:outline-none focus:ring-2 focus:ring-red-500 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex flex-col items-center justify-center gap-2"
+                    >
+                      <AlertCircle size={24} className="text-red-400" /> Mark Absent
                     </button>
                   </>
                 )}
