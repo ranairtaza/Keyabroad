@@ -46,7 +46,15 @@ export default async function FeesPage({
   const { data: payments, error, count } = await query.range(start, end);
   
   if (error) {
-    throw new Error(`Failed to fetch payments: ${error.message}`);
+    return (
+      <div className="p-10 bg-red-900/50 border border-red-500 rounded-xl m-10 text-white">
+        <h2 className="text-2xl font-bold mb-4">Supabase Query Error (Fees)</h2>
+        <p className="font-mono text-red-300">{error.message}</p>
+        <p className="font-mono text-sm mt-2">Code: {error.code}</p>
+        <p className="font-mono text-sm mt-2">Details: {error.details}</p>
+        <p className="text-sm mt-4 text-slate-300">Please screenshot this and show the AI.</p>
+      </div>
+    );
   }
 
   const paymentList = payments || [];

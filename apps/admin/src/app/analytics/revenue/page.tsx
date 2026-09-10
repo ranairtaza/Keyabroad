@@ -53,7 +53,16 @@ export default async function RevenueAnalyticsPage({
     p_end_date: endDate
   });
 
-  if (kpisErr) console.error("Error fetching revenue KPIs:", kpisErr);
+  if (kpisErr || commErr) {
+    return (
+      <div className="p-10 bg-red-900/50 border border-red-500 rounded-xl m-10 text-white">
+        <h2 className="text-2xl font-bold mb-4">Supabase Query Error (Revenue Analytics)</h2>
+        {kpisErr && <p className="font-mono text-red-300">KPIs Error: {kpisErr.message} ({kpisErr.code})</p>}
+        {commErr && <p className="font-mono text-red-300">Commissions Error: {commErr.message} ({commErr.code})</p>}
+        <p className="text-sm mt-4 text-slate-300">Please screenshot this and show the AI. (Have you run migration 023_phase20_revenue_analytics.sql on production?)</p>
+      </div>
+    );
+  }
 
   const revenueData = kpis || [];
   const commissionData = commissions || [];
