@@ -9,9 +9,10 @@ export default async function RevenueAnalyticsPage({
 }: {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
-  const resolvedParams = await searchParams;
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  try {
+    const resolvedParams = await searchParams;
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
   if (!user) return redirect('/login');
 
   const { data: profile } = await supabase.from('profiles').select('staff_role').eq('id', user.id).single();
@@ -166,4 +167,13 @@ export default async function RevenueAnalyticsPage({
       )}
     </div>
   );
+  } catch (err: any) {
+    return (
+      <div className="p-10 bg-red-900/80 border border-red-500 rounded-xl m-10 text-white overflow-auto max-w-full">
+        <h2 className="text-2xl font-bold mb-4">Production JS Error (Revenue)</h2>
+        <p className="font-mono text-red-300 mb-4">{err?.message || 'Unknown error'}</p>
+        <pre className="text-xs text-slate-300">{err?.stack}</pre>
+      </div>
+    );
+  }
 }
