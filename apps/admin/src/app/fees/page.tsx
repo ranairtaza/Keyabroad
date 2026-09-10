@@ -33,7 +33,7 @@ export default async function FeesPage({
     .select(`
       id, amount, currency_code, method, reference_number, payment_date, status,
       received_by:profiles!payments_received_by_fkey(full_name),
-      invoices ( id, invoice_number, students ( full_name ) )
+      invoices ( id, invoice_number, students ( name ) )
     `, { count: 'exact' })
     .order('payment_date', { ascending: false });
 
@@ -124,7 +124,7 @@ export default async function FeesPage({
                       {pay.invoices?.invoice_number || 'Unknown'}
                     </Link>
                   </td>
-                  <td className="p-4 text-slate-400">{pay.invoices?.students?.full_name || 'Unknown'}</td>
+                  <td className="p-4 text-slate-400">{pay.invoices?.students?.name || 'Unknown'}</td>
                   <td className={`p-4 font-bold ${pay.status === 'CONFIRMED' ? 'text-green-400' : 'text-slate-500 line-through'}`}>
                     {pay.currency_code} {Number(pay.amount).toFixed(2)}
                   </td>
