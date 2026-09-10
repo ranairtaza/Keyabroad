@@ -32,7 +32,7 @@ export default async function InvoicesPage({
     .from('invoices')
     .select(`
       id, invoice_number, total_amount, amount_paid, status, due_date, currency_code, branch, assigned_counselor_id,
-      students ( name, email )
+      students ( full_name, email )
     `, { count: 'exact' })
     .order('created_at', { ascending: false });
 
@@ -138,7 +138,7 @@ export default async function InvoicesPage({
                     </Link>
                   </td>
                   <td className="p-4">
-                    <div className="text-slate-300 font-medium">{inv.students?.name || 'Unknown'}</div>
+                    <div className="text-slate-300 font-medium">{inv.students?.full_name || 'Unknown'}</div>
                     <div className="text-xs text-slate-500">{inv.assigned_counselor?.full_name || 'No Counselor'}</div>
                   </td>
                   <td className="p-4 text-slate-300 font-medium">{inv.currency_code} {Number(inv.total_amount).toFixed(2)}</td>
