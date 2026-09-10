@@ -1,20 +1,47 @@
 
 > admin@0.1.0 prebuild
-> npm install --no-save @tailwindcss/oxide-linux-x64-gnu@4.3.3 lightningcss-linux-x64-gnu
+> node -e "if(process.platform === 'linux') { require('child_process').execSync('npm install --no-save @tailwindcss/oxide-linux-x64-gnu@4.3.3 lightningcss-linux-x64-gnu', {stdio: 'inherit'}) }"
 
-npm error code EBADPLATFORM
-npm error notsup Unsupported platform for lightningcss-linux-x64-gnu@1.32.0: wanted {"os":"linux","cpu":"x64","libc":"glibc"} (current: {"os":"win32","cpu":"x64"})
-npm error notsup Valid os:    linux
-npm error notsup Actual os:   win32
-npm error notsup Valid cpu:   x64
-npm error notsup Actual cpu:  x64
-npm error notsup Valid libc:  glibc
-npm error notsup Actual libc: undefined
-npm error A complete log of this run can be found in: D:\npm-cache\_logs\2026-08-25T11_54_54_973Z-debug-0.log
+
+> admin@0.1.0 build
+> next build
+
+▲ Next.js 16.2.11 (Turbopack)
+- Environments: .env.local
+
+⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+  Creating an optimized production build ...
+Turbopack build encountered 1 warnings:
+[next]/internal/font/google/inter_5972bc34.module.css
+Error while requesting resource
+There was an issue requesting https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap
+
+Import trace:
+  Server Component:
+    [next]/internal/font/google/inter_5972bc34.module.css
+    [next]/internal/font/google/inter_5972bc34.js
+    ./apps/admin/src/app/layout.tsx
+
+
+
+> Build error occurred
+Error: Turbopack build failed with 1 errors:
+[next]/internal/font/google/inter_5972bc34.module.css
+next/font: error:
+Failed to fetch `Inter` from Google Fonts.
+
+Import trace:
+  Server Component:
+    [next]/internal/font/google/inter_5972bc34.module.css
+    [next]/internal/font/google/inter_5972bc34.js
+    ./apps/admin/src/app/layout.tsx
+
+
+    at ignore-listed frames
 npm error Lifecycle script `build` failed with error:
 npm error code 1
 npm error path C:\Users\DeLL\OneDrive\Desktop\Keyabroad\apps\admin
 npm error workspace admin@0.1.0
 npm error location C:\Users\DeLL\OneDrive\Desktop\Keyabroad\apps\admin
 npm error command failed
-npm error command C:\Windows\system32\cmd.exe /d /s /c npm install --no-save @tailwindcss/oxide-linux-x64-gnu@4.3.3 lightningcss-linux-x64-gnu
+npm error command C:\Windows\system32\cmd.exe /d /s /c next build

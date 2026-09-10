@@ -16,7 +16,7 @@ CREATE OR REPLACE FUNCTION get_revenue_analytics(
 ) AS $$
 DECLARE
   v_role TEXT;
-  v_branch UUID;
+  v_branch TEXT;
 BEGIN
   -- 1. Identify User
   SELECT staff_role, branch INTO v_role, v_branch
@@ -94,7 +94,7 @@ CREATE OR REPLACE FUNCTION get_commission_kpis(
 ) AS $$
 DECLARE
   v_role TEXT;
-  v_branch UUID;
+  v_branch TEXT;
 BEGIN
   SELECT staff_role, branch INTO v_role, v_branch
   FROM public.profiles WHERE id = auth.uid();
