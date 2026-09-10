@@ -32,7 +32,7 @@ export default async function FeesPage({
     .from('payments')
     .select(`
       id, amount, currency_code, method, reference_number, payment_date, status,
-      received_by:profiles!payments_received_by_fkey(full_name),
+      received_by,
       invoices ( id, invoice_number, students ( name ) )
     `, { count: 'exact' })
     .order('payment_date', { ascending: false });
@@ -50,6 +50,23 @@ export default async function FeesPage({
   }
 
   const paymentList = payments || [];
+  
+  // Fetch receiver names separately to avoid FK join issues
+  const receiverIds = paymentList.map((p: any) => p.received_by).filter(Boolean);
+  if (receiverIds.length > 0) {
+    const { data: profiles } = await supabase.from('profiles').select('id, full_name').in('id', receiverIds);
+    if (profiles) {
+      paymentList.forEach((pay: any) => {
+        if (pay.received_by) {
+          const profile = profiles.find((p: any) => p.id === pay.received_by);
+          if (profile) {
+            pay.received_by_profile = profile;
+          }
+        }
+      });
+    }
+  }
+
   const totalPages = count ? Math.ceil(count / PAGE_SIZE) : 0;
 
   return (
@@ -143,7 +160,7 @@ export default async function FeesPage({
                       {pay.status}
                     </span>
                   </td>
-                  <td className="p-4 text-slate-400 text-xs">{pay.received_by?.full_name || 'System'}</td>
+                  <td className="p-4 text-slate-400 text-xs">{pay.received_by_profile?.full_name || 'System'}</td>
                   <td className="p-4 text-right">
                     <Link href={`/receipt/${pay.id}`} className="p-2 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white rounded-md transition-colors inline-flex items-center gap-1" title="View Receipt">
                       <Download size={16} />
