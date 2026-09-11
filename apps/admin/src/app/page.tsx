@@ -72,8 +72,8 @@ export default function Dashboard() {
         .limit(5);
         
       const { data: recentActivities } = await supabase
-        .from('audit_logs')
-        .select('*, profiles(full_name)')
+        .from('activity_logs')
+        .select('*')
         .order('created_at', { ascending: false })
         .limit(10);
 
@@ -232,7 +232,7 @@ export default function Dashboard() {
                         <div>
                           <p className="text-sm text-slate-700 dark:text-slate-200">
                             {act.type === 'activity' ? (
-                              <><strong>{act.profiles?.full_name || 'System'}</strong> {act.action} {act.resource_type}</>
+                              <><strong>{act.employee_name || act.profiles?.full_name || 'Staff'}</strong> {act.description || act.action_type || 'updated system records.'}</>
                             ) : (
                               <><strong>{act.full_name || act.student_name || act.name || 'A Student'}</strong> {act.type === 'appointment' ? 'booked a new consultation appointment.' : `registered as a new lead for ${act.inquiry_type || act.purpose || act.language_test || 'consultation'}.`}</>
                             )}
