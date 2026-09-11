@@ -24,7 +24,7 @@ export default function ReceiptPage() {
             total_amount,
             amount_paid,
             status,
-            students ( full_name, email )
+            students ( * )
           )
         `)
         .eq("id", params.id)
@@ -89,7 +89,7 @@ export default function ReceiptPage() {
             <div className="mt-6 space-y-1 pt-4 border-t border-slate-100">
               <div className="flex gap-2">
                 <span className="text-gray-500 w-32">Received From:</span>
-                <span className="font-bold">{student?.full_name || 'Unknown Student'}</span>
+                <span className="font-bold">{student?.name || student?.full_name || 'Unknown Student'}</span>
               </div>
               <div className="flex gap-2">
                 <span className="text-gray-500 w-32">Invoice Ref:</span>

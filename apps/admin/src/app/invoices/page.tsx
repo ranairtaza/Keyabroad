@@ -1,5 +1,5 @@
 import { createClient } from "@/lib/auth/server";
-import { FileText, Plus, Calendar } from "lucide-react";
+import { FileText, Plus, Calendar, Printer } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Pagination } from "@/components/shared/Pagination";
@@ -34,7 +34,7 @@ export default async function InvoicesPage({
   let query = supabase
     .from('invoices')
     .select(`
-      id, invoice_number, total_amount, amount_paid, status, due_date, currency_code, branch, assigned_counselor_id,
+      id, invoice_number, total_amount, amount_paid, amount, paid_amount, remaining_amount, status, due_date, currency_code, branch, assigned_counselor_id, student,
       students ( * )
     `, { count: 'exact' })
     .order('created_at', { ascending: false });
@@ -115,9 +115,10 @@ export default async function InvoicesPage({
             </thead>
             <tbody>
               {invoiceList.map((inv: any) => {
-                const total = inv.total_amount ? Number(inv.total_amount) : 0;
-                const paid = inv.amount_paid ? Number(inv.amount_paid) : 0;
+                const total = Number(inv.total_amount) || Number(inv.amount) || 0;
+                const paid = Number(inv.amount_paid) || Number(inv.paid_amount) || 0;
                 const outstanding = Math.max(0, total - paid);
+                const studentName = inv.students?.name || inv.students?.full_name || inv.student || 'Unknown Student';
                 return (
                 <tr key={inv.id} className="border-b border-slate-800/50 hover:bg-slate-800/30">
                   <td className="p-4 text-white font-medium">
@@ -126,7 +127,7 @@ export default async function InvoicesPage({
                     </Link>
                   </td>
                   <td className="p-4">
-                    <div className="text-slate-300 font-medium">{inv.students?.name || inv.students?.full_name || 'Unknown Student'}</div>
+                    <div className="text-slate-300 font-medium">{studentName}</div>
                     <div className="text-xs text-slate-500">{inv.assigned_counselor?.full_name || 'No Counselor'}</div>
                   </td>
                   <td className="p-4 text-slate-300 font-medium">{inv.currency_code || 'PKR'} {total.toFixed(2)}</td>
@@ -150,9 +151,14 @@ export default async function InvoicesPage({
                     {inv.branch || 'N/A'}
                   </td>
                   <td className="p-4 text-right">
-                    <Link href={`/invoices/${inv.id}`} className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-white rounded-md text-sm font-medium transition-colors">
-                      View
-                    </Link>
+                    <div className="flex items-center justify-end gap-2">
+                      <Link href={`/invoices/${inv.id}`} className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-white rounded-md text-sm font-medium transition-colors">
+                        View
+                      </Link>
+                      <Link href={`/invoices/${inv.id}`} className="p-2 bg-slate-800 hover:bg-blue-600 text-slate-300 hover:text-white rounded-md transition-colors inline-flex items-center" title="Print Invoice / PDF">
+                        <Printer size={15} />
+                      </Link>
+                    </div>
                   </td>
                 </tr>
               )})}
