@@ -48,11 +48,11 @@ export default function CreateInvoicePage() {
           
           <div className="space-y-2">
             <label className="text-sm font-medium text-slate-300">Currency</label>
-            <select required name="currency_code" defaultValue="USD" className="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-primary">
+            <select required name="currency_code" defaultValue="PKR" className="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-primary">
+              <option value="PKR">PKR - Pakistani Rupee</option>
               <option value="USD">USD - US Dollar</option>
               <option value="GBP">GBP - British Pound</option>
               <option value="EUR">EUR - Euro</option>
-              <option value="PKR">PKR - Pakistani Rupee</option>
               <option value="CAD">CAD - Canadian Dollar</option>
               <option value="AUD">AUD - Australian Dollar</option>
             </select>

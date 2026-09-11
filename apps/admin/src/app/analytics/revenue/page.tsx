@@ -66,7 +66,7 @@ export default async function RevenueAnalyticsPage({
     const currencyMap: Record<string, any> = {};
 
     (invoices || []).forEach((inv: any) => {
-      const cur = inv.currency_code || 'USD';
+      const cur = inv.currency_code || 'PKR';
       if (!currencyMap[cur]) {
         currencyMap[cur] = {
           currency_code: cur,
@@ -99,7 +99,7 @@ export default async function RevenueAnalyticsPage({
     });
 
     (payments || []).forEach((pay: any) => {
-      const cur = pay.currency_code || 'USD';
+      const cur = pay.currency_code || 'PKR';
       if (!currencyMap[cur]) {
         currencyMap[cur] = {
           currency_code: cur,
@@ -120,7 +120,7 @@ export default async function RevenueAnalyticsPage({
 
     const commMap: Record<string, any> = {};
     (comms || []).forEach((c: any) => {
-      const cur = c.currency_code || 'USD';
+      const cur = c.currency_code || 'PKR';
       if (!commMap[cur]) {
         commMap[cur] = {
           currency_code: cur,

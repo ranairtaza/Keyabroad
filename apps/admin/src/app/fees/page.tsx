@@ -122,7 +122,7 @@ export default async function FeesPage({
                   </td>
                   <td className="p-4 text-slate-400">{pay.invoices?.students?.name || pay.invoices?.students?.full_name || 'Unknown'}</td>
                   <td className={`p-4 font-bold ${pay.status === 'CONFIRMED' ? 'text-green-400' : 'text-slate-500 line-through'}`}>
-                    {pay.currency_code} {pay.amount ? Number(pay.amount).toFixed(2) : '0.00'}
+                    {pay.currency_code || 'PKR'} {pay.amount ? Number(pay.amount).toFixed(2) : '0.00'}
                   </td>
                   <td className="p-4">
                     <div className="flex flex-col">

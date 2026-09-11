@@ -129,8 +129,8 @@ export default async function InvoicesPage({
                     <div className="text-slate-300 font-medium">{inv.students?.name || inv.students?.full_name || 'Unknown Student'}</div>
                     <div className="text-xs text-slate-500">{inv.assigned_counselor?.full_name || 'No Counselor'}</div>
                   </td>
-                  <td className="p-4 text-slate-300 font-medium">{inv.currency_code} {total.toFixed(2)}</td>
-                  <td className="p-4 text-orange-400 font-medium">{inv.currency_code} {outstanding.toFixed(2)}</td>
+                  <td className="p-4 text-slate-300 font-medium">{inv.currency_code || 'PKR'} {total.toFixed(2)}</td>
+                  <td className="p-4 text-orange-400 font-medium">{inv.currency_code || 'PKR'} {outstanding.toFixed(2)}</td>
                   <td className="p-4">
                     <span className={`px-2 py-1 text-xs font-bold rounded-md uppercase tracking-wider ${
                       inv.status === 'PAID' ? 'bg-green-500/20 text-green-400 border border-green-500/30' :

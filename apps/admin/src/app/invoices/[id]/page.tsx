@@ -129,15 +129,15 @@ export default async function InvoiceDetailPage({ params }: { params: { id: stri
             <div className="space-y-3">
               <div className="flex justify-between text-slate-300">
                 <span>Subtotal</span>
-                <span>{invoice.currency_code} {Number(invoice.total_amount).toFixed(2)}</span>
+                <span>{invoice.currency_code || 'PKR'} {Number(invoice.total_amount).toFixed(2)}</span>
               </div>
               <div className="flex justify-between text-green-400">
                 <span>Amount Paid</span>
-                <span>-{invoice.currency_code} {Number(invoice.amount_paid).toFixed(2)}</span>
+                <span>-{invoice.currency_code || 'PKR'} {Number(invoice.amount_paid).toFixed(2)}</span>
               </div>
               <div className="pt-3 border-t border-slate-800 flex justify-between text-white font-bold text-lg">
                 <span>Amount Due</span>
-                <span>{invoice.currency_code} {outstanding.toFixed(2)}</span>
+                <span>{invoice.currency_code || 'PKR'} {outstanding.toFixed(2)}</span>
               </div>
             </div>
           </div>
