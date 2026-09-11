@@ -139,7 +139,9 @@ export default async function InvoicesPage({
             </thead>
             <tbody>
               {invoiceList.map((inv: any) => {
-                const outstanding = Math.max(0, inv.total_amount - inv.amount_paid);
+                const total = inv.total_amount ? Number(inv.total_amount) : 0;
+                const paid = inv.amount_paid ? Number(inv.amount_paid) : 0;
+                const outstanding = Math.max(0, total - paid);
                 return (
                 <tr key={inv.id} className="border-b border-slate-800/50 hover:bg-slate-800/30">
                   <td className="p-4 text-white font-medium">
@@ -151,7 +153,7 @@ export default async function InvoicesPage({
                     <div className="text-slate-300 font-medium">{inv.students?.name || inv.students?.full_name || 'Unknown Student'}</div>
                     <div className="text-xs text-slate-500">{inv.assigned_counselor?.full_name || 'No Counselor'}</div>
                   </td>
-                  <td className="p-4 text-slate-300 font-medium">{inv.currency_code} {Number(inv.total_amount).toFixed(2)}</td>
+                  <td className="p-4 text-slate-300 font-medium">{inv.currency_code} {total.toFixed(2)}</td>
                   <td className="p-4 text-orange-400 font-medium">{inv.currency_code} {outstanding.toFixed(2)}</td>
                   <td className="p-4">
                     <span className={`px-2 py-1 text-xs font-bold rounded-md uppercase tracking-wider ${
@@ -166,7 +168,7 @@ export default async function InvoicesPage({
                   </td>
                   <td className="p-4 text-slate-400 flex items-center gap-2">
                     <Calendar size={14} />
-                    {new Date(inv.due_date).toLocaleDateString()}
+                    {inv.due_date ? new Date(inv.due_date).toLocaleDateString() : 'N/A'}
                   </td>
                   <td className="p-4 text-slate-400">
                     {inv.branch || 'N/A'}

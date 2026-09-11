@@ -144,7 +144,7 @@ export default async function FeesPage({
               {paymentList.map((pay: any) => (
                 <tr key={pay.id} className="border-b border-slate-800/50 hover:bg-slate-800/30">
                   <td className="p-4 text-slate-300">
-                    {new Date(pay.payment_date).toLocaleDateString()}
+                    {pay.payment_date ? new Date(pay.payment_date).toLocaleDateString() : 'N/A'}
                   </td>
                   <td className="p-4 font-medium">
                     <Link href={`/invoices/${pay.invoices?.id}`} className="text-white hover:text-primary transition-colors">
@@ -153,11 +153,11 @@ export default async function FeesPage({
                   </td>
                   <td className="p-4 text-slate-400">{pay.invoices?.students?.name || pay.invoices?.students?.full_name || 'Unknown'}</td>
                   <td className={`p-4 font-bold ${pay.status === 'CONFIRMED' ? 'text-green-400' : 'text-slate-500 line-through'}`}>
-                    {pay.currency_code} {Number(pay.amount).toFixed(2)}
+                    {pay.currency_code} {pay.amount ? Number(pay.amount).toFixed(2) : '0.00'}
                   </td>
                   <td className="p-4">
                     <div className="flex flex-col">
-                      <span className="text-slate-300">{pay.method.replace('_', ' ')}</span>
+                      <span className="text-slate-300">{pay.method ? String(pay.method).replace('_', ' ') : 'N/A'}</span>
                       <span className="text-slate-500 text-xs font-mono">{pay.reference_number || '-'}</span>
                     </div>
                   </td>
