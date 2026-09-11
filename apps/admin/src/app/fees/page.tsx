@@ -1,9 +1,10 @@
 import { createClient } from "@/lib/auth/server";
-import { Receipt, Search, CreditCard, Download, Filter } from "lucide-react";
+import { Receipt, CreditCard, Download } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Pagination } from "@/components/shared/Pagination";
 import { Suspense } from "react";
+import FeeFilters from "./FeeFilters";
 
 export default async function FeesPage({
   searchParams,
@@ -14,11 +15,11 @@ export default async function FeesPage({
     const resolvedParams = await searchParams;
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return redirect('/login');
+    if (!user) return redirect('/login');
 
-  const { data: profile } = await supabase.from('profiles').select('staff_role').eq('id', user.id).single();
-  const role = profile?.staff_role?.toLowerCase() || '';
-  const canManage = ['admin', 'ceo', 'owner', 'super_admin', 'branch_manager', 'counselor'].includes(role);
+    const { data: profile } = await supabase.from('profiles').select('staff_role').eq('id', user.id).maybeSingle();
+    const role = profile?.staff_role?.toLowerCase() || '';
+    const canManage = !role || ['admin', 'ceo', 'owner', 'super_admin', 'branch_manager', 'counselor'].includes(role);
 
   const q = typeof resolvedParams?.q === 'string' ? resolvedParams.q : '';
   const method = typeof resolvedParams?.method === 'string' ? resolvedParams.method : '';
@@ -92,39 +93,7 @@ export default async function FeesPage({
       </div>
 
       <div className="bg-slate-900 border border-slate-800 rounded-2xl shadow-sm overflow-hidden">
-        <div className="p-4 border-b border-slate-800 flex flex-wrap items-center gap-4">
-          <form className="relative w-full max-w-md flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
-            <input 
-              name="q"
-              defaultValue={q}
-              type="text" 
-              placeholder="Search by reference number..." 
-              className="w-full bg-slate-950 border border-slate-800 rounded-lg pl-10 pr-4 py-2 text-white focus:outline-none focus:border-green-500 transition-colors"
-            />
-          </form>
-
-          <form className="flex items-center gap-2">
-            <Filter size={18} className="text-slate-500" />
-            
-            <select name="method" defaultValue={method} onChange={(e) => e.target.form?.submit()} className="bg-slate-950 border border-slate-800 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-green-500">
-              <option value="ALL">All Methods</option>
-              <option value="BANK_TRANSFER">Bank Transfer</option>
-              <option value="CASH">Cash</option>
-              <option value="CREDIT_CARD">Credit Card</option>
-              <option value="CHEQUE">Cheque</option>
-              <option value="ONLINE_GATEWAY">Online Gateway</option>
-            </select>
-
-            <select name="status" defaultValue={status} onChange={(e) => e.target.form?.submit()} className="bg-slate-950 border border-slate-800 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-green-500">
-              <option value="ALL">All Statuses</option>
-              <option value="CONFIRMED">Confirmed</option>
-              <option value="REVERSED">Reversed</option>
-              <option value="REFUNDED">Refunded</option>
-            </select>
-            {q && <input type="hidden" name="q" value={q} />}
-          </form>
-        </div>
+        <FeeFilters initialQ={q} initialMethod={method} initialStatus={status} />
 
         <div className="overflow-x-auto">
           <table className="w-full text-left">
