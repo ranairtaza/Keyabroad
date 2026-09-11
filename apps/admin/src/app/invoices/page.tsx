@@ -3,6 +3,7 @@ import { FileText, Plus, Search, Calendar, Filter } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Pagination } from "@/components/shared/Pagination";
+import { Suspense } from "react";
 
 export default async function InvoicesPage({
   searchParams,
@@ -191,7 +192,11 @@ export default async function InvoicesPage({
           </table>
         </div>
         
-        <Pagination currentPage={page} totalPages={totalPages} totalItems={count || 0} />
+        <div className="mt-6 flex justify-end">
+        <Suspense fallback={<div className="h-10"></div>}>
+          <Pagination currentPage={page} totalPages={totalPages} totalItems={count || 0} />
+        </Suspense>
+      </div>
       </div>
     </div>
   );
