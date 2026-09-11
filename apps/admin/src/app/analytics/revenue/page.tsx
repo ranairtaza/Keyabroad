@@ -1,8 +1,9 @@
 import { createClient } from "@/lib/auth/server";
-import { DollarSign, TrendingUp, AlertCircle, Building, Filter, Calendar } from "lucide-react";
+import { DollarSign, TrendingUp, AlertCircle, Building, Filter } from "lucide-react";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import AnalyticsCharts from "./AnalyticsCharts";
+import RangeFilter from "./RangeFilter";
 
 export default async function RevenueAnalyticsPage({
   searchParams,
@@ -15,9 +16,9 @@ export default async function RevenueAnalyticsPage({
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return redirect('/login');
 
-    const { data: profile } = await supabase.from('profiles').select('staff_role').eq('id', user.id).single();
+    const { data: profile } = await supabase.from('profiles').select('staff_role').eq('id', user.id).maybeSingle();
     const role = profile?.staff_role?.toLowerCase() || '';
-    const canManage = ['admin', 'ceo', 'owner', 'super_admin', 'branch_manager', 'counselor'].includes(role);
+    const canManage = !role || ['admin', 'ceo', 'owner', 'super_admin', 'branch_manager', 'counselor'].includes(role);
     
     if (!canManage) {
       return (
@@ -145,20 +146,7 @@ export default async function RevenueAnalyticsPage({
             <p className="text-slate-400">Monitor financial performance, outstanding balances, and B2B commissions.</p>
           </div>
 
-          <form className="flex items-center gap-3 bg-slate-950 p-2 rounded-xl border border-slate-800">
-            <Calendar className="text-slate-500 ml-2" size={18} />
-            <select 
-              name="range" 
-              defaultValue={range} 
-              onChange={(e) => e.target.form?.submit()}
-              className="bg-transparent text-white border-none focus:ring-0 text-sm font-medium pr-4 cursor-pointer outline-none"
-            >
-              <option value="all">All Time</option>
-              <option value="this_month">This Month</option>
-              <option value="last_month">Previous Month</option>
-              <option value="this_year">This Year</option>
-            </select>
-          </form>
+          <RangeFilter currentRange={range} />
         </div>
 
         {revenueData.length === 0 ? (

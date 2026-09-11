@@ -23,10 +23,11 @@ export default function AnalyticsCharts({ currency, startDate, endDate }: { curr
 
       if (!payments) return;
 
-      const aggregated = payments.reduce((acc: any, curr: any) => {
-        const month = curr.payment_date.substring(0, 7); // YYYY-MM
+      const aggregated = (payments || []).reduce((acc: any, curr: any) => {
+        if (!curr || !curr.payment_date) return acc;
+        const month = String(curr.payment_date).substring(0, 7); // YYYY-MM
         if (!acc[month]) acc[month] = 0;
-        acc[month] += Number(curr.amount);
+        acc[month] += Number(curr.amount) || 0;
         return acc;
       }, {});
 
