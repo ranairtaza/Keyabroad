@@ -1,41 +1,44 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { createClient as createServerClient } from '@/lib/auth/server';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
 const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
 
-async function runMarkAbsent(targetDate?: string | null) {
+function getAdminClient() {
   if (!supabaseServiceRoleKey) {
-    return NextResponse.json({ error: 'Missing service role key' }, { status: 500 });
+    throw new Error('Server configuration error: SUPABASE_SERVICE_ROLE_KEY is missing.');
   }
-
-  const supabaseAdmin = createClient(supabaseUrl, supabaseServiceRoleKey, {
+  return createClient(supabaseUrl, supabaseServiceRoleKey, {
     auth: { autoRefreshToken: false, persistSession: false }
   });
+}
+
+async function runMarkAbsent(targetDate?: string | null) {
+  const supabaseAdmin = getAdminClient();
 
   // Determine which date to process
   const now = new Date();
-  // PKT = UTC+5
-  const pktOffsetMs = 5 * 60 * 60 * 1000;
+  const pktOffsetMs = 5 * 60 * 60 * 1000; // PKT = UTC+5
   const pktNow = new Date(now.getTime() + pktOffsetMs);
   const pktHours = pktNow.getUTCHours();
 
   let date: string;
   if (targetDate) {
-    // Retroactive call — skip the time-window guard
+    // Retroactive or explicit date
     date = targetDate;
   } else {
-    // Same-day auto call — only proceed after 11 AM PKT
+    // Same-day automated trigger — only execute after 11:00 AM PKT window closes
     if (pktHours < 11) {
       return NextResponse.json({
-        message: 'Portal is still open. Skipping auto-absent.',
+        message: 'Attendance portal is still open. Skipping auto-absent.',
         pktHour: pktHours
       });
     }
     date = pktNow.toISOString().split('T')[0];
   }
 
-  // Get all active employees
+  // 1. Fetch all active employees
   const { data: employees, error: empError } = await supabaseAdmin
     .from('team_members')
     .select('id, name')
@@ -43,10 +46,10 @@ async function runMarkAbsent(targetDate?: string | null) {
 
   if (empError) throw empError;
   if (!employees || employees.length === 0) {
-    return NextResponse.json({ message: 'No active employees found' });
+    return NextResponse.json({ message: 'No active employees found in directory.', date });
   }
 
-  // Get attendance records for the target date (present, leave, or already absent)
+  // 2. Fetch existing attendance records for target date (present, leave, or already absent)
   const { data: attendance, error: attError } = await supabaseAdmin
     .from('employee_attendance')
     .select('employee_id')
@@ -54,11 +57,12 @@ async function runMarkAbsent(targetDate?: string | null) {
 
   if (attError) throw attError;
 
-  const attendedIds = (attendance || []).map(a => String(a.employee_id));
+  const attendedIds = new Set((attendance || []).map(a => String(a.employee_id)));
 
-  const absentRecords: { employee_id: any; employee_name: any; status: string; date: string }[] = [];
+  // 3. Build absent list only for missing records (idempotency)
+  const absentRecords: { employee_id: number; employee_name: string; status: string; date: string }[] = [];
   for (const emp of employees) {
-    if (!attendedIds.includes(String(emp.id))) {
+    if (!attendedIds.has(String(emp.id))) {
       absentRecords.push({
         employee_id: emp.id,
         employee_name: emp.name,
@@ -72,52 +76,119 @@ async function runMarkAbsent(targetDate?: string | null) {
     const { error: insertError } = await supabaseAdmin
       .from('employee_attendance')
       .insert(absentRecords);
+
     if (insertError) throw insertError;
   }
 
   return NextResponse.json({
     success: true,
     date,
-    message: `Marked ${absentRecords.length} employee(s) as absent.`,
+    message: `Marked ${absentRecords.length} employee(s) as absent for ${date}.`,
+    markedCount: absentRecords.length
   });
 }
 
 /**
+ * Helper to check authorization via CRON_SECRET or authenticated Admin session
+ */
+async function authorizeRequest(request: Request): Promise<{ authorized: boolean; reason?: string }> {
+  // 1. Check CRON_SECRET authorization header
+  const authHeader = request.headers.get('authorization');
+  const cronSecret = process.env.CRON_SECRET;
+
+  if (cronSecret && authHeader === `Bearer ${cronSecret}`) {
+    return { authorized: true };
+  }
+
+  // 2. Check authenticated Admin / Owner / HR session
+  try {
+    const supabaseAuth = await createServerClient();
+    const { data: { user }, error: authError } = await supabaseAuth.auth.getUser();
+
+    if (!authError && user && user.email) {
+      const supabaseAdmin = getAdminClient();
+
+      const { data: profile } = await supabaseAdmin
+        .from('profiles')
+        .select('role, staff_role')
+        .eq('email', user.email)
+        .single();
+
+      const { data: tm } = await supabaseAdmin
+        .from('team_members')
+        .select('role')
+        .eq('email', user.email)
+        .single();
+
+      const pRole = profile?.role?.toLowerCase() || '';
+      const sRole = profile?.staff_role?.toLowerCase() || '';
+      const tmRole = tm?.role?.toLowerCase() || '';
+
+      const isAdmin =
+        pRole === 'admin' ||
+        sRole === 'admin' ||
+        sRole === 'super_admin' ||
+        sRole === 'owner' ||
+        user.email === 'junaid@keyabroad.com' ||
+        tmRole.includes('admin') ||
+        tmRole.includes('ceo') ||
+        tmRole.includes('founder') ||
+        tmRole.includes('hr') ||
+        tmRole.includes('operations head');
+
+      if (isAdmin) {
+        return { authorized: true };
+      }
+    }
+  } catch {
+    // Session check failed
+  }
+
+  return { authorized: false, reason: 'Unauthorized: Valid CRON_SECRET or Admin/HR session required.' };
+}
+
+/**
  * POST /api/automations/mark-absent
- * Called internally from the attendance page (no auth required — internal only).
- * Optionally accepts JSON body { date: 'YYYY-MM-DD' } to backfill a past date.
+ * Idempotent Mark-Absent Execution Endpoint
+ * Supports trusted automation (CRON_SECRET) or manual Admin execution.
  */
 export async function POST(request: Request) {
   try {
+    const auth = await authorizeRequest(request);
+    if (!auth.authorized) {
+      return NextResponse.json({ error: auth.reason || 'Unauthorized' }, { status: 401 });
+    }
+
     let targetDate: string | null = null;
     try {
       const body = await request.json();
       if (body?.date) targetDate = body.date;
     } catch {
-      // No body or non-JSON — that's fine
+      // Body is optional
     }
+
     return await runMarkAbsent(targetDate);
   } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json({ error: error.message || 'An unexpected error occurred.' }, { status: 500 });
   }
 }
 
 /**
  * GET /api/automations/mark-absent?date=YYYY-MM-DD
- * Convenience endpoint for cron jobs or manual admin triggers.
- * Requires CRON_SECRET authorization header for GET requests.
+ * Convenience endpoint for scheduled cron tasks.
+ * Strictly requires valid CRON_SECRET or Admin session.
  */
 export async function GET(request: Request) {
   try {
-    const authHeader = request.headers.get('authorization');
-    const CRON_SECRET = process.env.CRON_SECRET || 'dev_secret_key';
-    if (authHeader !== `Bearer ${CRON_SECRET}`) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const auth = await authorizeRequest(request);
+    if (!auth.authorized) {
+      return NextResponse.json({ error: auth.reason || 'Unauthorized' }, { status: 401 });
     }
+
     const { searchParams } = new URL(request.url);
     const date = searchParams.get('date');
     return await runMarkAbsent(date);
   } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json({ error: error.message || 'An unexpected error occurred.' }, { status: 500 });
   }
 }

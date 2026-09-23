@@ -32,7 +32,7 @@ export default function TeamDirectoryPage() {
     
     if (error) {
       console.error(error);
-      toast.error("Failed to load team from database. Did you run the SQL migration?");
+      toast.error("Failed to load team from database.");
     } else if (data) {
       const roleHierarchy = [
         "ceo/founder",
@@ -88,7 +88,7 @@ export default function TeamDirectoryPage() {
   ];
 
   const handleRestrictedAction = (actionName: string) => {
-    toast.error(`Access Denied: You need Owner approval to ${actionName}.`);
+    toast.error(`Access Denied: You need Owner/Admin approval to ${actionName}.`);
   };
 
   const handleResign = async (emp: any) => {
@@ -97,7 +97,7 @@ export default function TeamDirectoryPage() {
       return;
     }
     
-    const workedTo = "Today"; // Or current month/year
+    const workedTo = "Today";
     
     const { error } = await supabase
       .from('team_members')
@@ -110,9 +110,12 @@ export default function TeamDirectoryPage() {
     }
 
     toast.success(`${emp.name} has been moved to the Resigned record.`);
-    fetchTeam(); // Refresh
+    fetchTeam();
   };
 
+  /**
+   * Protected Employee Deletion with Historical Integrity Check
+   */
   const handleDelete = async (emp: any) => {
     if (role !== "owner") {
       handleRestrictedAction("delete an employee");
@@ -120,28 +123,31 @@ export default function TeamDirectoryPage() {
       return;
     }
 
-    if (!confirm(`Are you sure you want to permanently delete ${emp.name}? This cannot be undone.`)) {
+    if (!confirm(`Are you sure you want to delete ${emp.name}? If attendance history exists, deletion will be rejected to protect legal audit records.`)) {
       setOpenDropdownId(null);
       return;
     }
 
-    // First delete their attendance records to completely remove them from attendance sheets
-    await supabase.from('employee_attendance').delete().eq('employee_id', emp.id);
+    try {
+      const res = await fetch('/api/team/delete', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ employeeId: emp.id })
+      });
 
-    // Then permanently delete them from the team directory
-    const { error } = await supabase
-      .from('team_members')
-      .delete()
-      .eq('id', emp.id);
+      const data = await res.json();
 
-    if (error) {
-      toast.error("Database error while deleting employee.");
-      return;
+      if (!res.ok) {
+        toast.error(data.error || "Cannot delete employee.", { duration: 6000 });
+      } else {
+        toast.success(data.message || `${emp.name} deleted successfully.`);
+        fetchTeam();
+      }
+    } catch {
+      toast.error("Network error during deletion request.");
+    } finally {
+      setOpenDropdownId(null);
     }
-
-    toast.success(`${emp.name} has been permanently deleted.`);
-    setOpenDropdownId(null);
-    fetchTeam();
   };
 
   const handleEditProfile = (emp: any) => {
@@ -177,7 +183,7 @@ export default function TeamDirectoryPage() {
       .eq('id', editingEmployee.id);
 
     if (error) {
-      toast.error("Database error while saving profile.");
+      toast.error("Database error while saving profile: " + error.message);
       return;
     }
 
@@ -190,7 +196,6 @@ export default function TeamDirectoryPage() {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
       
-      // Limit file size to 2MB since we are storing as base64 in the database
       if (file.size > 2 * 1024 * 1024) {
         toast.error("Image is too large! Please choose a picture under 2MB.");
         return;
@@ -206,35 +211,35 @@ export default function TeamDirectoryPage() {
     }
   };
 
+  /**
+   * Protected Server-side Role Assignment
+   */
   const handleAssignRole = async (emp: any, newRole: string) => {
     if (role !== "owner") {
       handleRestrictedAction("assign roles");
       return;
     }
 
-    const { error } = await supabase
-      .from('team_members')
-      .update({ role: newRole })
-      .eq('id', emp.id);
+    try {
+      const res = await fetch('/api/team/role', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ employeeId: emp.id, newRole })
+      });
 
-    if (error) {
-      toast.error("Database error while assigning role.");
-      return;
+      const data = await res.json();
+
+      if (!res.ok) {
+        toast.error(data.error || "Failed to update role.");
+      } else {
+        toast.success(data.message || `Role successfully changed to ${newRole}`);
+        fetchTeam();
+      }
+    } catch {
+      toast.error("Network error while updating role.");
+    } finally {
+      setAssignRoleDropdownId(null);
     }
-
-    // Also update their profile role so they get admin access if applicable
-    if (emp.email) {
-      const isAdminRole = newRole.toLowerCase().includes('admin') || newRole.toLowerCase().includes('ceo') || newRole.toLowerCase().includes('founder');
-      
-      await supabase
-        .from('profiles')
-        .update({ role: isAdminRole ? 'admin' : 'staff', designation: newRole })
-        .eq('email', emp.email);
-    }
-
-    toast.success(`Role successfully changed to ${newRole}`);
-    setAssignRoleDropdownId(null);
-    fetchTeam();
   };
 
   const handleAddEmployeeClick = () => {
@@ -262,18 +267,12 @@ export default function TeamDirectoryPage() {
       if (!res.ok) {
         toast.error(data.error || "Failed to create employee.");
       } else {
-        toast.success(
-          <div>
-            <p>Employee Account Created!</p>
-            <p className="text-xs mt-1">Temp Password: <strong>{data.tempPassword}</strong></p>
-          </div>,
-          { duration: 10000 }
-        );
+        toast.success(data.message || "Employee account created successfully!");
         setIsAddModalOpen(false);
         fetchTeam();
       }
-    } catch (err) {
-      toast.error("Network error.");
+    } catch {
+      toast.error("Network error while creating employee.");
     } finally {
       setIsCreating(false);
     }
@@ -490,7 +489,7 @@ export default function TeamDirectoryPage() {
               <form onSubmit={handleCreateEmployeeSubmit} className="flex flex-col overflow-hidden h-full">
                 <div className="p-6 space-y-4 overflow-y-auto">
                   <p className="text-xs text-slate-500 dark:text-slate-400 bg-slate-50 dark:bg-slate-700/50 p-3 rounded-lg">
-                    This will automatically generate a dashboard login account for the employee using the provided email.
+                    This will create a dashboard login account for the employee. Account setup and access links should be sent via Supabase Magic Link onboarding.
                   </p>
                   <div><label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Full Name</label><input required type="text" value={newEmployeeForm.name} onChange={e => setNewEmployeeForm({...newEmployeeForm, name: e.target.value})} className="w-full px-3 py-2 bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none text-slate-900 dark:text-white" /></div>
                   <div><label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Company Email</label><input required type="email" value={newEmployeeForm.email} onChange={e => setNewEmployeeForm({...newEmployeeForm, email: e.target.value})} className="w-full px-3 py-2 bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none text-slate-900 dark:text-white" /></div>

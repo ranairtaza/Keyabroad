@@ -1,0 +1,143 @@
+import { NextResponse } from 'next/server';
+import { createClient } from '@supabase/supabase-js';
+import { createClient as createServerClient } from '@/lib/auth/server';
+
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
+
+function getAdminClient() {
+  if (!supabaseServiceRoleKey) {
+    throw new Error('Server configuration error: SUPABASE_SERVICE_ROLE_KEY is missing.');
+  }
+  return createClient(supabaseUrl, supabaseServiceRoleKey, {
+    auth: { autoRefreshToken: false, persistSession: false }
+  });
+}
+
+const ALLOWED_ROLES = [
+  'CEO/Founder',
+  'Admin/CEO',
+  'Admin',
+  'Accountant',
+  'Language Instructor',
+  'Lead Educational Counsellor',
+  'Visa Processing Specialist',
+  'Career Guidance Expert',
+  'Student Success Coordinator',
+  'Marketing Executive',
+  'Social Media & Marketing Executive',
+  'Social Media Manager',
+  'Admission and Marketing Executive',
+  'Branch Manager',
+  'Operations Head',
+  'Internee'
+];
+
+/**
+ * POST /api/team/role
+ * Protected Server-side Role Assignment Endpoint
+ * Strictly requires authenticated Owner / Admin role.
+ */
+export async function POST(request: Request) {
+  try {
+    const supabaseAuth = await createServerClient();
+    const { data: { user }, error: authError } = await supabaseAuth.auth.getUser();
+
+    if (authError || !user || !user.email) {
+      return NextResponse.json({ error: 'Unauthorized: Session missing or expired' }, { status: 401 });
+    }
+
+    const supabaseAdmin = getAdminClient();
+
+    // Authorize caller
+    const { data: actorProfile } = await supabaseAdmin
+      .from('profiles')
+      .select('role, staff_role')
+      .eq('email', user.email)
+      .single();
+
+    const { data: actorTeamMember } = await supabaseAdmin
+      .from('team_members')
+      .select('role')
+      .eq('email', user.email)
+      .single();
+
+    const pRole = actorProfile?.role?.toLowerCase() || '';
+    const sRole = actorProfile?.staff_role?.toLowerCase() || '';
+    const tmRole = actorTeamMember?.role?.toLowerCase() || '';
+
+    const isOwnerOrAdmin =
+      pRole === 'admin' ||
+      sRole === 'admin' ||
+      sRole === 'super_admin' ||
+      sRole === 'owner' ||
+      user.email === 'junaid@keyabroad.com' ||
+      tmRole.includes('admin') ||
+      tmRole.includes('ceo') ||
+      tmRole.includes('founder');
+
+    if (!isOwnerOrAdmin) {
+      return NextResponse.json(
+        { error: 'Forbidden: Only an Owner or Administrator can change employee roles.' },
+        { status: 403 }
+      );
+    }
+
+    const body = await request.json();
+    const { employeeId, newRole } = body;
+
+    if (!employeeId || !newRole) {
+      return NextResponse.json({ error: 'employeeId and newRole are required.' }, { status: 400 });
+    }
+
+    if (!ALLOWED_ROLES.includes(newRole)) {
+      return NextResponse.json(
+        { error: `Invalid role '${newRole}'. Must be one of: ${ALLOWED_ROLES.join(', ')}` },
+        { status: 400 }
+      );
+    }
+
+    const parsedId = parseInt(String(employeeId), 10);
+    if (isNaN(parsedId)) {
+      return NextResponse.json({ error: 'Invalid employee ID format.' }, { status: 400 });
+    }
+
+    // Update team_members record
+    const { data: updatedEmp, error: tmError } = await supabaseAdmin
+      .from('team_members')
+      .update({ role: newRole })
+      .eq('id', parsedId)
+      .select('id, name, email, role')
+      .single();
+
+    if (tmError || !updatedEmp) {
+      return NextResponse.json({ error: `Failed to update team member: ${tmError?.message}` }, { status: 500 });
+    }
+
+    // Synchronize profile role & designation
+    if (updatedEmp.email) {
+      const isNewRoleAdmin =
+        newRole.toLowerCase().includes('admin') ||
+        newRole.toLowerCase().includes('ceo') ||
+        newRole.toLowerCase().includes('founder');
+
+      await supabaseAdmin
+        .from('profiles')
+        .update({
+          role: isNewRoleAdmin ? 'admin' : 'staff',
+          staff_role: isNewRoleAdmin ? 'admin' : 'staff',
+          designation: newRole
+        })
+        .eq('email', updatedEmp.email);
+    }
+
+    return NextResponse.json({
+      success: true,
+      message: `Role for ${updatedEmp.name} successfully updated to ${newRole}.`,
+      employee: updatedEmp
+    });
+
+  } catch (error: any) {
+    return NextResponse.json({ error: error.message || 'An unexpected error occurred.' }, { status: 500 });
+  }
+}

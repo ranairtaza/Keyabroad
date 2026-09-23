@@ -95,7 +95,7 @@ export function EligibilityWizard() {
 
       const currencyFilter = `and(currency.eq.USD,tuition_fee.lte.${budgetUSD}),and(currency.eq.GBP,tuition_fee.lte.${budgetGBP}),and(currency.eq.EUR,tuition_fee.lte.${budgetEUR}),and(currency.eq.AUD,tuition_fee.lte.${budgetAUD}),and(currency.eq.CAD,tuition_fee.lte.${budgetCAD})`;
 
-      let query = supabase
+      const query = supabase
         .from('programs')
         .select('*', { count: 'exact', head: true })
         .lte('minimum_cgpa', formData.cgpa)

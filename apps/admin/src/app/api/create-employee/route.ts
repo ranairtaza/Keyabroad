@@ -1,84 +1,111 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import crypto from 'crypto';
+import { createClient as createServerClient } from '@/lib/auth/server';
 
-// We need the service role key to bypass RLS and create auth users securely
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
 const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
 
+function getAdminClient() {
+  if (!supabaseServiceRoleKey) {
+    throw new Error('Server configuration error: SUPABASE_SERVICE_ROLE_KEY is missing.');
+  }
+  return createClient(supabaseUrl, supabaseServiceRoleKey, {
+    auth: { autoRefreshToken: false, persistSession: false }
+  });
+}
+
+/**
+ * POST /api/create-employee
+ * Protected Employee Account Creation Endpoint
+ * Requires authenticated Owner / Super Admin.
+ * Uses cryptographically secure random password generation without exposing it to the browser.
+ * Note: Recommended future onboarding method is Supabase Invite / Magic Link.
+ */
 export async function POST(request: Request) {
   try {
-    const body = await request.json();
-    const { name, email, role, location, salary, joined } = body;
-
-    if (!supabaseServiceRoleKey) {
-      return NextResponse.json(
-        { error: 'Server configuration error: SUPABASE_SERVICE_ROLE_KEY is missing.' },
-        { status: 500 }
-      );
-    }
-
-    // 1. Authentication & Authorization
-    const { createClient: createServerClient } = await import("@/lib/auth/server");
     const supabaseAuth = await createServerClient();
-    const { data: { user } } = await supabaseAuth.auth.getUser();
-    
-    if (!user) {
+    const { data: { user }, error: authError } = await supabaseAuth.auth.getUser();
+
+    if (authError || !user || !user.email) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { data: profile } = await supabaseAuth
+    const supabaseAdmin = getAdminClient();
+
+    // Check caller authorization
+    const { data: profile } = await supabaseAdmin
       .from('profiles')
-      .select('staff_role')
-      .eq('id', user.id)
+      .select('role, staff_role')
+      .eq('email', user.email)
       .single();
 
-    const allowedRoles = ['super_admin', 'admin'];
-    if (!profile?.staff_role || !allowedRoles.includes(profile.staff_role)) {
+    const { data: actorTm } = await supabaseAdmin
+      .from('team_members')
+      .select('role')
+      .eq('email', user.email)
+      .single();
+
+    const pRole = profile?.role?.toLowerCase() || '';
+    const sRole = profile?.staff_role?.toLowerCase() || '';
+    const tmRole = actorTm?.role?.toLowerCase() || '';
+
+    const isAuthorized =
+      pRole === 'admin' ||
+      sRole === 'admin' ||
+      sRole === 'super_admin' ||
+      sRole === 'owner' ||
+      user.email === 'junaid@keyabroad.com' ||
+      tmRole.includes('admin') ||
+      tmRole.includes('ceo') ||
+      tmRole.includes('founder');
+
+    if (!isAuthorized) {
       return NextResponse.json({ error: 'Forbidden: Insufficient permissions to create employees' }, { status: 403 });
     }
 
-    // 2. Create a Supabase client with the service role key for the actual creation
-    const supabaseAdmin = createClient(supabaseUrl, supabaseServiceRoleKey, {
-      auth: {
-        autoRefreshToken: false,
-        persistSession: false
-      }
-    });
+    const body = await request.json();
+    const { name, email, role, location, salary, joined } = body;
 
-    // 1. Create the user in Supabase Auth
-    // Set a default temporary password that they should change later
-    const tempPassword = 'KeyabroadPassword123!';
+    if (!name || !email || !role) {
+      return NextResponse.json({ error: 'Name, email, and role are required fields.' }, { status: 400 });
+    }
+
+    // Generate cryptographically secure random password for account creation
+    // Never logged, never returned to browser, never stored in plaintext
+    const secureRandomPassword = crypto.randomBytes(24).toString('base64url') + '!Aa9';
+
     let userId = null;
     let isNewUser = true;
 
-    const { data: authData, error: authError } = await supabaseAdmin.auth.admin.createUser({
+    // Create user in Supabase Auth
+    const { data: authData, error: createAuthError } = await supabaseAdmin.auth.admin.createUser({
       email,
-      password: tempPassword,
-      email_confirm: true, // Auto-confirm so they can log in immediately
+      password: secureRandomPassword,
+      email_confirm: true,
       user_metadata: { full_name: name }
     });
 
-    if (authError) {
-      if (authError.message.toLowerCase().includes('already') || authError.status === 422 || authError.status === 400) {
-        // User already exists. Find them in profiles.
+    if (createAuthError) {
+      if (createAuthError.message.toLowerCase().includes('already') || createAuthError.status === 422 || createAuthError.status === 400) {
         isNewUser = false;
-        const { data: profile } = await supabaseAdmin
+        const { data: existingProfile } = await supabaseAdmin
           .from('profiles')
           .select('id')
           .eq('email', email)
           .single();
-          
-        if (profile) {
-          userId = profile.id;
+
+        if (existingProfile) {
+          userId = existingProfile.id;
         }
       } else {
-        return NextResponse.json({ error: authError.message }, { status: 400 });
+        return NextResponse.json({ error: createAuthError.message }, { status: 400 });
       }
     } else {
       userId = authData?.user?.id;
     }
 
-    // 2. Insert or Update into team_members table
+    // Insert or update in team_members
     const newEmp = {
       name,
       email,
@@ -97,35 +124,45 @@ export async function POST(request: Request) {
       .single();
 
     if (existingTeamMember) {
-      const { error: dbUpdateError } = await supabaseAdmin.from('team_members').update(newEmp).eq('id', existingTeamMember.id);
+      const { error: dbUpdateError } = await supabaseAdmin
+        .from('team_members')
+        .update(newEmp)
+        .eq('id', existingTeamMember.id);
+
       if (dbUpdateError) {
         return NextResponse.json({ error: `User found but failed to update directory: ${dbUpdateError.message}` }, { status: 500 });
       }
     } else {
-      const { error: dbInsertError } = await supabaseAdmin.from('team_members').insert([newEmp]);
+      const { error: dbInsertError } = await supabaseAdmin
+        .from('team_members')
+        .insert([newEmp]);
+
       if (dbInsertError) {
         return NextResponse.json({ error: `User created but failed to add to directory: ${dbInsertError.message}` }, { status: 500 });
       }
     }
-    
-    // 3. Upsert into profiles table to assign their role properly for the dashboard
+
+    // Upsert into profiles table
     if (userId) {
-       const isAdminRole = role.toLowerCase().includes('admin') || role.toLowerCase().includes('ceo') || role.toLowerCase().includes('founder');
-       
-       await supabaseAdmin.from('profiles').upsert({
-         id: userId,
-         email: email,
-         full_name: name,
-         role: isAdminRole ? 'admin' : 'staff',
-         designation: role,
-         avatar_url: newEmp.image
-       }, { onConflict: 'id' });
+      const isAdminRole = role.toLowerCase().includes('admin') || role.toLowerCase().includes('ceo') || role.toLowerCase().includes('founder');
+
+      await supabaseAdmin.from('profiles').upsert({
+        id: userId,
+        email: email,
+        full_name: name,
+        role: isAdminRole ? 'admin' : 'staff',
+        staff_role: isAdminRole ? 'admin' : 'staff',
+        designation: role,
+        avatar_url: newEmp.image
+      }, { onConflict: 'id' });
     }
 
-    return NextResponse.json({ 
-      success: true, 
-      message: isNewUser ? 'Employee account created successfully!' : 'Existing user successfully added to the team directory!',
-      tempPassword: isNewUser ? tempPassword : 'User already has a password'
+    // Return sanitized response WITHOUT any passwords
+    return NextResponse.json({
+      success: true,
+      message: isNewUser
+        ? 'Employee account created successfully. Onboarding credentials should be sent via Supabase Magic Link / password reset.'
+        : 'Existing user record successfully synchronized in the team directory.'
     });
 
   } catch (error: any) {

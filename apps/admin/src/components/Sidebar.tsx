@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useRole } from "./RoleContext";
 import { useSidebar } from "./SidebarContext";
-import { LayoutDashboard, Users, Kanban, CheckSquare, Settings, LogOut, BarChart3, Network, Database, Globe, Clock, Receipt, Star, Plane, FileText, Megaphone, Zap, Cable, Activity, FileSpreadsheet, X, Building, Calculator, ChevronDown, ChevronRight, Banknote, GraduationCap, Briefcase } from "lucide-react";
+import { LayoutDashboard, Users, Kanban, CheckSquare, Settings, LogOut, BarChart3, Network, Database, Globe, Clock, Receipt, Star, Plane, FileText, Megaphone, Zap, Cable, Activity, FileSpreadsheet, X, Building, Calculator, ChevronDown, ChevronRight, Banknote, GraduationCap, Briefcase, Fingerprint } from "lucide-react";
 import { useState, startTransition } from "react";
 
 export default function Sidebar() {
@@ -21,6 +21,7 @@ export default function Sidebar() {
   const canManageBlogs = !isIntern;
   const isManager = currentUser?.designation?.toLowerCase().includes("manager");
   const canViewHROps = role === "owner" || isManager;
+  const isAdminOrOwner = role === "owner" || (currentUser?.designation?.toLowerCase().includes("admin"));
 
   const analyticsSubLinks = [
     { name: "Overview", href: "/analytics" },
@@ -52,6 +53,7 @@ export default function Sidebar() {
     ...(canViewHROps ? [{ name: "HR Operations", href: "/hr-operations", icon: Activity }] : []),
     { name: "Tasks", href: "/tasks", icon: CheckSquare },
     { name: "Attendance", href: "/attendance", icon: Clock },
+    ...(isAdminOrOwner ? [{ name: "Biometrics", href: "/biometrics", icon: Fingerprint }] : []),
     { name: "Team Directory", href: "/team", icon: Network },
     { name: "Integrations", href: "/integrations", icon: Cable },
     { name: "Settings", href: "/settings", icon: Settings },
