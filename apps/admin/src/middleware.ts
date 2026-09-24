@@ -13,7 +13,8 @@ export async function middleware(request: NextRequest) {
     path.startsWith('/embed') ||
     path.startsWith('/api/health') ||
     path.startsWith('/api/leads/webhook') ||
-    path.startsWith('/api/automations/webhook')
+    path.startsWith('/api/automations/webhook') ||
+    path.startsWith('/api/biometrics/events')
   ) {
     return supabaseResponse
   }
