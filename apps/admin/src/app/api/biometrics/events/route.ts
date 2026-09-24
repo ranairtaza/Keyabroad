@@ -40,7 +40,7 @@ function getAdminClient() {
 async function authenticateMachineDevice(
   request: Request,
   claimedDeviceId?: string
-): Promise<{ authorized: boolean; deviceId?: string; credentialId?: string; reason?: string }> {
+): Promise<{ authorized: boolean; deviceId?: string; credentialId?: string; reason?: string; mode?: 'LIVE' | 'TEST'; testExpiresAt?: string | null }> {
   const deviceApiKey = request.headers.get('x-device-api-key');
   const authHeader = request.headers.get('authorization');
 
@@ -69,7 +69,9 @@ async function authenticateMachineDevice(
   return {
     authorized: true,
     deviceId: credAuth.deviceId,
-    credentialId: credAuth.credentialId
+    credentialId: credAuth.credentialId,
+    mode: credAuth.mode,
+    testExpiresAt: credAuth.testExpiresAt
   };
 }
 
@@ -154,8 +156,15 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'No valid events found in payload.' }, { status: 400 });
     }
 
+    let isTest = auth.mode === 'TEST';
+    if (isTest && auth.testExpiresAt) {
+      if (new Date(auth.testExpiresAt).getTime() < Date.now()) {
+        return NextResponse.json({ error: 'TEST mode has expired for this device.' }, { status: 403 });
+      }
+    }
+
     // 5. Process through deterministic AttendanceEventEngine
-    const summary = await AttendanceEventEngine.processBatch(normalizedEvents, supabaseAdmin);
+    const summary = await AttendanceEventEngine.processBatch(normalizedEvents, supabaseAdmin, isTest);
 
     // 6. Update device telemetry in a single batch update upon success
     const nowIso = new Date().toISOString();
@@ -175,6 +184,7 @@ export async function POST(request: Request) {
 
     return NextResponse.json({
       success: true,
+      mode: isTest ? 'TEST' : 'LIVE',
       summary
     });
 

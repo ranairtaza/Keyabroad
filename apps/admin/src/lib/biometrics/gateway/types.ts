@@ -32,6 +32,8 @@ export interface DeviceAuthResult {
   status?: string;
   error?: string;
   credentialId?: string;
+  mode?: 'LIVE' | 'TEST';
+  testExpiresAt?: string | null;
 }
 
 export type DeviceHealthState = 'ONLINE' | 'OFFLINE' | 'NEVER_CONNECTED' | 'DISABLED' | 'ERROR';

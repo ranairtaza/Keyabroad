@@ -1,8 +1,4 @@
 
-> admin@0.1.0 prebuild
-> node -e "if(process.platform === 'linux') { require('child_process').execSync('npm install --no-save @tailwindcss/oxide-linux-x64-gnu@4.3.3 lightningcss-linux-x64-gnu', {stdio: 'inherit'}) }"
-
-
 > admin@0.1.0 build
 > next build
 
@@ -11,37 +7,107 @@
 
 ⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
   Creating an optimized production build ...
-Turbopack build encountered 1 warnings:
-[next]/internal/font/google/inter_5972bc34.module.css
-Error while requesting resource
-There was an issue requesting https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap
+✓ Compiled successfully in 88s
+  Running TypeScript ...
+  Finished TypeScript in 63s ...
+  Collecting page data using 7 workers ...
+  Generating static pages using 7 workers (0/73) ...
+  Generating static pages using 7 workers (18/73) 
+  Generating static pages using 7 workers (36/73) 
+  Generating static pages using 7 workers (54/73) 
+✓ Generating static pages using 7 workers (73/73) in 3.3s
+  Finalizing page optimization ...
 
-Import trace:
-  Server Component:
-    [next]/internal/font/google/inter_5972bc34.module.css
-    [next]/internal/font/google/inter_5972bc34.js
-    ./apps/admin/src/app/layout.tsx
+Route (app)
+┌ ○ /
+├ ○ /_not-found
+├ ƒ /analytics
+├ ƒ /analytics/applications
+├ ƒ /analytics/leads
+├ ƒ /analytics/revenue
+├ ƒ /analytics/team
+├ ƒ /api/ai/chat
+├ ƒ /api/ai/matcher
+├ ƒ /api/attendance
+├ ƒ /api/attendance/correction
+├ ƒ /api/automations/check-invoices
+├ ƒ /api/automations/check-tasks
+├ ƒ /api/automations/mark-absent
+├ ƒ /api/automations/sla-check
+├ ƒ /api/automations/webhook
+├ ƒ /api/biometrics/devices
+├ ƒ /api/biometrics/devices/[id]
+├ ƒ /api/biometrics/devices/[id]/revoke-key
+├ ƒ /api/biometrics/devices/[id]/rotate-key
+├ ƒ /api/biometrics/events
+├ ƒ /api/biometrics/events/reprocess
+├ ƒ /api/biometrics/mappings
+├ ƒ /api/create-employee
+├ ƒ /api/export
+├ ƒ /api/health
+├ ƒ /api/health/ready
+├ ƒ /api/leads/webhook
+├ ƒ /api/messages
+├ ƒ /api/notify
+├ ƒ /api/notify/in-app
+├ ƒ /api/notify/list
+├ ƒ /api/notify/read
+├ ƒ /api/ocr
+├ ƒ /api/tasks/create
+├ ƒ /api/tasks/delete
+├ ƒ /api/tasks/list
+├ ƒ /api/tasks/update
+├ ƒ /api/team/delete
+├ ƒ /api/team/role
+├ ƒ /api/time
+├ ○ /appointments
+├ ○ /attendance
+├ ○ /biometrics
+├ ○ /blogs
+├ ○ /cost-calculator-config
+├ ○ /course-matcher
+├ ○ /crm/audit
+├ ○ /crm/documents
+├ ○ /crm/leads
+├ ○ /crm/messages
+├ ƒ /crm/students/[id]
+├ ƒ /crm/tasks
+├ ○ /database
+├ ƒ /embed/reviews
+├ ○ /feedback
+├ ƒ /feedback/[id]
+├ ƒ /fees
+├ ○ /hr-operations
+├ ○ /icon.png
+├ ○ /integrations
+├ ƒ /invoices
+├ ƒ /invoices/[id]
+├ ƒ /invoices/[id]/pay
+├ ○ /invoices/create
+├ ○ /jobs
+├ ○ /leads
+├ ○ /login
+├ ○ /master-records
+├ ○ /operations
+├ ƒ /operations/command-center
+├ ƒ /operations/performance
+├ ○ /operations/system-health
+├ ○ /pipeline
+├ ○ /pipeline/applications
+├ ○ /programs
+├ ƒ /receipt/[id]
+├ ○ /reviews
+├ ○ /scholarships
+├ ○ /settings
+├ ○ /tasks
+├ ○ /team
+├ ○ /universities
+├ ○ /universities/create
+└ ○ /visas
 
 
+ƒ Proxy (Middleware)
 
-> Build error occurred
-Error: Turbopack build failed with 1 errors:
-[next]/internal/font/google/inter_5972bc34.module.css
-next/font: error:
-Failed to fetch `Inter` from Google Fonts.
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
 
-Import trace:
-  Server Component:
-    [next]/internal/font/google/inter_5972bc34.module.css
-    [next]/internal/font/google/inter_5972bc34.js
-    ./apps/admin/src/app/layout.tsx
-
-
-    at ignore-listed frames
-npm error Lifecycle script `build` failed with error:
-npm error code 1
-npm error path C:\Users\DeLL\OneDrive\Desktop\Keyabroad\apps\admin
-npm error workspace admin@0.1.0
-npm error location C:\Users\DeLL\OneDrive\Desktop\Keyabroad\apps\admin
-npm error command failed
-npm error command C:\Windows\system32\cmd.exe /d /s /c next build

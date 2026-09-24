@@ -44,7 +44,8 @@ export class AttendanceEventEngine {
    */
   public static async processEvent(
     event: NormalizedBiometricEvent,
-    supabase: SupabaseClient
+    supabase: SupabaseClient,
+    isTest: boolean = false
   ): Promise<IngestionResult> {
     const idempotencyHash = this.generateIdempotencyHash(event);
 
@@ -98,7 +99,8 @@ export class AttendanceEventEngine {
           processed_at: nowIso,
           processing_status: 'UNMATCHED',
           processing_error: resolution.error,
-          raw_metadata: event.rawMetadata || {}
+          raw_metadata: event.rawMetadata || {},
+          is_test: isTest
         })
         .select('id')
         .single();
@@ -131,7 +133,8 @@ export class AttendanceEventEngine {
           processed_at: nowIso,
           processing_status: statusValue,
           processing_error: resolution.error,
-          raw_metadata: event.rawMetadata || {}
+          raw_metadata: event.rawMetadata || {},
+          is_test: isTest
         })
         .select('id')
         .single();
@@ -153,69 +156,71 @@ export class AttendanceEventEngine {
     let actionTaken: IngestionResult['actionTaken'] = 'CHECK_IN_RECORDED';
 
     try {
-      if (event.eventType === 'CHECK_IN') {
-        const { data: existingAttendance } = await supabase
-          .from('employee_attendance')
-          .select('id, status, created_at')
-          .eq('employee_id', employeeId)
-          .eq('date', dateStr)
-          .single();
+      if (!isTest) {
+        if (event.eventType === 'CHECK_IN') {
+          const { data: existingAttendance } = await supabase
+            .from('employee_attendance')
+            .select('id, status, created_at')
+            .eq('employee_id', employeeId)
+            .eq('date', dateStr)
+            .single();
 
-        if (!existingAttendance) {
-          // New check-in
-          await supabase.from('employee_attendance').insert({
-            employee_id: employeeId,
-            employee_name: employeeName,
-            status: 'present',
-            date: dateStr,
-            created_at: validEventTimeIso
-          });
-          actionTaken = 'CHECK_IN_RECORDED';
-        } else if (existingAttendance.status === 'absent') {
-          // Override auto-absent if employee later punched in
-          await supabase.from('employee_attendance').update({
-            status: 'present',
-            created_at: validEventTimeIso
-          }).eq('id', existingAttendance.id);
-          actionTaken = 'CHECK_IN_RECORDED';
-        } else if (existingAttendance.status === 'present') {
-          // If earliest punch is earlier than recorded created_at, update it
-          if (new Date(validEventTimeIso) < new Date(existingAttendance.created_at)) {
+          if (!existingAttendance) {
+            // New check-in
+            await supabase.from('employee_attendance').insert({
+              employee_id: employeeId,
+              employee_name: employeeName,
+              status: 'present',
+              date: dateStr,
+              created_at: validEventTimeIso
+            });
+            actionTaken = 'CHECK_IN_RECORDED';
+          } else if (existingAttendance.status === 'absent') {
+            // Override auto-absent if employee later punched in
             await supabase.from('employee_attendance').update({
+              status: 'present',
               created_at: validEventTimeIso
             }).eq('id', existingAttendance.id);
+            actionTaken = 'CHECK_IN_RECORDED';
+          } else if (existingAttendance.status === 'present') {
+            // If earliest punch is earlier than recorded created_at, update it
+            if (new Date(validEventTimeIso) < new Date(existingAttendance.created_at)) {
+              await supabase.from('employee_attendance').update({
+                created_at: validEventTimeIso
+              }).eq('id', existingAttendance.id);
+            }
+            actionTaken = 'CHECK_IN_RECORDED';
           }
-          actionTaken = 'CHECK_IN_RECORDED';
-        }
-      } else if (event.eventType === 'CHECK_OUT') {
-        const { data: existingAttendance } = await supabase
-          .from('employee_attendance')
-          .select('id, status, check_out_time')
-          .eq('employee_id', employeeId)
-          .eq('date', dateStr)
-          .single();
+        } else if (event.eventType === 'CHECK_OUT') {
+          const { data: existingAttendance } = await supabase
+            .from('employee_attendance')
+            .select('id, status, check_out_time')
+            .eq('employee_id', employeeId)
+            .eq('date', dateStr)
+            .single();
 
-        if (existingAttendance) {
-          // Update check-out timestamp if newer or missing
-          const currentCheckout = existingAttendance.check_out_time ? new Date(existingAttendance.check_out_time) : null;
-          if (!currentCheckout || new Date(validEventTimeIso) > currentCheckout) {
-            await supabase.from('employee_attendance').update({
-              check_out_time: validEventTimeIso,
-              status: existingAttendance.status === 'absent' ? 'present' : existingAttendance.status
-            }).eq('id', existingAttendance.id);
+          if (existingAttendance) {
+            // Update check-out timestamp if newer or missing
+            const currentCheckout = existingAttendance.check_out_time ? new Date(existingAttendance.check_out_time) : null;
+            if (!currentCheckout || new Date(validEventTimeIso) > currentCheckout) {
+              await supabase.from('employee_attendance').update({
+                check_out_time: validEventTimeIso,
+                status: existingAttendance.status === 'absent' ? 'present' : existingAttendance.status
+              }).eq('id', existingAttendance.id);
+            }
+            actionTaken = 'CHECK_OUT_RECORDED';
+          } else {
+            // Check-out with no prior check-in for the day
+            await supabase.from('employee_attendance').insert({
+              employee_id: employeeId,
+              employee_name: employeeName,
+              status: 'present',
+              date: dateStr,
+              created_at: validEventTimeIso,
+              check_out_time: validEventTimeIso
+            });
+            actionTaken = 'CHECK_OUT_RECORDED';
           }
-          actionTaken = 'CHECK_OUT_RECORDED';
-        } else {
-          // Check-out with no prior check-in for the day
-          await supabase.from('employee_attendance').insert({
-            employee_id: employeeId,
-            employee_name: employeeName,
-            status: 'present',
-            date: dateStr,
-            created_at: validEventTimeIso,
-            check_out_time: validEventTimeIso
-          });
-          actionTaken = 'CHECK_OUT_RECORDED';
         }
       }
 
@@ -235,7 +240,8 @@ export class AttendanceEventEngine {
           processed_at: nowIso,
           processing_status: 'PROCESSED',
           processing_error: null,
-          raw_metadata: event.rawMetadata || {}
+          raw_metadata: event.rawMetadata || {},
+          is_test: isTest
         })
         .select('id')
         .single();
@@ -280,7 +286,8 @@ export class AttendanceEventEngine {
           processed_at: nowIso,
           processing_status: 'FAILED',
           processing_error: err.message || 'Database error while processing attendance',
-          raw_metadata: event.rawMetadata || {}
+          raw_metadata: event.rawMetadata || {},
+          is_test: isTest
         })
         .select('id')
         .single();
@@ -321,7 +328,8 @@ export class AttendanceEventEngine {
    */
   public static async processBatch(
     events: NormalizedBiometricEvent[],
-    supabase: SupabaseClient
+    supabase: SupabaseClient,
+    isTest: boolean = false
   ): Promise<BatchIngestionSummary> {
     const summary: BatchIngestionSummary = {
       totalReceived: events.length,
@@ -334,7 +342,7 @@ export class AttendanceEventEngine {
     };
 
     for (const event of events) {
-      const res = await this.processEvent(event, supabase);
+      const res = await this.processEvent(event, supabase, isTest);
       summary.results.push(res);
 
       if (res.isDuplicate) {

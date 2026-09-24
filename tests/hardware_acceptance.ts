@@ -54,7 +54,8 @@ async function runAcceptanceTest() {
       manufacturer: 'GenericTest',
       model: 'TestModel1',
       serial_number: `TEST-SN-${Date.now()}`,
-      status: 'active'
+      status: 'active',
+      mode: 'TEST'
     })
     .select()
     .single();
@@ -80,6 +81,9 @@ async function runAcceptanceTest() {
   // Let's do it right here.
   const rawKey = `ka_dev_${crypto.randomBytes(32).toString('hex')}`;
   const keyHash = crypto.createHash('sha256').update(rawKey).digest('hex');
+  const secretPart = rawKey.slice(7);
+  const correctPrefix = `ka_dev_${secretPart.slice(0, 6)}...`;
+  
   const { data: profile } = await supabaseAdmin.from('profiles').select('id').limit(1).single();
   const createdBy = profile ? profile.id : teamMember.id; // Fallback if profiles is empty but it shouldn't be
 
@@ -88,7 +92,7 @@ async function runAcceptanceTest() {
     .insert({
       device_id: testDeviceId,
       key_hash: keyHash,
-      key_prefix: 'ka_dev_',
+      key_prefix: correctPrefix,
       key_name: 'HW Acceptance Key',
       created_by: createdBy,
       status: 'active',

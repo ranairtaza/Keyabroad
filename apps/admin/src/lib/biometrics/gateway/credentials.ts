@@ -145,7 +145,7 @@ export class DeviceCredentialManager {
     if (!cred || credError) {
       const { data: legacyDevice } = await supabase
         .from('biometric_devices')
-        .select('id, device_name, status, api_key_hash')
+        .select('id, device_name, status, api_key_hash, mode, test_expires_at')
         .eq('api_key_hash', keyHash)
         .single();
 
@@ -172,6 +172,8 @@ export class DeviceCredentialManager {
           deviceId: legacyDevice.id,
           deviceName: legacyDevice.device_name,
           status: legacyDevice.status,
+          mode: legacyDevice.mode,
+          testExpiresAt: legacyDevice.test_expires_at,
         };
       }
 
@@ -211,7 +213,7 @@ export class DeviceCredentialManager {
     // 2. Query Device Status
     const { data: device, error: devError } = await supabase
       .from('biometric_devices')
-      .select('id, device_name, status')
+      .select('id, device_name, status, mode, test_expires_at')
       .eq('id', cred.device_id)
       .single();
 
@@ -249,6 +251,8 @@ export class DeviceCredentialManager {
       deviceName: device.device_name,
       status: device.status,
       credentialId: cred.id,
+      mode: device.mode,
+      testExpiresAt: device.test_expires_at,
     };
   }
 
