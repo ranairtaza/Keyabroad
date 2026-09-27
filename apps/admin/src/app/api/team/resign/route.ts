@@ -14,7 +14,7 @@ export async function POST(req: Request) {
     if (!employeeId) return NextResponse.json({ error: 'Missing employeeId' }, { status: 400 });
 
     const authResult = await resolveCurrentEmployee();
-    if (!authResult.employee) {
+    if (!authResult) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 

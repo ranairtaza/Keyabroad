@@ -14,14 +14,14 @@ export async function POST(req: Request) {
     if (!updateData) return NextResponse.json({ error: 'Missing parameters' }, { status: 400 });
 
     const authResult = await resolveCurrentEmployee();
-    if (!authResult.employee) {
+    if (!authResult) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const targetEmployeeId = providedEmployeeId || authResult.employee.id;
+    const targetEmployeeId = providedEmployeeId || authResult.teamMemberId;
 
     // Allow if owner OR if user is updating their own profile
-    if (authResult.role !== 'owner' && authResult.employee.id !== targetEmployeeId) {
+    if (authResult.role !== 'owner' && authResult.teamMemberId !== targetEmployeeId) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
