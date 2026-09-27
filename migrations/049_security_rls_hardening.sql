@@ -36,7 +36,13 @@ BEGIN
     
     RETURN 'employee';
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
+
+-- Revoke default execution and grant explicitly to authenticated users
+REVOKE EXECUTE ON FUNCTION public.get_canonical_role(text) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION public.get_canonical_role(text) TO authenticated;
+GRANT EXECUTE ON FUNCTION public.get_canonical_role(text) TO service_role;
+
 
 -- 2. Update Migration 044: Biometric Attendance Foundation
 DROP POLICY IF EXISTS "biometric_devices_admin_select" ON biometric_devices;

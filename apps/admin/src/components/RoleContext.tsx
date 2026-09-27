@@ -72,9 +72,10 @@ export function RoleProvider({ children }: { children: React.ReactNode }) {
           const designation = tm?.role || profile?.designation;
           
           const isOwner = 
-            profileRole === 'admin' || staffRole === 'admin' || staffRole === 'ceo' || staffRole === 'owner' || staffRole === 'super_admin' || 
-            session.user.email === 'junaid@keyabroad.com' || 
-            (tmRole && (tmRole.includes('admin') || tmRole.includes('ceo') || tmRole.includes('founder')));
+            tmRole === 'owner' || 
+            tmRole === 'super_admin' || 
+            tmRole === 'super admin' || 
+            tmRole === 'admin';
 
             setCurrentUser({
               id: session.user.id,
