@@ -99,18 +99,24 @@ export default function TeamDirectoryPage() {
     
     const workedTo = "Today";
     
-    const { error } = await supabase
-      .from('team_members')
-      .update({ status: 'resigned', worked_from: emp.joined, worked_to: workedTo })
-      .eq('id', emp.id);
+    try {
+      const res = await fetch('/api/team/resign', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ employeeId: emp.id, worked_from: emp.joined, worked_to: workedTo })
+      });
 
-    if (error) {
-      toast.error("Database error while resigning employee.");
-      return;
+      const data = await res.json();
+
+      if (!res.ok) {
+        toast.error(data.error || "Failed to resign employee.");
+      } else {
+        toast.success(`${emp.name} has been moved to the Resigned record.`);
+        fetchTeam();
+      }
+    } catch {
+      toast.error("Network error while resigning employee.");
     }
-
-    toast.success(`${emp.name} has been moved to the Resigned record.`);
-    fetchTeam();
   };
 
   /**
@@ -177,19 +183,25 @@ export default function TeamDirectoryPage() {
       updateData.salary = editingEmployee.salary;
     }
 
-    const { error } = await supabase
-      .from('team_members')
-      .update(updateData)
-      .eq('id', editingEmployee.id);
+    try {
+      const res = await fetch('/api/team/update-profile', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ employeeId: editingEmployee.id, updateData })
+      });
 
-    if (error) {
-      toast.error("Database error while saving profile: " + error.message);
-      return;
+      const data = await res.json();
+
+      if (!res.ok) {
+        toast.error(data.error || "Failed to save profile.");
+      } else {
+        toast.success(`${editingEmployee.name}'s profile updated!`);
+        setIsEditModalOpen(false);
+        fetchTeam();
+      }
+    } catch {
+      toast.error("Network error while saving profile.");
     }
-
-    toast.success(`${editingEmployee.name}'s profile updated!`);
-    setIsEditModalOpen(false);
-    fetchTeam();
   };
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {

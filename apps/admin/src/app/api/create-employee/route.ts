@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import crypto from 'crypto';
-import { createClient as createServerClient } from '@/lib/auth/server';
+import { requireAnyRole, normalizeRole } from '@/lib/auth/authorization';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
 const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
@@ -24,48 +24,16 @@ function getAdminClient() {
  */
 export async function POST(request: Request) {
   try {
-    const supabaseAuth = await createServerClient();
-    const { data: { user }, error: authError } = await supabaseAuth.auth.getUser();
-
-    if (authError || !user || !user.email) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
+    const actor = await requireAnyRole(['owner', 'admin', 'hr']);
     const supabaseAdmin = getAdminClient();
-
-    // Check caller authorization
-    const { data: profile } = await supabaseAdmin
-      .from('profiles')
-      .select('role, staff_role')
-      .eq('email', user.email)
-      .single();
-
-    const { data: actorTm } = await supabaseAdmin
-      .from('team_members')
-      .select('role')
-      .eq('email', user.email)
-      .single();
-
-    const pRole = profile?.role?.toLowerCase() || '';
-    const sRole = profile?.staff_role?.toLowerCase() || '';
-    const tmRole = actorTm?.role?.toLowerCase() || '';
-
-    const isAuthorized =
-      pRole === 'admin' ||
-      sRole === 'admin' ||
-      sRole === 'super_admin' ||
-      sRole === 'owner' ||
-      user.email === 'junaid@keyabroad.com' ||
-      tmRole.includes('admin') ||
-      tmRole.includes('ceo') ||
-      tmRole.includes('founder');
-
-    if (!isAuthorized) {
-      return NextResponse.json({ error: 'Forbidden: Insufficient permissions to create employees' }, { status: 403 });
-    }
 
     const body = await request.json();
     const { name, email, role, location, salary, joined } = body;
+
+    const targetCanonicalRole = normalizeRole(role);
+    if (['owner', 'admin'].includes(targetCanonicalRole) && actor.role !== 'owner') {
+      return NextResponse.json({ error: 'Forbidden: Only an owner can create an administrator account.' }, { status: 403 });
+    }
 
     if (!name || !email || !role) {
       return NextResponse.json({ error: 'Name, email, and role are required fields.' }, { status: 400 });
@@ -144,14 +112,15 @@ export async function POST(request: Request) {
 
     // Upsert into profiles table
     if (userId) {
-      const isAdminRole = role.toLowerCase().includes('admin') || role.toLowerCase().includes('ceo') || role.toLowerCase().includes('founder');
+      const canonicalRole = normalizeRole(role);
+      const isPrivileged = canonicalRole === 'admin' || canonicalRole === 'owner';
 
       await supabaseAdmin.from('profiles').upsert({
         id: userId,
         email: email,
         full_name: name,
-        role: isAdminRole ? 'admin' : 'staff',
-        staff_role: isAdminRole ? 'admin' : 'staff',
+        role: isPrivileged ? 'admin' : 'staff',
+        staff_role: canonicalRole, // Store exact canonical role
         designation: role,
         avatar_url: newEmp.image
       }, { onConflict: 'id' });

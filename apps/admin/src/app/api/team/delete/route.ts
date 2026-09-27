@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
-import { createClient as createServerClient } from '@/lib/auth/server';
+import { requireAnyRole } from '@/lib/auth/authorization';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
 const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
@@ -21,48 +21,8 @@ function getAdminClient() {
  */
 export async function POST(request: Request) {
   try {
-    const supabaseAuth = await createServerClient();
-    const { data: { user }, error: authError } = await supabaseAuth.auth.getUser();
-
-    if (authError || !user || !user.email) {
-      return NextResponse.json({ error: 'Unauthorized: Session missing or expired' }, { status: 401 });
-    }
-
+    const actor = await requireAnyRole(['owner', 'admin']);
     const supabaseAdmin = getAdminClient();
-
-    // Authorize Owner / Super Admin
-    const { data: actorProfile } = await supabaseAdmin
-      .from('profiles')
-      .select('role, staff_role')
-      .eq('email', user.email)
-      .single();
-
-    const { data: actorTeamMember } = await supabaseAdmin
-      .from('team_members')
-      .select('role')
-      .eq('email', user.email)
-      .single();
-
-    const pRole = actorProfile?.role?.toLowerCase() || '';
-    const sRole = actorProfile?.staff_role?.toLowerCase() || '';
-    const tmRole = actorTeamMember?.role?.toLowerCase() || '';
-
-    const isOwnerOrAdmin =
-      pRole === 'admin' ||
-      sRole === 'admin' ||
-      sRole === 'super_admin' ||
-      sRole === 'owner' ||
-      user.email === 'junaid@keyabroad.com' ||
-      tmRole.includes('ceo') ||
-      tmRole.includes('founder') ||
-      tmRole.includes('admin');
-
-    if (!isOwnerOrAdmin) {
-      return NextResponse.json(
-        { error: 'Forbidden: Only an Owner or Administrator can delete team members.' },
-        { status: 403 }
-      );
-    }
 
     const body = await request.json();
     const { employeeId } = body;
@@ -74,6 +34,10 @@ export async function POST(request: Request) {
     const parsedId = parseInt(String(employeeId), 10);
     if (isNaN(parsedId)) {
       return NextResponse.json({ error: 'Invalid employee ID format.' }, { status: 400 });
+    }
+
+    if (parsedId === actor.teamMemberId) {
+      return NextResponse.json({ error: 'Forbidden: You cannot delete your own account.' }, { status: 403 });
     }
 
     // 1. Check if employee exists

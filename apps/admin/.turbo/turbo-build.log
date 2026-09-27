@@ -7,15 +7,15 @@
 
 ⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
   Creating an optimized production build ...
-✓ Compiled successfully in 88s
+✓ Compiled successfully in 39.3s
   Running TypeScript ...
-  Finished TypeScript in 63s ...
+  Finished TypeScript in 29.2s ...
   Collecting page data using 7 workers ...
-  Generating static pages using 7 workers (0/73) ...
-  Generating static pages using 7 workers (18/73) 
-  Generating static pages using 7 workers (36/73) 
-  Generating static pages using 7 workers (54/73) 
-✓ Generating static pages using 7 workers (73/73) in 3.3s
+  Generating static pages using 7 workers (0/80) ...
+  Generating static pages using 7 workers (20/80) 
+  Generating static pages using 7 workers (40/80) 
+  Generating static pages using 7 workers (60/80) 
+✓ Generating static pages using 7 workers (80/80) in 3.6s
   Finalizing page optimization ...
 
 Route (app)
@@ -46,6 +46,11 @@ Route (app)
 ├ ƒ /api/export
 ├ ƒ /api/health
 ├ ƒ /api/health/ready
+├ ƒ /api/hr/leave/balances
+├ ƒ /api/hr/leave/requests
+├ ƒ /api/hr/leave/requests/[id]/review
+├ ƒ /api/hr/shifts
+├ ƒ /api/hr/workforce/daily
 ├ ƒ /api/leads/webhook
 ├ ƒ /api/messages
 ├ ƒ /api/notify
@@ -78,6 +83,9 @@ Route (app)
 ├ ƒ /feedback/[id]
 ├ ƒ /fees
 ├ ○ /hr-operations
+├ ○ /hr-operations/leaves
+├ ○ /hr-operations/shifts
+├ ○ /hr-operations/workforce
 ├ ○ /icon.png
 ├ ○ /integrations
 ├ ƒ /invoices

@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
-import { createClient as createServerClient } from '@/lib/auth/server';
+import { resolveCurrentEmployee } from '@/lib/auth/authorization';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
 const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
@@ -32,28 +32,10 @@ function getPktTime() {
  */
 export async function POST(request: Request) {
   try {
-    // 1. Authenticate user from session cookies
-    const supabaseAuth = await createServerClient();
-    const { data: { user }, error: authError } = await supabaseAuth.auth.getUser();
-
-    if (authError || !user || !user.email) {
-      return NextResponse.json({ error: 'Unauthorized: Session missing or expired' }, { status: 401 });
-    }
-
-    const supabaseAdmin = getAdminClient();
-
-    // 2. Resolve employee record from trusted server identity
-    const { data: employee, error: empError } = await supabaseAdmin
-      .from('team_members')
-      .select('id, name, email, status')
-      .eq('email', user.email)
-      .single();
-
-    if (empError || !employee) {
-      return NextResponse.json(
-        { error: 'Forbidden: No active employee profile found for this authenticated user.' },
-        { status: 403 }
-      );
+    // 1. Resolve employee record from trusted server identity
+    const employee = await resolveCurrentEmployee();
+    if (!employee) {
+      return NextResponse.json({ error: 'Unauthorized: Session missing, expired, or invalid' }, { status: 401 });
     }
 
     if (employee.status !== 'active') {
@@ -62,6 +44,8 @@ export async function POST(request: Request) {
         { status: 403 }
       );
     }
+
+    const supabaseAdmin = getAdminClient();
 
     const body = await request.json();
     const { action, status } = body;
@@ -72,7 +56,7 @@ export async function POST(request: Request) {
       const { data: todayRecord, error: findError } = await supabaseAdmin
         .from('employee_attendance')
         .select('id, status, check_out_time')
-        .eq('employee_id', employee.id)
+        .eq('employee_id', employee.teamMemberId)
         .eq('date', dateStr)
         .single();
 
@@ -129,12 +113,16 @@ export async function POST(request: Request) {
     }
 
     // Verify employee has not already marked attendance today
-    const { data: existingRecord } = await supabaseAdmin
+    const { data: existingRecord, error: existingRecordError } = await supabaseAdmin
       .from('employee_attendance')
       .select('id, status')
-      .eq('employee_id', employee.id)
+      .eq('employee_id', employee.teamMemberId)
       .eq('date', dateStr)
       .single();
+
+    if (existingRecordError && existingRecordError.code !== 'PGRST116') {
+      return NextResponse.json({ error: `Database error checking existing attendance: ${existingRecordError.message}` }, { status: 500 });
+    }
 
     if (existingRecord) {
       return NextResponse.json(
@@ -147,7 +135,7 @@ export async function POST(request: Request) {
     const { data: newRecord, error: insertError } = await supabaseAdmin
       .from('employee_attendance')
       .insert({
-        employee_id: employee.id,
+        employee_id: employee.teamMemberId,
         employee_name: employee.name,
         status: targetStatus,
         date: dateStr,
@@ -185,24 +173,14 @@ export async function POST(request: Request) {
  */
 export async function GET(request: Request) {
   try {
-    const supabaseAuth = await createServerClient();
-    const { data: { user }, error: authError } = await supabaseAuth.auth.getUser();
-
-    if (authError || !user || !user.email) {
+    const employee = await resolveCurrentEmployee();
+    if (!employee) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const supabaseAdmin = getAdminClient();
 
-    // Check user role
-    const { data: teamMember } = await supabaseAdmin
-      .from('team_members')
-      .select('id, role')
-      .eq('email', user.email)
-      .single();
-
-    const tmRole = teamMember?.role?.toLowerCase() || '';
-    const isAdmin = tmRole.includes('admin') || tmRole.includes('ceo') || tmRole.includes('founder') || user.email === 'junaid@keyabroad.com';
+    const isAdmin = ['admin', 'owner', 'hr', 'operations head'].includes(employee.role);
 
     const { searchParams } = new URL(request.url);
     const date = searchParams.get('date');
@@ -212,10 +190,7 @@ export async function GET(request: Request) {
     let query = supabaseAdmin.from('employee_attendance').select('*');
 
     if (!isAdmin) {
-      if (!teamMember) {
-        return NextResponse.json({ data: [] });
-      }
-      query = query.eq('employee_id', teamMember.id);
+      query = query.eq('employee_id', employee.teamMemberId);
     } else {
       const employeeId = searchParams.get('employeeId');
       if (employeeId) {

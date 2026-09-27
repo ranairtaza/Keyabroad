@@ -50,7 +50,11 @@ export default function SettingsPage() {
     setProfilePic(croppedBase64);
     updateUser({ image: croppedBase64 });
     if (currentUser?.email) {
-      await supabase.from('team_members').update({ image: croppedBase64 }).eq('email', currentUser.email);
+      await fetch('/api/team/update-profile', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ updateData: { image: croppedBase64 } })
+      });
     }
     toast.success("Profile picture updated and saved!");
     setIsCropperOpen(false);
@@ -62,7 +66,11 @@ export default function SettingsPage() {
     setProfilePic(null);
     updateUser({ image: defaultImg });
     if (currentUser?.email) {
-      await supabase.from('team_members').update({ image: defaultImg }).eq('email', currentUser.email);
+      await fetch('/api/team/update-profile', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ updateData: { image: defaultImg } })
+      });
     }
     toast.success("Profile picture removed.");
   };
@@ -74,7 +82,11 @@ export default function SettingsPage() {
       if (role === "owner") {
         updateData.role = designation;
       }
-      await supabase.from('team_members').update(updateData).eq('email', currentUser.email);
+      await fetch('/api/team/update-profile', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ updateData })
+      });
     }
     toast.success("Settings saved successfully!");
   };

@@ -32,18 +32,9 @@ export async function POST(request: Request) {
     const supabaseAdmin = getAdminClient();
 
     // Verify Admin / Owner authorization
-    const { data: tm } = await supabaseAdmin
-      .from('team_members')
-      .select('role')
-      .eq('email', user.email)
-      .single();
-
-    const tmRole = tm?.role?.toLowerCase() || '';
-    const isOwnerOrAdmin =
-      tmRole.includes('admin') ||
-      tmRole.includes('ceo') ||
-      tmRole.includes('founder') ||
-      user.email === 'junaid@keyabroad.com';
+    const { resolveCurrentEmployee } = await import('@/lib/auth/authorization');
+    const employee = await resolveCurrentEmployee();
+    const isOwnerOrAdmin = employee && ['owner', 'admin'].includes(employee.role);
 
     if (!isOwnerOrAdmin) {
       return NextResponse.json({ error: 'Forbidden: Insufficient privileges.' }, { status: 403 });

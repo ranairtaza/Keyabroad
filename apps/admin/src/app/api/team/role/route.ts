@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
-import { createClient as createServerClient } from '@/lib/auth/server';
+import { requireAnyRole, normalizeRole } from '@/lib/auth/authorization';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
 const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
@@ -40,48 +40,8 @@ const ALLOWED_ROLES = [
  */
 export async function POST(request: Request) {
   try {
-    const supabaseAuth = await createServerClient();
-    const { data: { user }, error: authError } = await supabaseAuth.auth.getUser();
-
-    if (authError || !user || !user.email) {
-      return NextResponse.json({ error: 'Unauthorized: Session missing or expired' }, { status: 401 });
-    }
-
+    const actor = await requireAnyRole(['owner', 'admin']);
     const supabaseAdmin = getAdminClient();
-
-    // Authorize caller
-    const { data: actorProfile } = await supabaseAdmin
-      .from('profiles')
-      .select('role, staff_role')
-      .eq('email', user.email)
-      .single();
-
-    const { data: actorTeamMember } = await supabaseAdmin
-      .from('team_members')
-      .select('role')
-      .eq('email', user.email)
-      .single();
-
-    const pRole = actorProfile?.role?.toLowerCase() || '';
-    const sRole = actorProfile?.staff_role?.toLowerCase() || '';
-    const tmRole = actorTeamMember?.role?.toLowerCase() || '';
-
-    const isOwnerOrAdmin =
-      pRole === 'admin' ||
-      sRole === 'admin' ||
-      sRole === 'super_admin' ||
-      sRole === 'owner' ||
-      user.email === 'junaid@keyabroad.com' ||
-      tmRole.includes('admin') ||
-      tmRole.includes('ceo') ||
-      tmRole.includes('founder');
-
-    if (!isOwnerOrAdmin) {
-      return NextResponse.json(
-        { error: 'Forbidden: Only an Owner or Administrator can change employee roles.' },
-        { status: 403 }
-      );
-    }
 
     const body = await request.json();
     const { employeeId, newRole } = body;
@@ -102,6 +62,15 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Invalid employee ID format.' }, { status: 400 });
     }
 
+    if (parsedId === actor.teamMemberId) {
+      return NextResponse.json({ error: 'Forbidden: Cannot change your own role.' }, { status: 403 });
+    }
+
+    const targetCanonicalRole = normalizeRole(newRole);
+    if (['owner', 'admin'].includes(targetCanonicalRole) && actor.role !== 'owner') {
+      return NextResponse.json({ error: 'Forbidden: Only an owner can assign an administrator role.' }, { status: 403 });
+    }
+
     // Update team_members record
     const { data: updatedEmp, error: tmError } = await supabaseAdmin
       .from('team_members')
@@ -116,16 +85,14 @@ export async function POST(request: Request) {
 
     // Synchronize profile role & designation
     if (updatedEmp.email) {
-      const isNewRoleAdmin =
-        newRole.toLowerCase().includes('admin') ||
-        newRole.toLowerCase().includes('ceo') ||
-        newRole.toLowerCase().includes('founder');
+      const canonicalRole = normalizeRole(newRole);
+      const isPrivileged = canonicalRole === 'admin' || canonicalRole === 'owner';
 
       await supabaseAdmin
         .from('profiles')
         .update({
-          role: isNewRoleAdmin ? 'admin' : 'staff',
-          staff_role: isNewRoleAdmin ? 'admin' : 'staff',
+          role: isPrivileged ? 'admin' : 'staff',
+          staff_role: canonicalRole, // Store exact canonical role
           designation: newRole
         })
         .eq('email', updatedEmp.email);

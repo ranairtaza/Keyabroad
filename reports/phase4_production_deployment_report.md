@@ -30,6 +30,14 @@ The results confirm the following logic is operating securely in production:
 
 **Conclusion:** PHASE 4 = PRODUCTION VERIFIED. We are ready to begin work on Phase 5.
 
+## Automated Gateway/Test-Mode Verification
+- ✅ **Migration:** `046_biometric_hardware_test_mode.sql` applied successfully and schema cache reloaded on production.
+- ✅ **Test Mode Features:** 
+  - `mode: 'LIVE' | 'TEST'` enforced on the device level.
+  - `is_test: true` appended to all events ingested from devices in `TEST` mode.
+  - Isolation guarantees that test events bypass the attendance ledger.
+- ✅ **Automated Execution:** The `tests/hardware_acceptance.ts` script successfully completed end-to-end against the production database, verifying that `TEST` mode successfully isolates the test punch.
+
 ## Real Hardware Acceptance
 - **Device Model**: Unknown (Physical device not accessible)
 - **Real Scan Performed**: Blocked (AI agent cannot physically interact with fingerprint terminal)
@@ -42,12 +50,3 @@ The results confirm the following logic is operating securely in production:
 - **Security Verified**: Blocked
 
 **Final Status**: HARDWARE_BLOCKED
-
-
-## Safe Hardware Test Mode
-- A new hardware test mode was successfully designed and integrated.
-- **Migration:** `046_biometric_hardware_test_mode.sql` (Schema cache currently blocking tests in production)
-- **Features:**
-  - `mode: 'LIVE' | 'TEST'` enforced on the device level.
-  - `is_test: true` appended to all events ingested from devices in `TEST` mode.
-  - Isolation guarantees that test events bypass the attendance ledger.

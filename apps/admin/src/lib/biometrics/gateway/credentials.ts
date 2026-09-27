@@ -141,42 +141,7 @@ export class DeviceCredentialManager {
 
     const { data: cred, error: credError } = await query.single();
 
-    // Fallback: Check legacy biometric_devices.api_key_hash if not in device_credentials yet
     if (!cred || credError) {
-      const { data: legacyDevice } = await supabase
-        .from('biometric_devices')
-        .select('id, device_name, status, api_key_hash, mode, test_expires_at')
-        .eq('api_key_hash', keyHash)
-        .single();
-
-      if (legacyDevice) {
-        if (claimedDeviceId && legacyDevice.id !== claimedDeviceId) {
-          return { authenticated: false, error: 'Unauthorized: Invalid machine credentials.' };
-        }
-        if (legacyDevice.status === 'inactive' || legacyDevice.status === 'disabled') {
-          return { authenticated: false, deviceId: legacyDevice.id, error: 'Unauthorized: Terminal is disabled.' };
-        }
-
-        const nowIso = new Date().toISOString();
-        await supabase
-          .from('biometric_devices')
-          .update({
-            last_authenticated_at: nowIso,
-            last_heartbeat: nowIso,
-            consecutive_error_count: 0,
-          })
-          .eq('id', legacyDevice.id);
-
-        return {
-          authenticated: true,
-          deviceId: legacyDevice.id,
-          deviceName: legacyDevice.device_name,
-          status: legacyDevice.status,
-          mode: legacyDevice.mode,
-          testExpiresAt: legacyDevice.test_expires_at,
-        };
-      }
-
       return { authenticated: false, error: 'Unauthorized: Invalid machine credentials.' };
     }
 

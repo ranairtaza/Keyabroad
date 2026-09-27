@@ -138,6 +138,33 @@ export default function Sidebar() {
 
           {links.map((link) => {
             const Icon = link.icon;
+            if (link.name === "HR Operations") {
+              return (
+                <div key={link.href}>
+                  <button
+                    onClick={() => {}}
+                    className={`w-full flex items-center justify-between gap-3 px-4 py-3 rounded-xl transition-all font-medium ${
+                      pathname.startsWith("/hr-operations")
+                        ? "bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 shadow-sm border border-blue-100 dark:border-blue-900/50"
+                        : "text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-800 dark:hover:text-slate-200"
+                    }`}
+                    title="HR Operations"
+                  >
+                    <div className="flex items-center gap-3">
+                      <Icon size={20} className="flex-shrink-0" />
+                      <span className="md:hidden lg:inline">HR Operations</span>
+                    </div>
+                  </button>
+                  <div className="mt-1 ml-3 pl-3 border-l-2 border-slate-200 dark:border-slate-700 flex flex-col gap-0.5 md:hidden lg:flex">
+                    <Link href="/hr-operations" onClick={() => startTransition(() => setIsSidebarOpen(false))} className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-all font-medium ${pathname === '/hr-operations' ? "bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400" : "text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700"}`}>Dashboard</Link>
+                    <Link href="/hr-operations/workforce" onClick={() => startTransition(() => setIsSidebarOpen(false))} className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-all font-medium ${pathname === '/hr-operations/workforce' ? "bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400" : "text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700"}`}>Workforce</Link>
+                    <Link href="/hr-operations/leaves" onClick={() => startTransition(() => setIsSidebarOpen(false))} className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-all font-medium ${pathname === '/hr-operations/leaves' ? "bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400" : "text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700"}`}>Leaves</Link>
+                    <Link href="/hr-operations/shifts" onClick={() => startTransition(() => setIsSidebarOpen(false))} className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-all font-medium ${pathname === '/hr-operations/shifts' ? "bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400" : "text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700"}`}>Shifts</Link>
+                  </div>
+                </div>
+              );
+            }
+
             return (
               <Link
                 key={link.href}

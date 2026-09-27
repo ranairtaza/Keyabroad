@@ -107,34 +107,9 @@ async function authorizeRequest(request: Request): Promise<{ authorized: boolean
 
     if (!authError && user && user.email) {
       const supabaseAdmin = getAdminClient();
-
-      const { data: profile } = await supabaseAdmin
-        .from('profiles')
-        .select('role, staff_role')
-        .eq('email', user.email)
-        .single();
-
-      const { data: tm } = await supabaseAdmin
-        .from('team_members')
-        .select('role')
-        .eq('email', user.email)
-        .single();
-
-      const pRole = profile?.role?.toLowerCase() || '';
-      const sRole = profile?.staff_role?.toLowerCase() || '';
-      const tmRole = tm?.role?.toLowerCase() || '';
-
-      const isAdmin =
-        pRole === 'admin' ||
-        sRole === 'admin' ||
-        sRole === 'super_admin' ||
-        sRole === 'owner' ||
-        user.email === 'junaid@keyabroad.com' ||
-        tmRole.includes('admin') ||
-        tmRole.includes('ceo') ||
-        tmRole.includes('founder') ||
-        tmRole.includes('hr') ||
-        tmRole.includes('operations head');
+      const { resolveCurrentEmployee } = await import('@/lib/auth/authorization');
+      const employee = await resolveCurrentEmployee();
+      const isAdmin = employee && ['owner', 'admin', 'hr', 'operations head'].includes(employee.role);
 
       if (isAdmin) {
         return { authorized: true };

@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
-import { createClient as createServerClient } from '@/lib/auth/server';
+import { requireAnyRole } from '@/lib/auth/authorization';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
 const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
@@ -20,33 +20,8 @@ function getAdminClient() {
  */
 export async function GET() {
   try {
-    const supabaseAuth = await createServerClient();
-    const { data: { user }, error: authError } = await supabaseAuth.auth.getUser();
-
-    if (authError || !user || !user.email) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
+    const actor = await requireAnyRole(['owner', 'admin', 'hr', 'operations head']);
     const supabaseAdmin = getAdminClient();
-
-    // Verify Admin / HR authorization
-    const { data: tm } = await supabaseAdmin
-      .from('team_members')
-      .select('role')
-      .eq('email', user.email)
-      .single();
-
-    const tmRole = tm?.role?.toLowerCase() || '';
-    const isAuthorized =
-      tmRole.includes('admin') ||
-      tmRole.includes('ceo') ||
-      tmRole.includes('founder') ||
-      tmRole.includes('hr') ||
-      user.email === 'junaid@keyabroad.com';
-
-    if (!isAuthorized) {
-      return NextResponse.json({ error: 'Forbidden: Insufficient privileges.' }, { status: 403 });
-    }
 
     const { data, error } = await supabaseAdmin
       .from('employee_biometric_mappings')
@@ -78,32 +53,8 @@ export async function GET() {
  */
 export async function POST(request: Request) {
   try {
-    const supabaseAuth = await createServerClient();
-    const { data: { user }, error: authError } = await supabaseAuth.auth.getUser();
-
-    if (authError || !user || !user.email) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
+    const actor = await requireAnyRole(['owner', 'admin']);
     const supabaseAdmin = getAdminClient();
-
-    // Authorize Admin / Owner
-    const { data: tm } = await supabaseAdmin
-      .from('team_members')
-      .select('role')
-      .eq('email', user.email)
-      .single();
-
-    const tmRole = tm?.role?.toLowerCase() || '';
-    const isOwnerOrAdmin =
-      tmRole.includes('admin') ||
-      tmRole.includes('ceo') ||
-      tmRole.includes('founder') ||
-      user.email === 'junaid@keyabroad.com';
-
-    if (!isOwnerOrAdmin) {
-      return NextResponse.json({ error: 'Forbidden: Only an Admin or Owner can manage biometric mappings.' }, { status: 403 });
-    }
 
     const body = await request.json();
     const { employeeId, deviceId, biometricUserId, status, notes } = body;
@@ -196,24 +147,24 @@ export async function POST(request: Request) {
     }
 
     // Record audit log
-    try {
-      await supabaseAdmin.from('audit_logs').insert({
-        user_id: user.id,
-        action: 'BIOMETRIC_MAPPING_SAVED',
-        resource_type: 'employee_biometric_mappings',
-        resource_id: resultMapping.id,
-        details: {
-          employee_name: employee.name,
-          employee_id: parsedEmpId,
-          biometric_user_id: cleanBiometricUserId,
-          device_id: deviceId || 'GLOBAL',
-          status: status || 'active',
-          saved_by: user.email,
-          timestamp: new Date().toISOString()
-        }
-      });
-    } catch {
-      // Optional
+    const { error: auditError } = await supabaseAdmin.from('audit_logs').insert({
+      user_id: actor.authUserId,
+      action: 'BIOMETRIC_MAPPING_SAVED',
+      resource_type: 'employee_biometric_mappings',
+      resource_id: resultMapping.id,
+      details: {
+        employee_name: employee.name,
+        employee_id: parsedEmpId,
+        biometric_user_id: cleanBiometricUserId,
+        device_id: deviceId || 'GLOBAL',
+        status: status || 'active',
+        saved_by: actor.email,
+        timestamp: new Date().toISOString()
+      }
+    });
+
+    if (auditError) {
+      return NextResponse.json({ error: `Mapping succeeded, but failed to write audit log: ${auditError.message}` }, { status: 500 });
     }
 
     return NextResponse.json({
@@ -233,31 +184,8 @@ export async function POST(request: Request) {
  */
 export async function DELETE(request: Request) {
   try {
-    const supabaseAuth = await createServerClient();
-    const { data: { user }, error: authError } = await supabaseAuth.auth.getUser();
-
-    if (authError || !user || !user.email) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
+    const actor = await requireAnyRole(['owner', 'admin']);
     const supabaseAdmin = getAdminClient();
-
-    const { data: tm } = await supabaseAdmin
-      .from('team_members')
-      .select('role')
-      .eq('email', user.email)
-      .single();
-
-    const tmRole = tm?.role?.toLowerCase() || '';
-    const isOwnerOrAdmin =
-      tmRole.includes('admin') ||
-      tmRole.includes('ceo') ||
-      tmRole.includes('founder') ||
-      user.email === 'junaid@keyabroad.com';
-
-    if (!isOwnerOrAdmin) {
-      return NextResponse.json({ error: 'Forbidden: Insufficient privileges.' }, { status: 403 });
-    }
 
     const { searchParams } = new URL(request.url);
     const mappingId = searchParams.get('id');

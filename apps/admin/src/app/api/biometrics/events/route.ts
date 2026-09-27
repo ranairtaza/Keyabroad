@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
-import { createClient as createServerClient } from '@/lib/auth/server';
+import { requireAnyRole } from '@/lib/auth/authorization';
 import { AttendanceEventEngine } from '@/lib/biometrics/event-engine';
 import { DeviceCredentialManager } from '@/lib/biometrics/gateway/credentials';
 import { GenericBiometricAdapter } from '@/lib/biometrics/gateway/adapter';
@@ -9,16 +9,7 @@ import { NormalizedBiometricEvent } from '@/lib/biometrics/types';
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
 const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
 
-const AUTHORIZED_ADMIN_ROLES = new Set([
-  'admin',
-  'super_admin',
-  'owner',
-  'hr',
-  'hr manager',
-  'operations head',
-  'ceo',
-  'founder'
-]);
+
 
 function getAdminClient() {
   if (!supabaseServiceRoleKey) {
@@ -216,40 +207,8 @@ export async function POST(request: Request) {
  */
 export async function GET(request: Request) {
   try {
-    const supabaseAuth = await createServerClient();
-    const { data: { user }, error: authError } = await supabaseAuth.auth.getUser();
-
-    if (authError || !user || !user.email) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
+    const actor = await requireAnyRole(['owner', 'admin', 'hr', 'operations head']);
     const supabaseAdmin = getAdminClient();
-
-    // Verify Admin / HR authorization via exact role match
-    const { data: profile } = await supabaseAdmin
-      .from('profiles')
-      .select('role, staff_role')
-      .eq('id', user.id)
-      .single();
-
-    const { data: tm } = await supabaseAdmin
-      .from('team_members')
-      .select('role')
-      .eq('email', user.email)
-      .single();
-
-    const pRole = profile?.role?.toLowerCase() || '';
-    const sRole = profile?.staff_role?.toLowerCase() || '';
-    const tmRole = tm?.role?.toLowerCase() || '';
-
-    const isAuthorized =
-      AUTHORIZED_ADMIN_ROLES.has(pRole) ||
-      AUTHORIZED_ADMIN_ROLES.has(sRole) ||
-      AUTHORIZED_ADMIN_ROLES.has(tmRole);
-
-    if (!isAuthorized) {
-      return NextResponse.json({ error: 'Forbidden: Insufficient privileges.' }, { status: 403 });
-    }
 
     const { searchParams } = new URL(request.url);
     const deviceId = searchParams.get('deviceId');

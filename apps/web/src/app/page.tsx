@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import Script from "next/script";
-import { ArrowRight, Globe2, GraduationCap, Search, Sparkles, Building2, MapPin, CheckCircle2, ChevronRight, Calculator } from "lucide-react";
+import { ArrowRight, Globe2, GraduationCap, Search, Building2, MapPin, CheckCircle2, ChevronRight, Calculator, Sparkles } from "lucide-react";
 import { Button } from "@keyabroad/ui/components/button";
 import { Input } from "@keyabroad/ui/components/input";
 import { Badge } from "@keyabroad/ui/components/badge";
@@ -41,10 +41,6 @@ export default function Home() {
         </div>
         
         <div className="container relative z-10 mx-auto px-4 text-center max-w-5xl">
-          <Badge variant="outline" className="text-emerald-400 border-emerald-400/30 mb-6 py-1.5 px-4 bg-emerald-400/10">
-            <Sparkles className="w-4 h-4 mr-2 inline" />
-            Admissions open for Fall 2026
-          </Badge>
           <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold font-heading mb-6 tracking-tight">
             Your Global Future <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-blue-400">Starts Here</span>
           </h1>

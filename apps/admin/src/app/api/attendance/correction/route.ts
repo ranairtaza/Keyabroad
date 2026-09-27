@@ -32,33 +32,9 @@ export async function POST(request: Request) {
     const supabaseAdmin = getAdminClient();
 
     // 2. Authorize Admin/Owner/HR role
-    const { data: actorProfile } = await supabaseAdmin
-      .from('profiles')
-      .select('role, staff_role')
-      .eq('email', user.email)
-      .single();
-
-    const { data: actorTeamMember } = await supabaseAdmin
-      .from('team_members')
-      .select('role')
-      .eq('email', user.email)
-      .single();
-
-    const pRole = actorProfile?.role?.toLowerCase() || '';
-    const sRole = actorProfile?.staff_role?.toLowerCase() || '';
-    const tmRole = actorTeamMember?.role?.toLowerCase() || '';
-
-    const isAuthorized =
-      pRole === 'admin' ||
-      sRole === 'admin' ||
-      sRole === 'super_admin' ||
-      sRole === 'owner' ||
-      user.email === 'junaid@keyabroad.com' ||
-      tmRole.includes('admin') ||
-      tmRole.includes('ceo') ||
-      tmRole.includes('founder') ||
-      tmRole.includes('hr') ||
-      tmRole.includes('operations head');
+    const { resolveCurrentEmployee } = await import('@/lib/auth/authorization');
+    const employee = await resolveCurrentEmployee();
+    const isAuthorized = employee && ['owner', 'admin', 'hr', 'operations head'].includes(employee.role);
 
     if (!isAuthorized) {
       return NextResponse.json(
