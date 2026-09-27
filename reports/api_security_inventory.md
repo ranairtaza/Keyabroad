@@ -1,57 +1,38 @@
-# KeyAbroad 2.0 API Security Inventory
+# API Security Inventory (Phase 6C)
 
-## Overview
-This document inventories the protected API routes and their authorization mechanisms after the Phase 6C security hardening.
+## Canonical Authorization Utility
+The repository has been updated to use a centralized authorization utility located at `apps/admin/src/lib/auth/authorization.ts`. This utility exposes standard functions like:
+- `requireAuthenticatedUser()`
+- `requireAnyRole()`
+- `requireRole()`
 
-## Core Authorization Service
-All protected API routes now utilize the canonical server-side utility `resolveCurrentEmployee` defined in `apps/admin/src/lib/auth/authorization.ts`.
+These utilities extract the user's role definitively from the database (via canonical sources) rather than relying on arbitrary string matching or user-provided parameters.
 
-This service guarantees:
-1. **Authenticated Session Verification**: Validates the JWT securely via Supabase.
-2. **Canonical Role Lookup**: Cross-references the authenticated `email` with `team_members` to retrieve the canonical `role`.
-3. **Type-Safe Access**: Enforces the `SecurityRole` type (`owner | admin | hr | operations head | employee`), replacing insecure arbitrary substring matching (`role.includes('admin')`).
+## API Hardening Status
 
-## Protected Endpoints
+### Team & General APIs
+- `apps/admin/src/app/api/create-employee/route.ts`: ✅ Hardened to use `requireAnyRole(['owner', 'admin', 'hr', 'operations head'])`.
+- `apps/admin/src/app/api/team/delete/route.ts`: ✅ Hardened to use `requireAnyRole(['owner', 'admin', 'hr'])`.
+- `apps/admin/src/app/api/team/role/route.ts`: ✅ Hardened to use `requireAnyRole(['owner', 'admin', 'hr'])`.
+- `apps/admin/src/app/api/attendance/route.ts`: ✅ Hardened to use `requireAuthenticatedUser()`.
 
-### Team Management
-- `POST /api/team/delete`
-  - **Protection**: `role === 'owner'`
-  - **Guards**: Prevents deletion if biometric historical records exist (legal audit protection).
-- `POST /api/team/role`
-  - **Protection**: `role === 'owner'`
-  - **Purpose**: Server-side role assignment.
-- `POST /api/team/resign`
-  - **Protection**: `role === 'owner'`
-  - **Purpose**: Marks employee as resigned.
-- `POST /api/team/update-profile`
-  - **Protection**: `role === 'owner'` OR updating self.
-  - **Guards**: Self-updates strip sensitive fields (salary, joined, role, email).
+### HR APIs (Leave & Shifts)
+- `apps/admin/src/app/api/hr/shifts/route.ts`: ✅ Hardened to use `requireAnyRole` for writes and `requireAuthenticatedUser` for reads.
+- `apps/admin/src/app/api/hr/leave/requests/route.ts`: ✅ Hardened to use `requireAuthenticatedUser` (employees fetching requests) or `requireAnyRole` (managers viewing all).
+- `apps/admin/src/app/api/hr/leave/requests/[id]/review/route.ts`: ✅ Hardened. Uses `requireAuthenticatedUser()` to get identity, restricts to admins/HR, delegates to RPC `review_leave_request` to prevent self-approval.
+- `apps/admin/src/app/api/hr/leave/balances/route.ts`: ✅ Hardened. Uses `requireAuthenticatedUser()` and restricts unauthorized querying of balances.
 
-### Employee Creation
-- `POST /api/create-employee`
-  - **Protection**: `role === 'owner'`
+### Biometrics APIs
+- `apps/admin/src/app/api/biometrics/mappings/route.ts`: ✅ Hardened. No insecure string matching.
+- `apps/admin/src/app/api/biometrics/events/route.ts`: (Webhook) Validates via Api-Key headers (edge hardware).
+- `apps/admin/src/app/api/biometrics/events/reprocess/route.ts`: ✅ Hardened. Uses `requireAnyRole(['owner', 'admin', 'hr', 'operations head'])` + mandatory `audit_logs` entry.
+- `apps/admin/src/app/api/biometrics/devices/route.ts`: ✅ Hardened. Uses `requireAnyRole(['owner', 'admin', 'hr', 'operations head'])` for setup/query.
+- `apps/admin/src/app/api/biometrics/devices/[id]/route.ts`: ✅ Hardened. Centralized auth and mandatory `audit_logs` tracking.
+- `apps/admin/src/app/api/biometrics/devices/[id]/rotate-key/route.ts`: ✅ Hardened. Centralized auth and mandatory `audit_logs` tracking.
+- `apps/admin/src/app/api/biometrics/devices/[id]/revoke-key/route.ts`: ✅ Hardened. Centralized auth and mandatory `audit_logs` tracking.
 
-### Attendance & Biometrics
-- `POST /api/attendance/correction`
-  - **Protection**: `role === 'owner' || role === 'admin' || role === 'hr'`
-- `POST /api/automations/mark-absent`
-  - **Protection**: Service Role (internal automation) or `owner/admin/hr` for manual trigger.
-- `POST /api/biometrics/events/reprocess`
-  - **Protection**: `role === 'owner' || role === 'admin' || role === 'hr'`
-
-### Database Row Level Security (RLS)
-The migration `049_security_rls_hardening.sql` hardens direct database access using `public.get_canonical_role()`.
-
-- **team_members**: Owners and HR can update, employees can only select their own data.
-- **attendance_events**: Devices can insert, HR/Admins can select.
-- **leave_requests**: HR/Admins can manage all, employees can insert/update their own pending requests.
-- **shifts**: Admins/HR manage all, employees can select.
-
-## Client-Side Hardening
-- Direct `supabase.from('team_members').update()` removed from client-side pages (`team/page.tsx`, `settings/page.tsx`).
-- Operations migrated to secure `/api/team/...` endpoints.
-
-## Eradicated Vulnerabilities
-- No string matching `role.includes(...)`.
-- No hardcoded email bypasses (e.g., `user.email === '...'`).
-- No client-side direct writes to sensitive HR tables.
+## General Observations & Remediations
+1. **Self-Approval Bug Fixed**: A major security issue where admins could approve their own leave requests was addressed atomically inside a `SECURITY DEFINER` function (`review_leave_request`).
+2. **Audit Logging Enforced**: Key biometrics endpoints and hardware lifecycle events now enforce `audit_logs` insertion, throwing errors and aborting state changes if the audit log insertion fails.
+3. **No Insecure Roles**: Substring matches like `role.includes('admin')` have been thoroughly audited and removed.
+4. **Vercel Build Stability**: `npm run typecheck` passes, ensuring the codebase contains no broken types or shadow variable syntax errors after refactoring.

@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
-import { createClient as createServerClient } from '@/lib/auth/server';
+import { requireAuthenticatedUser } from '@/lib/auth/authorization';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
 const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
@@ -20,26 +20,10 @@ export async function POST(
 ) {
   try {
     const { id } = await params;
-    const supabaseAuth = await createServerClient();
-    const { data: { user }, error: authError } = await supabaseAuth.auth.getUser();
-
-    if (authError || !user || !user.email) {
-      return NextResponse.json({ error: 'Unauthorized: Session missing or expired' }, { status: 401 });
-    }
-
+    const employee = await requireAuthenticatedUser();
     const supabaseAdmin = getAdminClient();
 
-    const { data: employee, error: empError } = await supabaseAdmin
-      .from('team_members')
-      .select('id, name, email, role')
-      .eq('email', user.email)
-      .single();
-
-    if (empError || !employee) {
-      return NextResponse.json({ error: 'Forbidden: No active employee profile found.' }, { status: 403 });
-    }
-
-    const isAdmin = ['OWNER', 'ADMIN', 'HR', 'OPERATIONS HEAD'].includes(employee.role);
+    const isAdmin = ['owner', 'admin', 'hr', 'operations head'].includes(employee.role);
     if (!isAdmin) {
       return NextResponse.json({ error: 'Forbidden: Only HR or Admins can review leave requests.' }, { status: 403 });
     }
@@ -51,17 +35,33 @@ export async function POST(
       return NextResponse.json({ error: 'Invalid status update.' }, { status: 400 });
     }
 
-    const { data, error } = await supabaseAdmin
+    const { data: leaveRequest, error: reqError } = await supabaseAdmin
       .from('leave_requests')
-      .update({
-        status,
-        reviewer_comment,
-        reviewed_at: new Date().toISOString(),
-        reviewed_by: user.id
-      })
+      .select('employee_id')
       .eq('id', id)
-      .select()
       .single();
+
+    if (reqError || !leaveRequest) {
+      return NextResponse.json({ error: 'Leave request not found.' }, { status: 404 });
+    }
+
+    if (leaveRequest.employee_id === employee.teamMemberId) {
+      return NextResponse.json({ error: 'Forbidden: Cannot review your own leave request.' }, { status: 403 });
+    }
+
+    const { error } = await supabaseAdmin.rpc('review_leave_request', {
+      request_id: id,
+      new_status: status,
+      comment: reviewer_comment,
+      reviewer: employee.authUserId
+    });
+
+    if (error) {
+      return NextResponse.json({ error: error.message }, { status: 400 });
+    }
+    
+    // Fetch updated data to return
+    const { data } = await supabaseAdmin.from('leave_requests').select('*').eq('id', id).single();
 
     if (error) throw error;
     return NextResponse.json({ data }, { status: 200 });

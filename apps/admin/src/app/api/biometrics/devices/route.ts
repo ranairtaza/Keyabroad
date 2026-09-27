@@ -7,63 +7,7 @@ import { computeDeviceHealth } from '@/lib/biometrics/gateway/health';
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
 const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
 
-const AUTHORIZED_ADMIN_ROLES = new Set([
-  'admin',
-  'super_admin',
-  'owner',
-  'hr',
-  'hr manager',
-  'operations head',
-  'ceo',
-  'founder'
-]);
-
-function getAdminClient() {
-  if (!supabaseServiceRoleKey) {
-    throw new Error('Server configuration error: SUPABASE_SERVICE_ROLE_KEY is missing.');
-  }
-  return createClient(supabaseUrl, supabaseServiceRoleKey, {
-    auth: { autoRefreshToken: false, persistSession: false }
-  });
-}
-
-async function verifyAdminAuth() {
-  const supabaseAuth = await createServerClient();
-  const { data: { user }, error: authError } = await supabaseAuth.auth.getUser();
-
-  if (authError || !user || !user.email) {
-    return { authorized: false, error: 'Unauthorized', status: 401 };
-  }
-
-  const supabaseAdmin = getAdminClient();
-
-  const { data: profile } = await supabaseAdmin
-    .from('profiles')
-    .select('role, staff_role')
-    .eq('id', user.id)
-    .single();
-
-  const { data: tm } = await supabaseAdmin
-    .from('team_members')
-    .select('role')
-    .eq('email', user.email)
-    .single();
-
-  const pRole = profile?.role?.toLowerCase() || '';
-  const sRole = profile?.staff_role?.toLowerCase() || '';
-  const tmRole = tm?.role?.toLowerCase() || '';
-
-  const isAuthorized =
-    AUTHORIZED_ADMIN_ROLES.has(pRole) ||
-    AUTHORIZED_ADMIN_ROLES.has(sRole) ||
-    AUTHORIZED_ADMIN_ROLES.has(tmRole);
-
-  if (!isAuthorized) {
-    return { authorized: false, error: 'Forbidden: Insufficient privileges.', status: 403 };
-  }
-
-  return { authorized: true, user, supabaseAdmin };
-}
+import { requireAnyRole } from '@/lib/auth/authorization';
 
 /**
  * GET /api/biometrics/devices
@@ -72,12 +16,12 @@ async function verifyAdminAuth() {
  */
 export async function GET() {
   try {
-    const auth = await verifyAdminAuth();
-    if (!auth.authorized || !auth.supabaseAdmin) {
-      return NextResponse.json({ error: auth.error }, { status: auth.status });
-    }
+    await requireAnyRole(['owner', 'admin', 'hr', 'operations head']);
+    const supabaseAdmin = createClient(supabaseUrl, supabaseServiceRoleKey, {
+      auth: { autoRefreshToken: false, persistSession: false }
+    });
 
-    const { data: devices, error } = await auth.supabaseAdmin
+    const { data: devices, error } = await supabaseAdmin
       .from('biometric_devices')
       .select('id, device_name, manufacturer, model, serial_number, branch_location, connection_type, adapter_type, status, last_heartbeat, last_event_at, last_authenticated_at, last_sync, error_count, last_error, offline_threshold_minutes, metadata, created_at, updated_at')
       .order('created_at', { ascending: false });
@@ -103,13 +47,11 @@ export async function GET() {
  */
 export async function POST(request: Request) {
   try {
-    const auth = await verifyAdminAuth();
-    if (!auth.authorized || !auth.supabaseAdmin || !auth.user) {
-      return NextResponse.json({ error: auth.error }, { status: auth.status });
-    }
-
-    const supabaseAdmin = auth.supabaseAdmin;
-    const user = auth.user;
+    const actor = await requireAnyRole(['owner', 'admin', 'hr', 'operations head']);
+    const supabaseAdmin = createClient(supabaseUrl, supabaseServiceRoleKey, {
+      auth: { autoRefreshToken: false, persistSession: false }
+    });
+    const userId = actor.authUserId;
 
     const body = await request.json();
     const {
@@ -168,27 +110,27 @@ export async function POST(request: Request) {
     const credResult = await DeviceCredentialManager.createCredential(
       newDevice.id,
       'Primary Ingestion Key',
-      user.id,
+      userId,
       supabaseAdmin
     );
 
     // Record audit event
-    try {
-      await supabaseAdmin.from('audit_logs').insert({
-        user_id: user.id,
-        action: 'BIOMETRIC_DEVICE_REGISTERED',
-        resource_type: 'biometric_devices',
-        resource_id: newDevice.id,
-        details: {
-          device_name: newDevice.device_name,
-          serial_number: newDevice.serial_number,
-          registered_by: user.id,
-          key_prefix: credResult.keyPrefix,
-          timestamp: new Date().toISOString()
-        }
-      });
-    } catch {
-      // Optional audit failure tolerance
+    const { error: auditError } = await supabaseAdmin.from('audit_logs').insert({
+      user_id: userId,
+      action: 'BIOMETRIC_DEVICE_REGISTERED',
+      resource_type: 'biometric_devices',
+      resource_id: newDevice.id,
+      details: {
+        device_name: newDevice.device_name,
+        serial_number: newDevice.serial_number,
+        registered_by: userId,
+        key_prefix: credResult.keyPrefix,
+        timestamp: new Date().toISOString()
+      }
+    });
+
+    if (auditError) {
+      throw new Error(`Audit logging failed: ${auditError.message}`);
     }
 
     return NextResponse.json({

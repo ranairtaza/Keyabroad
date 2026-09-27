@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
-import { createClient as createServerClient } from '@/lib/auth/server';
+import { requireAuthenticatedUser } from '@/lib/auth/authorization';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
 const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
@@ -16,35 +16,18 @@ function getAdminClient() {
 
 export async function GET(request: Request) {
   try {
-    const supabaseAuth = await createServerClient();
-    const { data: { user }, error: authError } = await supabaseAuth.auth.getUser();
-
-    if (authError || !user || !user.email) {
-      return NextResponse.json({ error: 'Unauthorized: Session missing or expired' }, { status: 401 });
-    }
-
+    const employee = await requireAuthenticatedUser();
     const supabaseAdmin = getAdminClient();
 
-    // Verify employee
-    const { data: employee, error: empError } = await supabaseAdmin
-      .from('team_members')
-      .select('id, name, email, role')
-      .eq('email', user.email)
-      .single();
-
-    if (empError || !employee) {
-      return NextResponse.json({ error: 'Forbidden: No active employee profile found.' }, { status: 403 });
-    }
-
     // Role-based fetch: Admins/HR see all, normal employees see own
-    const isAdmin = ['OWNER', 'ADMIN', 'HR', 'OPERATIONS HEAD'].includes(employee.role);
+    const isAdmin = ['owner', 'admin', 'hr', 'operations head'].includes(employee.role);
 
     let query = supabaseAdmin
       .from('leave_requests')
       .select('*, leave_types(name), team_members(name)');
 
     if (!isAdmin) {
-      query = query.eq('employee_id', employee.id);
+      query = query.eq('employee_id', employee.teamMemberId);
     }
 
     const { data: requests, error } = await query;
@@ -58,24 +41,8 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   try {
-    const supabaseAuth = await createServerClient();
-    const { data: { user }, error: authError } = await supabaseAuth.auth.getUser();
-
-    if (authError || !user || !user.email) {
-      return NextResponse.json({ error: 'Unauthorized: Session missing or expired' }, { status: 401 });
-    }
-
+    const employee = await requireAuthenticatedUser();
     const supabaseAdmin = getAdminClient();
-
-    const { data: employee, error: empError } = await supabaseAdmin
-      .from('team_members')
-      .select('id, name, email')
-      .eq('email', user.email)
-      .single();
-
-    if (empError || !employee) {
-      return NextResponse.json({ error: 'Forbidden: No active employee profile found.' }, { status: 403 });
-    }
 
     const body = await request.json();
     const { leave_type_id, start_date, end_date, reason } = body;
@@ -90,7 +57,7 @@ export async function POST(request: Request) {
     const { data: overlapping, error: overlapError } = await supabaseAdmin
       .from('leave_requests')
       .select('id')
-      .eq('employee_id', employee.id)
+      .eq('employee_id', employee.teamMemberId)
       .in('status', ['PENDING', 'APPROVED'])
       .or(`and(start_date.lte.${end_date},end_date.gte.${start_date})`);
     
@@ -104,7 +71,7 @@ export async function POST(request: Request) {
     const { data: balance, error: balanceError } = await supabaseAdmin
       .from('leave_balances')
       .select('total_accrued, total_used')
-      .eq('employee_id', employee.id)
+      .eq('employee_id', employee.teamMemberId)
       .eq('leave_type_id', leave_type_id)
       .eq('year', currentYear)
       .single();
@@ -120,7 +87,7 @@ export async function POST(request: Request) {
     const { data, error } = await supabaseAdmin
       .from('leave_requests')
       .insert({
-        employee_id: employee.id,
+        employee_id: employee.teamMemberId,
         leave_type_id,
         start_date,
         end_date,

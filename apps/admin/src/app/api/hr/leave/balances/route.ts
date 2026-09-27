@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
-import { createClient as createServerClient } from '@/lib/auth/server';
+import { requireAuthenticatedUser } from '@/lib/auth/authorization';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
 const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
@@ -16,33 +16,17 @@ function getAdminClient() {
 
 export async function GET(request: Request) {
   try {
-    const supabaseAuth = await createServerClient();
-    const { data: { user }, error: authError } = await supabaseAuth.auth.getUser();
-
-    if (authError || !user || !user.email) {
-      return NextResponse.json({ error: 'Unauthorized: Session missing or expired' }, { status: 401 });
-    }
-
+    const employee = await requireAuthenticatedUser();
     const supabaseAdmin = getAdminClient();
 
-    const { data: employee, error: empError } = await supabaseAdmin
-      .from('team_members')
-      .select('id, name, email, role')
-      .eq('email', user.email)
-      .single();
-
-    if (empError || !employee) {
-      return NextResponse.json({ error: 'Forbidden: No active employee profile found.' }, { status: 403 });
-    }
-
-    const isAdmin = ['OWNER', 'ADMIN', 'HR', 'OPERATIONS HEAD'].includes(employee.role);
+    const isAdmin = ['owner', 'admin', 'hr', 'operations head'].includes(employee.role);
 
     let query = supabaseAdmin
       .from('leave_balances')
       .select('*, leave_types(name), team_members(name)');
 
     if (!isAdmin) {
-      query = query.eq('employee_id', employee.id);
+      query = query.eq('employee_id', employee.teamMemberId);
     }
 
     const { data: balances, error } = await query;

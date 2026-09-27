@@ -3,6 +3,7 @@ import { createClient } from '@supabase/supabase-js';
 import { createClient as createServerClient } from '@/lib/auth/server';
 import { AttendanceEventEngine } from '@/lib/biometrics/event-engine';
 import { NormalizedBiometricEvent } from '@/lib/biometrics/types';
+import { BiometricIdentityResolver } from '@/lib/biometrics/identity-resolver';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
 const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
@@ -66,44 +67,116 @@ export async function POST(request: Request) {
     let newlyMatchedCount = 0;
 
     for (const rawEv of eventsToReprocess) {
-      // Re-run through Event Engine
-      const normalized: NormalizedBiometricEvent = {
-        deviceId: rawEv.device_id,
-        biometricUserId: rawEv.biometric_user_id,
-        eventTimestamp: rawEv.event_timestamp,
-        eventType: rawEv.event_type,
-        verificationMethod: rawEv.verification_method,
-        externalEventId: rawEv.external_event_id,
-        rawMetadata: rawEv.raw_metadata
-      };
+      // 1. Resolve identity
+      const resolution = await BiometricIdentityResolver.resolve(rawEv.device_id, rawEv.biometric_user_id, supabaseAdmin);
+      
+      if (resolution.status === 'MATCHED') {
+        const employeeId = resolution.employeeId!;
+        const employeeName = resolution.employeeName!;
+        const dateStr = rawEv.event_timestamp.substring(0, 10);
+        
+        try {
+          if (rawEv.event_type === 'CHECK_IN') {
+             const { data: existingAttendance } = await supabaseAdmin
+              .from('employee_attendance')
+              .select('id, status, created_at')
+              .eq('employee_id', employeeId)
+              .eq('date', dateStr)
+              .single();
 
-      // Delete existing event row so engine can re-evaluate idempotency cleanly
-      await supabaseAdmin.from('attendance_events').delete().eq('id', rawEv.id);
+            if (!existingAttendance) {
+              await supabaseAdmin.from('employee_attendance').insert({
+                employee_id: employeeId,
+                employee_name: employeeName,
+                status: 'present',
+                date: dateStr,
+                created_at: rawEv.event_timestamp
+              });
+            } else if (existingAttendance.status === 'absent' || new Date(rawEv.event_timestamp) < new Date(existingAttendance.created_at)) {
+              await supabaseAdmin.from('employee_attendance').update({
+                status: 'present',
+                created_at: rawEv.event_timestamp
+              }).eq('id', existingAttendance.id);
+            }
+          } else if (rawEv.event_type === 'CHECK_OUT') {
+             const { data: existingAttendance } = await supabaseAdmin
+              .from('employee_attendance')
+              .select('id, status, check_out_time')
+              .eq('employee_id', employeeId)
+              .eq('date', dateStr)
+              .single();
 
-      const result = await AttendanceEventEngine.processEvent(normalized, supabaseAdmin);
-      reprocessedCount++;
-
-      if (result.status === 'PROCESSED') {
-        newlyMatchedCount++;
+             if (existingAttendance) {
+               const currentCheckout = existingAttendance.check_out_time ? new Date(existingAttendance.check_out_time) : null;
+               if (!currentCheckout || new Date(rawEv.event_timestamp) > currentCheckout) {
+                 await supabaseAdmin.from('employee_attendance').update({
+                   check_out_time: rawEv.event_timestamp,
+                   status: existingAttendance.status === 'absent' ? 'present' : existingAttendance.status
+                 }).eq('id', existingAttendance.id);
+               }
+             } else {
+               await supabaseAdmin.from('employee_attendance').insert({
+                 employee_id: employeeId,
+                 employee_name: employeeName,
+                 status: 'present',
+                 date: dateStr,
+                 created_at: rawEv.event_timestamp,
+                 check_out_time: rawEv.event_timestamp
+               });
+             }
+          }
+          
+          // Safe state transition of the event
+          await supabaseAdmin.from('attendance_events')
+            .update({
+              employee_id: employeeId,
+              processing_status: 'PROCESSED',
+              processing_error: null,
+              processed_at: new Date().toISOString()
+            })
+            .eq('id', rawEv.id);
+            
+          newlyMatchedCount++;
+          reprocessedCount++;
+        } catch (err: any) {
+          await supabaseAdmin.from('attendance_events')
+            .update({
+              processing_status: 'FAILED',
+              processing_error: err.message,
+              processed_at: new Date().toISOString()
+            })
+            .eq('id', rawEv.id);
+          reprocessedCount++;
+        }
+      } else {
+         // Still unmatched/inactive
+         await supabaseAdmin.from('attendance_events')
+            .update({
+              processing_status: resolution.status === 'INACTIVE' ? 'IGNORED' : 'UNMATCHED',
+              processing_error: resolution.error,
+              processed_at: new Date().toISOString()
+            })
+            .eq('id', rawEv.id);
+         reprocessedCount++;
       }
     }
 
-    // Record audit log
-    try {
-      await supabaseAdmin.from('audit_logs').insert({
-        user_id: user.id,
-        action: 'BIOMETRIC_EVENTS_REPROCESSED',
-        resource_type: 'attendance_events',
-        resource_id: eventId || deviceId || 'BATCH',
-        details: {
-          reprocessed_by: user.email,
-          total_reprocessed: reprocessedCount,
-          newly_matched: newlyMatchedCount,
-          timestamp: new Date().toISOString()
-        }
-      });
-    } catch {
-      // Optional
+    // Record audit log mandatory
+    const { error: auditError } = await supabaseAdmin.from('audit_logs').insert({
+      user_id: user.id,
+      action: 'BIOMETRIC_EVENTS_REPROCESSED',
+      resource_type: 'attendance_events',
+      resource_id: eventId || deviceId || 'BATCH',
+      details: {
+        reprocessed_by: user.email,
+        total_reprocessed: reprocessedCount,
+        newly_matched: newlyMatchedCount,
+        timestamp: new Date().toISOString()
+      }
+    });
+
+    if (auditError) {
+       throw new Error(`Audit logging failed: ${auditError.message}`);
     }
 
     return NextResponse.json({
