@@ -5,22 +5,7 @@ import { useInView, animate, motion, useMotionValue, useTransform } from "framer
 import Hover3DWrapper from "@/components/Hover3DWrapper";
 import AnimatedSection from "@/components/AnimatedSection";
 
-const AnimatedCounter = ({ from, to, duration = 2 }: { from: number; to: number; duration?: number }) => {
-  const ref = useRef<HTMLSpanElement>(null);
-  const inView = useInView(ref, { once: true, margin: "-50px" });
-  
-  const count = useMotionValue(from);
-  const rounded = useTransform(count, (latest) => Math.round(latest));
 
-  useEffect(() => {
-    if (inView) {
-      const animation = animate(count, to, { duration: duration, ease: "easeOut" });
-      return animation.stop;
-    }
-  }, [count, to, duration, inView]);
-
-  return <motion.span ref={ref}>{rounded}</motion.span>;
-};
 
 export default function ExperienceSection() {
   return (
@@ -42,11 +27,11 @@ export default function ExperienceSection() {
           <AnimatedSection delay={0} direction="up" className="md:translate-y-12">
             <Hover3DWrapper intensity="subtle">
               <div className="bg-[#f0f0f0] rounded-2xl p-8 shadow-2xl border border-white/50 text-center flex flex-col items-center h-full" style={{ transform: "translateZ(30px)" }}>
-                <h3 className="text-4xl font-bold text-primary mb-4" style={{ transform: "translateZ(20px)" }}>
-                  <AnimatedCounter from={0} to={15} />+ <span className="text-xl text-slate-700">Years</span>
+                <h3 className="text-3xl font-bold text-primary mb-4" style={{ transform: "translateZ(20px)" }}>
+                  Trusted Guidance
                 </h3>
                 <p className="text-slate-700 font-medium leading-relaxed" style={{ transform: "translateZ(10px)" }}>
-                  Over 15 years of trusted experience helping students study abroad.
+                  Dedicated to providing reliable and personalized support for your study abroad journey.
                 </p>
               </div>
             </Hover3DWrapper>
@@ -56,11 +41,11 @@ export default function ExperienceSection() {
           <AnimatedSection delay={0.2} direction="up" className="md:-translate-y-4">
             <Hover3DWrapper intensity="subtle">
               <div className="bg-[#f0f0f0] rounded-2xl p-8 shadow-2xl border border-white/50 text-center flex flex-col items-center h-full" style={{ transform: "translateZ(30px)" }}>
-                <h3 className="text-4xl font-bold text-primary mb-4" style={{ transform: "translateZ(20px)" }}>
-                  <AnimatedCounter from={0} to={17} />+ <span className="text-xl text-slate-700">Destinations</span>
+                <h3 className="text-3xl font-bold text-primary mb-4" style={{ transform: "translateZ(20px)" }}>
+                  Global Access
                 </h3>
                 <p className="text-slate-700 font-medium leading-relaxed" style={{ transform: "translateZ(10px)" }}>
-                  Connecting students with top universities across 17+ incredible countries.
+                  Connecting students with top universities across incredible countries.
                 </p>
               </div>
             </Hover3DWrapper>
@@ -70,11 +55,11 @@ export default function ExperienceSection() {
           <AnimatedSection delay={0.4} direction="up" className="md:translate-y-12">
             <Hover3DWrapper intensity="subtle">
               <div className="bg-[#f0f0f0] rounded-2xl p-8 shadow-2xl border border-white/50 text-center flex flex-col items-center h-full" style={{ transform: "translateZ(30px)" }}>
-                <h3 className="text-4xl font-bold text-primary mb-4" style={{ transform: "translateZ(20px)" }}>
-                  <AnimatedCounter from={0} to={5000} duration={2.5} />+ <span className="text-xl text-slate-700">Students</span>
+                <h3 className="text-3xl font-bold text-primary mb-4" style={{ transform: "translateZ(20px)" }}>
+                  Proven Results
                 </h3>
                 <p className="text-slate-700 font-medium leading-relaxed" style={{ transform: "translateZ(10px)" }}>
-                  Over 5,000 students successfully placed and thriving in their international careers.
+                  Helping students secure admissions and thrive in their international careers.
                 </p>
               </div>
             </Hover3DWrapper>

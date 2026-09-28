@@ -3,7 +3,6 @@
 import React from "react";
 import Link from "next/link";
 import { ArrowRight, GraduationCap, Globe, Users } from "lucide-react";
-import AnimatedCounter from "./AnimatedCounter";
 
 export default function AnimatedHero() {
   return (
@@ -25,7 +24,7 @@ export default function AnimatedHero() {
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
               <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
             </span>
-            <span className="text-sm font-bold text-blue-50 tracking-wide pr-2">🏆 &nbsp; 98% Visa Success Rate &nbsp;|&nbsp; Fall 2026 Intakes Open</span>
+            <span className="text-sm font-bold text-blue-50 tracking-wide pr-2">🏆 &nbsp; Proven Excellence &nbsp;|&nbsp; Fall 2026 Intakes Open</span>
           </div>
 
           <h1 className="text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight mb-6 leading-[1.1]">
@@ -69,10 +68,10 @@ export default function AnimatedHero() {
               <div className="h-12 w-12 rounded-full bg-blue-500/20 flex items-center justify-center mb-4 text-blue-400">
                 <GraduationCap size={28} />
               </div>
-              <h3 className="text-3xl font-bold text-white mb-1">
-                <AnimatedCounter to={5000} duration={1.2} />+
+              <h3 className="text-2xl font-bold text-white mb-1">
+                Trusted
               </h3>
-              <p className="text-blue-200 text-sm">Students Placed Worldwide</p>
+              <p className="text-blue-200 text-sm">By Students Worldwide</p>
             </div>
 
             {/* Card 2 */}
@@ -82,8 +81,8 @@ export default function AnimatedHero() {
               <div className="h-12 w-12 rounded-full bg-green-500/20 flex items-center justify-center mb-4 text-green-400">
                 <Globe size={28} />
               </div>
-              <h3 className="text-3xl font-bold text-white mb-1">
-                <AnimatedCounter to={17} duration={1.2} />+
+              <h3 className="text-2xl font-bold text-white mb-1">
+                Global
               </h3>
               <p className="text-blue-200 text-sm">Destinations Covered</p>
             </div>
@@ -95,10 +94,10 @@ export default function AnimatedHero() {
               <div className="h-12 w-12 rounded-full bg-purple-500/20 flex items-center justify-center mb-4 text-purple-400">
                 <Users size={28} />
               </div>
-              <h3 className="text-3xl font-bold text-white mb-1">
-                <AnimatedCounter to={98} duration={1.2} />%
+              <h3 className="text-2xl font-bold text-white mb-1">
+                Expert
               </h3>
-              <p className="text-blue-200 text-sm">Visa Success Rate</p>
+              <p className="text-blue-200 text-sm">Visa Assistance</p>
             </div>
 
           </div>

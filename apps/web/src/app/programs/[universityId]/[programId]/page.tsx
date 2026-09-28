@@ -19,7 +19,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const program = await getPublishedProgramById(programId);
   
   if (!program) {
-    return { title: 'Program Not Found' };
+    notFound();
   }
 
   const uni = Array.isArray(program.universities)
@@ -27,7 +27,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     : (program.universities as any);
 
   if (uni?.id !== universityId && uni?.slug !== universityId) {
-    return { title: 'Program Not Found' };
+    notFound();
   }
 
   return {

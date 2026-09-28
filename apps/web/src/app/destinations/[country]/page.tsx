@@ -28,7 +28,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const resolvedParams = await params;
   const country = destinations.find(d => d.id === resolvedParams.country);
   
-  if (!country) return { title: 'Destination Not Found' };
+  if (!country) notFound();
 
   return {
     title: `Study in ${country.name} | KeyAbroad`,

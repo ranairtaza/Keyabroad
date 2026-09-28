@@ -2,6 +2,7 @@ import React from 'react';
 import { supabase } from '@keyabroad/auth/legacy';
 import { Calendar, User, ArrowLeft, FileText } from 'lucide-react';
 import Link from 'next/link';
+import { notFound } from 'next/navigation';
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const resolvedParams = await params;
@@ -11,7 +12,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     .eq('slug', resolvedParams.slug)
     .single();
 
-  if (!blog) return { title: 'Not Found' };
+  if (!blog) notFound();
   
   return {
     title: blog.meta_title || `${blog.title} | KeyAbroad Blog`,
@@ -31,14 +32,7 @@ export default async function SingleBlogPage({ params }: { params: Promise<{ slu
     .single();
 
   if (!blog) {
-    return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-slate-50">
-        <h2 className="text-2xl font-bold text-slate-800 mb-4">Article Not Found</h2>
-        <Link href="/blog" className="text-blue-600 hover:underline flex items-center gap-2">
-          <ArrowLeft size={16} /> Back to Blogs
-        </Link>
-      </div>
-    );
+    notFound();
   }
 
   return (

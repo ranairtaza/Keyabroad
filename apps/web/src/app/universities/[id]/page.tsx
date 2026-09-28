@@ -17,7 +17,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const university = await getPublishedUniversityById(id);
   
   if (!university) {
-    return { title: 'University Not Found' };
+    notFound();
   }
 
   const country = Array.isArray(university.countries)

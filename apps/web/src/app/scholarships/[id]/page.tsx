@@ -17,7 +17,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const resolvedParams = await params;
   const scholarship = await getPublishedScholarshipById(resolvedParams.id);
   
-  if (!scholarship) return { title: 'Scholarship Not Found' };
+  if (!scholarship) notFound();
 
   return {
     alternates: {

@@ -50,9 +50,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       .limit(5000); 
       
     if (universities) {
+      const validUniversities = universities.filter((uni: any) => uni.slug && uni.slug.trim() !== '');
       routes = routes.concat(
-        universities.map((uni: any) => ({
-          url: `${baseUrl}/universities/${uni.slug || uni.id}`,
+        validUniversities.map((uni: any) => ({
+          url: `${baseUrl}/universities/${uni.slug}`,
           lastModified: uni.updated_at ? new Date(uni.updated_at) : new Date(),
           changeFrequency: 'weekly' as const,
           priority: 0.7,
@@ -73,11 +74,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       .limit(5000);
       
     if (programs) {
+      const validPrograms = programs.filter((prog: any) => {
+        const uni = Array.isArray(prog.universities) ? prog.universities[0] : prog.universities;
+        return prog.slug && prog.slug.trim() !== '' && uni?.slug && uni.slug.trim() !== '';
+      });
       routes = routes.concat(
-        programs.map((prog: any) => {
+        validPrograms.map((prog: any) => {
           const uni = Array.isArray(prog.universities) ? prog.universities[0] : prog.universities;
           return {
-            url: `${baseUrl}/programs/${uni?.slug || uni?.id}/${prog.slug || prog.id}`,
+            url: `${baseUrl}/programs/${uni.slug}/${prog.slug}`,
             lastModified: prog.updated_at ? new Date(prog.updated_at) : new Date(),
             changeFrequency: 'weekly' as const,
             priority: 0.6,
