@@ -124,8 +124,10 @@ export default async function CountryPage({ params }: PageProps) {
               </p>
             )}
             
-            <Button size="lg" className="w-full mt-8 bg-blue-600 hover:bg-blue-700 text-white shadow-md">
-              Check Eligibility
+            <Button size="lg" className="w-full mt-8 bg-blue-600 hover:bg-blue-700 text-white shadow-md" asChild>
+              <Link href="/eligibility">
+                Check Eligibility
+              </Link>
             </Button>
           </div>
         </div>

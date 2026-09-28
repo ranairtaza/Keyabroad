@@ -241,9 +241,9 @@ export default async function UniversityDetailPage({ params }: PageProps) {
               <CardContent className="p-6 text-center">
                 <h3 className="font-bold text-slate-900 mb-2">Interested in {university.name}?</h3>
                 <p className="text-slate-600 text-sm mb-6">Connect with our counselors to check your eligibility and start your application.</p>
-                <Link href="/eligibility">
-                  <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white">Check Eligibility</Button>
-                </Link>
+                <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white" asChild>
+                  <Link href="/eligibility">Check Eligibility</Link>
+                </Button>
               </CardContent>
             </Card>
           </div>

@@ -149,8 +149,12 @@ export default async function ScholarshipPage({ params }: PageProps) {
               <p className="text-sm text-slate-600">
                 Speak with a KeyAbroad counselor to verify your eligibility and secure your scholarship.
               </p>
-              <Button className="w-full bg-emerald-600 hover:bg-emerald-700" size="lg">Check Eligibility</Button>
-              <Button className="w-full" variant="outline" size="lg">Book Consultation</Button>
+              <Button className="w-full bg-emerald-600 hover:bg-emerald-700" size="lg" asChild>
+                <Link href="/eligibility">Check Eligibility</Link>
+              </Button>
+              <Button className="w-full" variant="outline" size="lg" asChild>
+                <Link href="/book-appointment">Book Consultation</Link>
+              </Button>
             </div>
           </div>
         </div>
