@@ -148,11 +148,8 @@ export async function getPublishedProgramBySlug(slug: string) {
 export async function getPublishedProgramById(id: string) {
   const supabase = await createClient();
 
-  // Validate UUID format before querying to avoid postgres errors on invalid UUIDs
-  const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-  if (!uuidRegex.test(id)) {
-    return null;
-  }
+  const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+  const isUuid = uuidRegex.test(id);
 
   const { data: program, error } = await supabase
     .from('programs')
@@ -166,6 +163,7 @@ export async function getPublishedProgramById(id: string) {
       currency,
       universities (
         id,
+        slug,
         name,
         logo_url,
         url,
@@ -176,7 +174,7 @@ export async function getPublishedProgramById(id: string) {
         )
       )
     `)
-    .eq('id', id)
+    .eq(isUuid ? 'id' : 'slug', id)
     .single();
 
   if (error) {

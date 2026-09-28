@@ -45,14 +45,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   try {
     const { data: universities } = await supabase
       .from('universities')
-      .select('id, updated_at')
+      .select('id, slug, updated_at')
       .eq('is_published', true)
       .limit(5000); 
       
     if (universities) {
       routes = routes.concat(
         universities.map((uni: any) => ({
-          url: `${baseUrl}/universities/${uni.id}`,
+          url: `${baseUrl}/universities/${uni.slug || uni.id}`,
           lastModified: uni.updated_at ? new Date(uni.updated_at) : new Date(),
           changeFrequency: 'weekly' as const,
           priority: 0.7,
@@ -66,7 +66,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   try {
     const { data: programs } = await supabase
       .from('programs')
-      .select('id, updated_at, universities!inner(id)')
+      .select('id, slug, updated_at, universities!inner(id, slug)')
       .eq('is_published', true)
       .not('tuition_fee', 'is', null)
       .not('duration', 'is', null)
@@ -75,9 +75,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     if (programs) {
       routes = routes.concat(
         programs.map((prog: any) => {
-          const uniId = Array.isArray(prog.universities) ? prog.universities[0]?.id : prog.universities?.id;
+          const uni = Array.isArray(prog.universities) ? prog.universities[0] : prog.universities;
           return {
-            url: `${baseUrl}/programs/${uniId}/${prog.id}`,
+            url: `${baseUrl}/programs/${uni?.slug || uni?.id}/${prog.slug || prog.id}`,
             lastModified: prog.updated_at ? new Date(prog.updated_at) : new Date(),
             changeFrequency: 'weekly' as const,
             priority: 0.6,

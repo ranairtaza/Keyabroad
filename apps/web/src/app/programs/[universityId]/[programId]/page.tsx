@@ -26,20 +26,20 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     ? (program.universities[0] as any)
     : (program.universities as any);
 
-  if (uni?.id !== universityId) {
+  if (uni?.id !== universityId && uni?.slug !== universityId) {
     return { title: 'Program Not Found' };
   }
 
   return {
     alternates: {
-      canonical: `/programs/${universityId}/${program.id}`,
+      canonical: `/programs/${uni?.slug || uni?.id}/${program.slug || program.id}`,
     },
     title: `${program.name} at ${uni?.name} - Admissions 2026 | KeyAbroad`,
     description: `Get full details on the ${program.name} at ${uni?.name}. View tuition fees (${program.tuition_fee} ${program.currency}), duration, and start your application today.`,
     openGraph: {
       title: `${program.name} at ${uni?.name}`,
       description: `Study ${program.name} at ${uni?.name}. View requirements, fees, and apply through KeyAbroad.`,
-      url: `https://keyabroad.com/programs/${universityId}/${programId}`,
+      url: `https://keyabroad.com/programs/${uni?.slug || uni?.id}/${program.slug || program.id}`,
       siteName: 'KeyAbroad',
       images: [
         {

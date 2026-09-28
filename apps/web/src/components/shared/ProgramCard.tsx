@@ -27,7 +27,7 @@ interface ProgramCardProps {
 
 export function ProgramCard({ program }: ProgramCardProps) {
   return (
-    <Link href={`/programs/${program.universities?.id}/${(program as any).slug || program.id}`} className="group block h-full">
+    <Link href={`/programs/${(program.universities as any)?.slug || program.universities?.id}/${(program as any).slug || program.id}`} className="group block h-full">
       <Card className="h-full transition-all duration-300 hover:shadow-xl hover:-translate-y-1 border-slate-200 hover:border-blue-300 flex flex-col">
         <CardHeader className="pb-2">
           <CardTitle className="text-lg font-bold text-slate-900 group-hover:text-blue-600 transition-colors line-clamp-2">

@@ -7,15 +7,15 @@
 
 ⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
   Creating an optimized production build ...
-✓ Compiled successfully in 20.0s
+✓ Compiled successfully in 23.3s
   Running TypeScript ...
-  Finished TypeScript in 25.9s ...
+  Finished TypeScript in 30.4s ...
   Collecting page data using 7 workers ...
   Generating static pages using 7 workers (0/51) ...
   Generating static pages using 7 workers (12/51) 
   Generating static pages using 7 workers (25/51) 
   Generating static pages using 7 workers (38/51) 
-✓ Generating static pages using 7 workers (51/51) in 7.3s
+✓ Generating static pages using 7 workers (51/51) in 8.5s
   Finalizing page optimization ...
 
 Route (app)
@@ -54,8 +54,7 @@ Route (app)
 ├ ƒ /scholarships
 ├ ƒ /scholarships/[id]
 ├ ○ /services
-├ ● /sitemap/[__metadata_id__]
-│ └ /sitemap/0.xml
+├ ○ /sitemap.xml
 ├ ○ /student
 ├ ○ /student/applications
 ├ ○ /student/dashboard

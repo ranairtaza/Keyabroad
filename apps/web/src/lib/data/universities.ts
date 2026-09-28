@@ -87,6 +87,7 @@ export async function getPublishedUniversityById(id: string) {
     .from('universities')
     .select(`
       id,
+      slug,
       name,
       logo_url,
       url,
@@ -115,7 +116,7 @@ export async function getPublishedUniversityById(id: string) {
         description
       )
     `)
-    .eq('id', id)
+    .eq(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id) ? 'id' : 'slug', id)
     .single();
 
   if (error) {
