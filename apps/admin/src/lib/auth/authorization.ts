@@ -81,7 +81,7 @@ export async function resolveCurrentEmployee(): Promise<AuthenticatedEmployee | 
 
   return {
     authUserId: user.id,
-    email: user.email,
+    email: user.email || '',
     teamMemberId: teamMember.id,
     role: normalizeRole(teamMember.role),
     status: teamMember.status,
