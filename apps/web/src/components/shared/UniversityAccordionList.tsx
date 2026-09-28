@@ -62,11 +62,11 @@ export function UniversityAccordionList({ universities, currencyCode }: { univer
                         <div className="space-y-3">
                           <div className="flex justify-between items-center bg-white p-3 rounded-lg border border-slate-200 shadow-sm">
                             <span className="text-sm font-medium text-slate-600">Bachelors</span>
-                            <span className="font-bold text-slate-900">{currencyCode || '$'}{new Intl.NumberFormat().format(uni.avg_bachelors_tuition || 15000)}/yr</span>
+                            <span className="font-bold text-slate-900">{uni.avg_bachelors_tuition ? `${currencyCode || '$'}${new Intl.NumberFormat().format(uni.avg_bachelors_tuition)}/yr` : 'Varies'}</span>
                           </div>
                           <div className="flex justify-between items-center bg-white p-3 rounded-lg border border-slate-200 shadow-sm">
                             <span className="text-sm font-medium text-slate-600">Masters</span>
-                            <span className="font-bold text-slate-900">{currencyCode || '$'}{new Intl.NumberFormat().format(uni.avg_masters_tuition || 20000)}/yr</span>
+                            <span className="font-bold text-slate-900">{uni.avg_masters_tuition ? `${currencyCode || '$'}${new Intl.NumberFormat().format(uni.avg_masters_tuition)}/yr` : 'Varies'}</span>
                           </div>
                         </div>
                       </div>
