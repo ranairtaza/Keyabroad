@@ -184,3 +184,33 @@ export async function getPublishedProgramById(id: string) {
 
   return program;
 }
+
+export async function getAllProgramSlugs() {
+  const { createClient } = require('@supabase/supabase-js');
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  );
+  
+  const { data, error } = await supabase
+    .from('programs')
+    .select('id, universities(id)');
+    
+  if (error) {
+    console.error('Error fetching program slugs:', error);
+    return [];
+  }
+  
+  return (data || [])
+    .filter((p: any) => p.id)
+    .map((p: any) => {
+      const uni = Array.isArray(p.universities) ? p.universities[0] : p.universities;
+      const uniSlug = uni ? (uni as any).id : null;
+      if (!uniSlug) return null;
+      return { 
+        programId: String(p.id),
+        universityId: String(uniSlug)
+      };
+    })
+    .filter(Boolean);
+}

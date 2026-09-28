@@ -1,4 +1,4 @@
-import { getPublishedProgramById } from '@/lib/data/programs';
+import { getPublishedProgramById, getAllProgramSlugs } from '@/lib/data/programs';
 import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
 import { Building2, MapPin, GraduationCap, Banknote, Clock, ArrowRight } from 'lucide-react';
@@ -14,32 +14,38 @@ interface PageProps {
   }>;
 }
 
+export const dynamicParams = false;
+
+export async function generateStaticParams() {
+  return await getAllProgramSlugs();
+}
+
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { universityId, programId } = await params;
   const program = await getPublishedProgramById(programId);
   
   if (!program) {
-    notFound();
+    return { title: 'Not Found | KeyAbroad' };
   }
 
   const uni = Array.isArray(program.universities)
     ? (program.universities[0] as any)
     : (program.universities as any);
 
-  if (uni?.id !== universityId && uni?.slug !== universityId) {
-    notFound();
+  if (uni?.id !== universityId) {
+    return { title: 'Not Found | KeyAbroad' };
   }
 
   return {
     alternates: {
-      canonical: `/programs/${uni?.slug || uni?.id}/${program.slug || program.id}`,
+      canonical: `/programs/${uni?.id}/${program.id}`,
     },
     title: `${program.name} at ${uni?.name} - Admissions 2026 | KeyAbroad`,
     description: `Get full details on the ${program.name} at ${uni?.name}. View tuition fees (${program.tuition_fee} ${program.currency}), duration, and start your application today.`,
     openGraph: {
       title: `${program.name} at ${uni?.name}`,
       description: `Study ${program.name} at ${uni?.name}. View requirements, fees, and apply through KeyAbroad.`,
-      url: `https://keyabroad.com/programs/${uni?.slug || uni?.id}/${program.slug || program.id}`,
+      url: `https://keyabroad.com/programs/${uni?.id}/${program.id}`,
       siteName: 'KeyAbroad',
       images: [
         {

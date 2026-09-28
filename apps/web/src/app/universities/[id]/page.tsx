@@ -1,4 +1,4 @@
-import { getPublishedUniversityById } from '@/lib/data/universities';
+import { getPublishedUniversityById, getAllUniversitySlugs } from '@/lib/data/universities';
 import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
 import { Building2, MapPin, Globe, GraduationCap, Banknote, Calendar } from 'lucide-react';
@@ -12,12 +12,19 @@ interface PageProps {
   }>;
 }
 
+export const dynamicParams = false;
+
+export async function generateStaticParams() {
+  const slugs = await getAllUniversitySlugs();
+  return slugs;
+}
+
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { id } = await params;
   const university = await getPublishedUniversityById(id);
   
   if (!university) {
-    notFound();
+    return { title: 'Not Found | KeyAbroad' };
   }
 
   const country = Array.isArray(university.countries)
@@ -26,14 +33,14 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   return {
     alternates: {
-      canonical: `/universities/${(university as any).slug || university.id}`,
+      canonical: `/universities/${(university as any).id}`,
     },
     title: `${university.name} - Admissions, Fees & Programs 2026 | KeyAbroad`,
     description: `Discover programs, scholarships, and admissions requirements for ${university.name} in ${country?.name}. Apply now for 2026 intakes.`,
     openGraph: {
       title: `${university.name} | Study in ${country?.name}`,
       description: `Explore programs, tuition fees, and scholarships at ${university.name}. Start your application with KeyAbroad.`,
-      url: `https://keyabroad.com/universities/${(university as any).slug || university.id}`,
+      url: `https://keyabroad.com/universities/${(university as any).id}`,
       siteName: 'KeyAbroad',
       images: [
         {
