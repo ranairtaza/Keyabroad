@@ -7,7 +7,7 @@ import { computeDeviceHealth } from '@/lib/biometrics/gateway/health';
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
 const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
 
-import { requireAnyRole } from '@/lib/auth/authorization';
+import { requireAnyRole, handleApiError } from '@/lib/auth/authorization';
 
 /**
  * GET /api/biometrics/devices
@@ -35,8 +35,8 @@ export async function GET() {
     }));
 
     return NextResponse.json({ data: enrichedDevices });
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message || 'An unexpected error occurred.' }, { status: 500 });
+  } catch (err: any) {
+    return handleApiError(err);
   }
 }
 
@@ -47,7 +47,7 @@ export async function GET() {
  */
 export async function POST(request: Request) {
   try {
-    const actor = await requireAnyRole(['owner', 'admin', 'hr', 'operations head']);
+    const actor = await requireAnyRole(['owner', 'admin']);
     const supabaseAdmin = createClient(supabaseUrl, supabaseServiceRoleKey, {
       auth: { autoRefreshToken: false, persistSession: false }
     });
@@ -144,7 +144,7 @@ export async function POST(request: Request) {
       keyPrefix: credResult.keyPrefix
     });
 
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message || 'An unexpected error occurred.' }, { status: 500 });
+  } catch (err: any) {
+    return handleApiError(err);
   }
 }

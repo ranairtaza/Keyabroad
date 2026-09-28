@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
-import { requireAnyRole } from '@/lib/auth/authorization';
+import { requireAnyRole, handleApiError } from '@/lib/auth/authorization';
 import { AttendanceEventEngine } from '@/lib/biometrics/event-engine';
 import { DeviceCredentialManager } from '@/lib/biometrics/gateway/credentials';
 import { GenericBiometricAdapter } from '@/lib/biometrics/gateway/adapter';
@@ -257,7 +257,7 @@ export async function GET(request: Request) {
       offset
     });
 
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message || 'An unexpected error occurred.' }, { status: 500 });
+  } catch (err: any) {
+    return handleApiError(err);
   }
 }

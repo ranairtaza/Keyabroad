@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
-import { requireAuthenticatedUser } from '@/lib/auth/authorization';
+import { requireAuthenticatedUser, handleApiError } from '@/lib/auth/authorization';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
 const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
@@ -27,7 +27,7 @@ export async function GET(request: Request) {
     if (error) throw error;
     return NextResponse.json({ data: shifts });
   } catch (err: any) {
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    return handleApiError(err);
   }
 }
 
@@ -61,6 +61,6 @@ export async function POST(request: Request) {
     if (error) throw error;
     return NextResponse.json({ data }, { status: 201 });
   } catch (err: any) {
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    return handleApiError(err);
   }
 }

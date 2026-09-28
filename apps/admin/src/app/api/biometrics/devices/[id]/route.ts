@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
-import { requireAnyRole } from '@/lib/auth/authorization';
+import { requireAnyRole, handleApiError } from '@/lib/auth/authorization';
 import { computeDeviceHealth } from '@/lib/biometrics/gateway/health';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
@@ -15,7 +15,7 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    await requireAnyRole(['owner', 'admin', 'hr', 'operations head']);
+    await requireAnyRole(['owner', 'admin']);
     const supabaseAdmin = createClient(supabaseUrl, supabaseServiceRoleKey, {
       auth: { autoRefreshToken: false, persistSession: false }
     });
@@ -57,8 +57,8 @@ export async function GET(
       }
     });
 
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message || 'An unexpected error occurred.' }, { status: 500 });
+  } catch (err: any) {
+    return handleApiError(err);
   }
 }
 
@@ -71,7 +71,7 @@ export async function PATCH(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const actor = await requireAnyRole(['owner', 'admin', 'hr', 'operations head']);
+    const actor = await requireAnyRole(['owner', 'admin']);
     const supabaseAdmin = createClient(supabaseUrl, supabaseServiceRoleKey, {
       auth: { autoRefreshToken: false, persistSession: false }
     });
@@ -131,7 +131,7 @@ export async function PATCH(
       }
     });
 
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message || 'An unexpected error occurred.' }, { status: 500 });
+  } catch (err: any) {
+    return handleApiError(err);
   }
 }

@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
-import { requireAnyRole } from '@/lib/auth/authorization';
+import { requireAnyRole, handleApiError } from '@/lib/auth/authorization';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
 const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
@@ -20,7 +20,7 @@ function getAdminClient() {
  */
 export async function GET() {
   try {
-    const actor = await requireAnyRole(['owner', 'admin', 'hr', 'operations head']);
+    const actor = await requireAnyRole(['owner', 'admin']);
     const supabaseAdmin = getAdminClient();
 
     const { data, error } = await supabaseAdmin
@@ -42,8 +42,8 @@ export async function GET() {
     if (error) throw error;
 
     return NextResponse.json({ data: data || [] });
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message || 'An unexpected error occurred.' }, { status: 500 });
+  } catch (err: any) {
+    return handleApiError(err);
   }
 }
 
@@ -173,8 +173,8 @@ export async function POST(request: Request) {
       mapping: resultMapping
     });
 
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message || 'An unexpected error occurred.' }, { status: 500 });
+  } catch (err: any) {
+    return handleApiError(err);
   }
 }
 
@@ -206,7 +206,7 @@ export async function DELETE(request: Request) {
       message: 'Biometric mapping removed successfully.'
     });
 
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message || 'An unexpected error occurred.' }, { status: 500 });
+  } catch (err: any) {
+    return handleApiError(err);
   }
 }

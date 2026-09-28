@@ -13,9 +13,6 @@ export default function WorkforceCommandCenter() {
   const [data, setData] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    fetchData(date);
-  }, [date]);
 
   const fetchData = async (targetDate: string) => {
     try {
@@ -33,6 +30,10 @@ export default function WorkforceCommandCenter() {
       setIsLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchData(date);
+  }, [date]);
 
   const getStatusBadge = (status: string) => {
     switch (status) {

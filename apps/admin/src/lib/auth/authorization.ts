@@ -13,6 +13,20 @@ function getAdminClient() {
   });
 }
 
+export class AuthenticationError extends Error {
+  constructor(message = 'Unauthorized') {
+    super(message);
+    this.name = 'AuthenticationError';
+  }
+}
+
+export class AuthorizationError extends Error {
+  constructor(message = 'Forbidden') {
+    super(message);
+    this.name = 'AuthorizationError';
+  }
+}
+
 export type SecurityRole = 'owner' | 'admin' | 'hr' | 'operations head' | 'employee';
 
 export interface AuthenticatedEmployee {
@@ -49,7 +63,7 @@ export async function resolveCurrentEmployee(): Promise<AuthenticatedEmployee | 
   const supabaseAuth = await createServerClient();
   const { data: { user }, error: authError } = await supabaseAuth.auth.getUser();
 
-  if (authError || !user || !user.email) {
+  if (authError || !user) {
     return null;
   }
 
@@ -57,8 +71,8 @@ export async function resolveCurrentEmployee(): Promise<AuthenticatedEmployee | 
 
   const { data: teamMember, error: empError } = await supabaseAdmin
     .from('team_members')
-    .select('id, name, email, status, role')
-    .eq('email', user.email)
+    .select('id, name, email, status, role, auth_user_id')
+    .eq('auth_user_id', user.id)
     .single();
 
   if (empError || !teamMember) {
@@ -82,7 +96,7 @@ export async function resolveCurrentEmployee(): Promise<AuthenticatedEmployee | 
 export async function requireAuthenticatedUser(): Promise<AuthenticatedEmployee> {
   const employee = await resolveCurrentEmployee();
   if (!employee) {
-    throw new Error('Unauthorized');
+    throw new AuthenticationError('Unauthorized');
   }
   return employee;
 }
@@ -93,7 +107,7 @@ export async function requireAuthenticatedUser(): Promise<AuthenticatedEmployee>
 export async function requireAnyRole(allowedRoles: SecurityRole[]): Promise<AuthenticatedEmployee> {
   const employee = await requireAuthenticatedUser();
   if (!allowedRoles.includes(employee.role)) {
-    throw new Error('Forbidden');
+    throw new AuthorizationError('Forbidden');
   }
   return employee;
 }
@@ -103,4 +117,20 @@ export async function requireAnyRole(allowedRoles: SecurityRole[]): Promise<Auth
  */
 export async function requireRole(allowedRole: SecurityRole): Promise<AuthenticatedEmployee> {
   return requireAnyRole([allowedRole]);
+}
+
+import { NextResponse } from 'next/server';
+
+/**
+ * Standardized error handler for API routes.
+ * Maps AuthenticationError to 401, AuthorizationError to 403, and others to 500.
+ */
+export function handleApiError(err: any): NextResponse {
+  if (err instanceof AuthenticationError || err.name === 'AuthenticationError') {
+    return NextResponse.json({ error: err.message }, { status: 401 });
+  }
+  if (err instanceof AuthorizationError || err.name === 'AuthorizationError') {
+    return NextResponse.json({ error: err.message }, { status: 403 });
+  }
+  return NextResponse.json({ error: err.message || 'Internal Server Error' }, { status: 500 });
 }

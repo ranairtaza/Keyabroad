@@ -12,10 +12,6 @@ export default function LeavesPage() {
   const [balances, setBalances] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    fetchData();
-  }, []);
-
   const fetchData = async () => {
     try {
       setIsLoading(true);
@@ -33,6 +29,10 @@ export default function LeavesPage() {
       setIsLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   const handleReview = async (id: string, status: string) => {
     try {

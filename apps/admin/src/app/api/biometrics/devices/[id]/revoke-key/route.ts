@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
-import { requireAnyRole } from '@/lib/auth/authorization';
+import { requireAnyRole, handleApiError } from '@/lib/auth/authorization';
 import { DeviceCredentialManager } from '@/lib/biometrics/gateway/credentials';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
@@ -14,7 +14,7 @@ export async function POST(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const actor = await requireAnyRole(['owner', 'admin', 'hr', 'operations head']);
+    const actor = await requireAnyRole(['owner', 'admin']);
     const supabaseAdmin = createClient(supabaseUrl, supabaseServiceRoleKey, {
       auth: { autoRefreshToken: false, persistSession: false }
     });
@@ -57,7 +57,7 @@ export async function POST(
       message: 'Device credential revoked successfully.'
     });
 
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message || 'An unexpected error occurred.' }, { status: 500 });
+  } catch (err: any) {
+    return handleApiError(err);
   }
 }

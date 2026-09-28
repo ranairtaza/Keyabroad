@@ -11,9 +11,6 @@ export default function ShiftsPage() {
   const [shifts, setShifts] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    fetchData();
-  }, []);
 
   const fetchData = async () => {
     try {
@@ -27,6 +24,10 @@ export default function ShiftsPage() {
       setIsLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   return (
     <div className="max-w-7xl mx-auto space-y-6 pb-12 p-6">
