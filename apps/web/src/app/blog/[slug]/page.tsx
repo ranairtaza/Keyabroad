@@ -3,6 +3,13 @@ import { supabase } from '@keyabroad/auth/legacy';
 import { Calendar, User, ArrowLeft, FileText } from 'lucide-react';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
+export const dynamicParams = false;
+
+export async function generateStaticParams() {
+  const { data } = await supabase.from('blogs').select('slug').eq('status', 'published');
+  if (!data) return [];
+  return data.filter((b: any) => b.slug).map((b: any) => ({ slug: String(b.slug) }));
+}
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const resolvedParams = await params;
@@ -12,7 +19,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     .eq('slug', resolvedParams.slug)
     .single();
 
-  if (!blog) notFound();
+  if (!blog) return { title: 'Not Found | KeyAbroad' };
   
   return {
     title: blog.meta_title || `${blog.title} | KeyAbroad Blog`,

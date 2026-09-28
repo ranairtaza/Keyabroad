@@ -1,4 +1,4 @@
-import { getPublishedScholarshipById } from '@/lib/data/scholarships';
+import { getPublishedScholarshipById, getAllScholarshipIds } from '@/lib/data/scholarships';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { Button } from '@keyabroad/ui/components/button';
@@ -13,11 +13,17 @@ interface PageProps {
   }>;
 }
 
+export const dynamicParams = false;
+
+export async function generateStaticParams() {
+  return await getAllScholarshipIds();
+}
+
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const resolvedParams = await params;
   const scholarship = await getPublishedScholarshipById(resolvedParams.id);
   
-  if (!scholarship) notFound();
+  if (!scholarship) return { title: 'Not Found | KeyAbroad' };
 
   return {
     alternates: {
