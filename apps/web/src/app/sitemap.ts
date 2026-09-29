@@ -45,16 +45,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   try {
     const { data: universities } = await supabase
       .from('universities')
-      .select('id, slug, updated_at')
-      .eq('is_published', true)
+      .select('slug')
+      .eq('status', 'published')
+      .eq('verification_status', 'verified')
       .limit(5000); 
       
     if (universities) {
-      const validUniversities = universities.filter((uni: any) => uni.slug && uni.slug.trim() !== '');
+      const validUniversities = universities.filter((u: any) => u.slug);
       routes = routes.concat(
         validUniversities.map((uni: any) => ({
           url: `${baseUrl}/universities/${uni.slug}`,
-          lastModified: uni.updated_at ? new Date(uni.updated_at) : new Date(),
           changeFrequency: 'weekly' as const,
           priority: 0.7,
         }))
@@ -67,23 +67,21 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   try {
     const { data: programs } = await supabase
       .from('programs')
-      .select('id, slug, updated_at, universities!inner(id, slug)')
-      .eq('is_published', true)
-      .not('tuition_fee', 'is', null)
-      .not('duration', 'is', null)
+      .select('slug, universities!inner(slug)')
+      .eq('status', 'published')
+      .eq('verification_status', 'verified')
       .limit(5000);
       
     if (programs) {
       const validPrograms = programs.filter((prog: any) => {
         const uni = Array.isArray(prog.universities) ? prog.universities[0] : prog.universities;
-        return prog.slug && prog.slug.trim() !== '' && uni?.slug && uni.slug.trim() !== '';
+        return prog.slug && prog.slug.trim() !== '' && uni?.slug;
       });
       routes = routes.concat(
         validPrograms.map((prog: any) => {
           const uni = Array.isArray(prog.universities) ? prog.universities[0] : prog.universities;
           return {
             url: `${baseUrl}/programs/${uni.slug}/${prog.slug}`,
-            lastModified: prog.updated_at ? new Date(prog.updated_at) : new Date(),
             changeFrequency: 'weekly' as const,
             priority: 0.6,
           };
@@ -92,6 +90,48 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }
   } catch (error) {
     console.error(`Error generating programs sitemap chunk:`, error);
+  }
+
+  try {
+    const { data: scholarships } = await supabase
+      .from('scholarships')
+      .select('id')
+      .eq('status', 'published')
+      .eq('verification_status', 'verified')
+      .limit(1000);
+      
+    if (scholarships) {
+      routes = routes.concat(
+        scholarships.map((sch: any) => ({
+          url: `${baseUrl}/scholarships/${sch.id}`,
+          changeFrequency: 'monthly' as const,
+          priority: 0.6,
+        }))
+      );
+    }
+  } catch (error) {
+    console.error(`Error generating scholarships sitemap chunk:`, error);
+  }
+
+  try {
+    const { data: blogs } = await supabase
+      .from('blogs')
+      .select('slug')
+      .eq('status', 'published')
+      .limit(1000);
+      
+    if (blogs) {
+      const validBlogs = blogs.filter((b: any) => b.slug);
+      routes = routes.concat(
+        validBlogs.map((blog: any) => ({
+          url: `${baseUrl}/blog/${blog.slug}`,
+          changeFrequency: 'monthly' as const,
+          priority: 0.6,
+        }))
+      );
+    }
+  } catch (error) {
+    console.error(`Error generating blogs sitemap chunk:`, error);
   }
 
   return routes;

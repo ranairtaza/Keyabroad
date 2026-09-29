@@ -7,15 +7,15 @@
 
 ⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
   Creating an optimized production build ...
-✓ Compiled successfully in 23.3s
+✓ Compiled successfully in 12.0s
   Running TypeScript ...
-  Finished TypeScript in 30.4s ...
+  Finished TypeScript in 11.0s ...
   Collecting page data using 7 workers ...
-  Generating static pages using 7 workers (0/51) ...
-  Generating static pages using 7 workers (12/51) 
-  Generating static pages using 7 workers (25/51) 
-  Generating static pages using 7 workers (38/51) 
-✓ Generating static pages using 7 workers (51/51) in 8.5s
+  Generating static pages using 7 workers (0/205) ...
+  Generating static pages using 7 workers (51/205) 
+  Generating static pages using 7 workers (102/205) 
+  Generating static pages using 7 workers (153/205) 
+✓ Generating static pages using 7 workers (205/205) in 22.9s
   Finalizing page optimization ...
 
 Route (app)
@@ -29,7 +29,7 @@ Route (app)
 ├ ƒ /api/messages
 ├ ƒ /api/notify
 ├ ○ /blog
-├ ƒ /blog/[slug]
+├ ● /blog/[slug]
 ├ ○ /book-appointment
 ├ ƒ /careers
 ├ ○ /compare
@@ -49,10 +49,10 @@ Route (app)
 ├ ƒ /language-tests/[test]
 ├ ○ /login
 ├ ƒ /programs
-├ ƒ /programs/[universityId]/[programId]
+├ ● /programs/[universityId]/[programId]
 ├ ○ /robots.txt
 ├ ƒ /scholarships
-├ ƒ /scholarships/[id]
+├ ● /scholarships/[id]
 ├ ○ /services
 ├ ○ /sitemap.xml
 ├ ○ /student
@@ -65,7 +65,11 @@ Route (app)
 ├ ○ /student/profile
 ├ ○ /teams
 ├ ƒ /universities
-├ ƒ /universities/[id]
+├ ● /universities/[id]
+│ ├ /universities/university-of-greater-manchester
+│ ├ /universities/birmingham-city-university
+│ ├ /universities/university-of-law
+│ └ [+151 more paths]
 └ ○ /walk-in
 
 

@@ -91,7 +91,11 @@ export async function getPublishedScholarships(params: ScholarshipSearchParams) 
 }
 
 export async function getPublishedScholarshipById(id: string) {
-  const supabase = await createClient();
+  const { createClient } = require('@supabase/supabase-js');
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  );
 
   const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
   if (!uuidRegex.test(id)) {
@@ -120,6 +124,8 @@ export async function getPublishedScholarshipById(id: string) {
       )
     `)
     .eq('id', id)
+    .eq('status', 'published')
+    .eq('verification_status', 'verified')
     .single();
 
   if (error) {
@@ -136,7 +142,11 @@ export async function getAllScholarshipIds() {
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
   );
-  const { data, error } = await supabase.from('scholarships').select('id');
+  const { data, error } = await supabase
+    .from('scholarships')
+    .select('id')
+    .eq('status', 'published')
+    .eq('verification_status', 'verified');
   if (error) {
     console.error('Error fetching scholarship IDs:', error);
     return [];

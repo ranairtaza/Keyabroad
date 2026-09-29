@@ -81,14 +81,18 @@ export async function getPublishedUniversities(params: UniversitySearchParams) {
 
 
 export async function getPublishedUniversityById(id: string) {
-  const supabase = await createClient();
+  const { createClient } = require('@supabase/supabase-js');
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  );
 
   const { data: university, error } = await supabase
     .from('universities')
     .select(`
       id,
-      slug,
       name,
+      slug,
       logo_url,
       url,
       countries (
@@ -116,7 +120,9 @@ export async function getPublishedUniversityById(id: string) {
         description
       )
     `)
-    .eq(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id) ? 'id' : 'slug', id)
+    .eq('slug', id)
+    .eq('status', 'published')
+    .eq('verification_status', 'verified')
     .single();
 
   if (error) {
@@ -133,10 +139,14 @@ export async function getAllUniversitySlugs() {
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
   );
-  const { data, error } = await supabase.from('universities').select('id');
+  const { data, error } = await supabase
+    .from('universities')
+    .select('slug')
+    .eq('status', 'published')
+    .eq('verification_status', 'verified');
   if (error) {
     console.error('Error fetching university slugs:', error);
     return [];
   }
-  return (data || []).filter((u: any) => u.id).map((u: any) => ({ id: String(u.id) }));
+  return (data || []).filter((u: any) => u.slug).map((u: any) => ({ id: String(u.slug) }));
 }

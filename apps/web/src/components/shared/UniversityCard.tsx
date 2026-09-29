@@ -24,7 +24,7 @@ interface UniversityCardProps {
 
 export function UniversityCard({ university }: UniversityCardProps) {
   return (
-    <Link href={`/universities/${(university as any).slug || university.id}`} className="group h-full block">
+    <Link href={`/universities/${(university as any).slug}`} className="group h-full block">
       <Card className="relative h-full transition-all duration-300 hover:shadow-xl hover:-translate-y-1 border-slate-200 hover:border-blue-300 flex flex-col">
         <CardHeader className="pb-3 items-center text-center">
           {/* Ranking badge */}

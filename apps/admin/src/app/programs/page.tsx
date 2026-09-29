@@ -37,7 +37,8 @@ export default function ProgramsPage() {
     minimum_cgpa: 0,
     university_id: "",
     status: "published",
-    verification_status: "verified"
+    verification_status: "verified",
+    slug: ""
   });
 
   const supabase = createClient();
@@ -66,8 +67,11 @@ export default function ProgramsPage() {
       return;
     }
 
+    const slug = newProgram.slug || newProgram.name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)+/g, "");
+
     const payload = {
       ...newProgram,
+      slug,
       tuition_fee: Number(newProgram.tuition_fee),
       minimum_cgpa: Number(newProgram.minimum_cgpa),
     };
@@ -83,7 +87,7 @@ export default function ProgramsPage() {
       setIsModalOpen(false);
       setNewProgram({ 
         name: "", degree_level: "Bachelors", tuition_fee: 0, currency: "USD", duration: "4 Years", minimum_cgpa: 0,
-        university_id: "", status: "published", verification_status: "verified" 
+        university_id: "", status: "published", verification_status: "verified", slug: "" 
       });
     }
   };
@@ -215,7 +219,16 @@ export default function ProgramsPage() {
             <form onSubmit={handleAddProgram} className="p-6 space-y-4">
               <div>
                 <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Program Name</label>
-                <input required type="text" value={newProgram.name} onChange={e => setNewProgram({...newProgram, name: e.target.value})} className="w-full px-4 py-2 border border-slate-200 dark:border-slate-800 rounded-lg bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white" />
+                <input required type="text" value={newProgram.name} onChange={e => {
+                  const name = e.target.value;
+                  const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)+/g, "");
+                  setNewProgram({...newProgram, name, slug});
+                }} className="w-full px-4 py-2 border border-slate-200 dark:border-slate-800 rounded-lg bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white" />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">URL Slug *</label>
+                <input required type="text" value={newProgram.slug} onChange={e => setNewProgram({...newProgram, slug: e.target.value})} className="w-full px-4 py-2 border border-slate-200 dark:border-slate-800 rounded-lg bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white" />
               </div>
 
               <div>

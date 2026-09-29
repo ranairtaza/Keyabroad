@@ -19,7 +19,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     .eq('slug', resolvedParams.slug)
     .single();
 
-  if (!blog) return { title: 'Not Found | KeyAbroad' };
+  if (!blog) notFound();
   
   return {
     title: blog.meta_title || `${blog.title} | KeyAbroad Blog`,

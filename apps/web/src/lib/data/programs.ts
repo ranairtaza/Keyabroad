@@ -110,7 +110,11 @@ export async function getPublishedPrograms(params: ProgramSearchParams) {
 }
 
 export async function getPublishedProgramBySlug(slug: string) {
-  const supabase = await createClient();
+  const { createClient } = require('@supabase/supabase-js');
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  );
 
   const { data: program, error } = await supabase
     .from('programs')
@@ -135,6 +139,8 @@ export async function getPublishedProgramBySlug(slug: string) {
       )
     `)
     .eq('slug', slug)
+    .eq('status', 'published')
+    .eq('verification_status', 'verified')
     .single();
 
   if (error) {
@@ -146,10 +152,11 @@ export async function getPublishedProgramBySlug(slug: string) {
 }
 
 export async function getPublishedProgramById(id: string) {
-  const supabase = await createClient();
-
-  const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-  const isUuid = uuidRegex.test(id);
+  const { createClient } = require('@supabase/supabase-js');
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  );
 
   const { data: program, error } = await supabase
     .from('programs')
@@ -163,7 +170,6 @@ export async function getPublishedProgramById(id: string) {
       currency,
       universities (
         id,
-        slug,
         name,
         logo_url,
         url,
@@ -174,7 +180,9 @@ export async function getPublishedProgramById(id: string) {
         )
       )
     `)
-    .eq(isUuid ? 'id' : 'slug', id)
+    .eq('slug', id)
+    .eq('status', 'published')
+    .eq('verification_status', 'verified')
     .single();
 
   if (error) {
@@ -194,7 +202,11 @@ export async function getAllProgramSlugs() {
   
   const { data, error } = await supabase
     .from('programs')
-    .select('id, universities(id)');
+    .select('slug, universities!inner(slug, status, verification_status)')
+    .eq('status', 'published')
+    .eq('verification_status', 'verified')
+    .eq('universities.status', 'published')
+    .eq('universities.verification_status', 'verified');
     
   if (error) {
     console.error('Error fetching program slugs:', error);
@@ -202,13 +214,13 @@ export async function getAllProgramSlugs() {
   }
   
   return (data || [])
-    .filter((p: any) => p.id)
+    .filter((p: any) => p.slug)
     .map((p: any) => {
       const uni = Array.isArray(p.universities) ? p.universities[0] : p.universities;
-      const uniSlug = uni ? (uni as any).id : null;
+      const uniSlug = uni ? (uni as any).slug : null;
       if (!uniSlug) return null;
       return { 
-        programId: String(p.id),
+        programId: String(p.slug),
         universityId: String(uniSlug)
       };
     })

@@ -15,8 +15,7 @@ interface PageProps {
 export const dynamicParams = false;
 
 export async function generateStaticParams() {
-  const slugs = await getAllUniversitySlugs();
-  return slugs;
+  return await getAllUniversitySlugs();
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
@@ -24,7 +23,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const university = await getPublishedUniversityById(id);
   
   if (!university) {
-    return { title: 'Not Found | KeyAbroad' };
+    notFound();
   }
 
   const country = Array.isArray(university.countries)
@@ -33,14 +32,14 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   return {
     alternates: {
-      canonical: `/universities/${(university as any).id}`,
+      canonical: `/universities/${(university as any).slug}`,
     },
     title: `${university.name} - Admissions, Fees & Programs 2026 | KeyAbroad`,
     description: `Discover programs, scholarships, and admissions requirements for ${university.name} in ${country?.name}. Apply now for 2026 intakes.`,
     openGraph: {
       title: `${university.name} | Study in ${country?.name}`,
       description: `Explore programs, tuition fees, and scholarships at ${university.name}. Start your application with KeyAbroad.`,
-      url: `https://keyabroad.com/universities/${(university as any).id}`,
+      url: `https://keyabroad.com/universities/${(university as any).slug}`,
       siteName: 'KeyAbroad',
       images: [
         {
@@ -110,7 +109,7 @@ export default async function UniversityDetailPage({ params }: PageProps) {
       {
         '@type': 'EducationalOrganization',
         name: university.name,
-        url: `https://keyabroad.com/universities/${(university as any).slug || university.id}`,
+        url: `https://keyabroad.com/universities/${university.slug}`,
         logo: university.logo_url || 'https://keyabroad.com/icon.png',
         address: {
           '@type': 'PostalAddress',
@@ -178,7 +177,7 @@ export default async function UniversityDetailPage({ params }: PageProps) {
               {university.programs && university.programs.length > 0 ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {university.programs.map((program: any) => (
-                    <Link key={program.id} href={`/programs/${university.slug || university.id}/${(program as any).slug || program.id}`}>
+                    <Link key={program.id} href={`/programs/${university.slug}/${(program as any).slug}`}>
                       <Card className="h-full hover:border-blue-300 hover:shadow-md transition-all cursor-pointer">
                         <CardHeader className="pb-2">
                           <CardTitle className="text-lg font-bold text-slate-900 group-hover:text-blue-600">

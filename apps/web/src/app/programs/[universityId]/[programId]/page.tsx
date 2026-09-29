@@ -25,27 +25,27 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const program = await getPublishedProgramById(programId);
   
   if (!program) {
-    return { title: 'Not Found | KeyAbroad' };
+    notFound();
   }
 
   const uni = Array.isArray(program.universities)
     ? (program.universities[0] as any)
     : (program.universities as any);
 
-  if (uni?.id !== universityId) {
-    return { title: 'Not Found | KeyAbroad' };
+  if (uni?.slug !== universityId || program.slug !== programId) {
+    notFound();
   }
 
   return {
     alternates: {
-      canonical: `/programs/${uni?.id}/${program.id}`,
+      canonical: `/programs/${uni?.slug}/${program.slug}`,
     },
     title: `${program.name} at ${uni?.name} - Admissions 2026 | KeyAbroad`,
     description: `Get full details on the ${program.name} at ${uni?.name}. View tuition fees (${program.tuition_fee} ${program.currency}), duration, and start your application today.`,
     openGraph: {
       title: `${program.name} at ${uni?.name}`,
       description: `Study ${program.name} at ${uni?.name}. View requirements, fees, and apply through KeyAbroad.`,
-      url: `https://keyabroad.com/programs/${uni?.id}/${program.id}`,
+      url: `https://keyabroad.com/programs/${uni?.slug}/${program.slug}`,
       siteName: 'KeyAbroad',
       images: [
         {
@@ -78,7 +78,7 @@ export default async function ProgramDetailPage({ params }: PageProps) {
     ? (program.universities[0] as any) 
     : (program.universities as any);
 
-  if (uni?.id !== universityId) {
+  if (uni?.slug !== universityId || program.slug !== programId) {
     notFound();
   }
 
@@ -104,7 +104,7 @@ export default async function ProgramDetailPage({ params }: PageProps) {
             '@type': 'ListItem',
             position: 3,
             name: uni.name,
-            item: `https://keyabroad.com/universities/${uni.id}`,
+            item: `https://keyabroad.com/universities/${uni.slug}`,
           }] : []),
           {
             '@type': 'ListItem',
@@ -120,7 +120,7 @@ export default async function ProgramDetailPage({ params }: PageProps) {
         provider: {
           '@type': 'EducationalOrganization',
           name: uni?.name,
-          sameAs: uni?.url || `https://keyabroad.com/universities/${uni?.id}`,
+          sameAs: uni?.url || `https://keyabroad.com/universities/${uni?.slug}`,
         },
         hasCourseInstance: [
           {
@@ -170,7 +170,7 @@ export default async function ProgramDetailPage({ params }: PageProps) {
               )}
               <div>
                 <div className="text-lg font-medium text-white">{uni.name}</div>
-                <Link href={`/universities/${uni.id}`} className="text-sm text-blue-400 hover:text-blue-300 flex items-center gap-1 mt-1">
+                <Link href={`/universities/${uni.slug}`} className="text-sm text-blue-400 hover:text-blue-300 flex items-center gap-1 mt-1">
                   View University <ArrowRight className="w-3 h-3" />
                 </Link>
               </div>
