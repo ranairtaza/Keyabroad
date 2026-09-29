@@ -114,6 +114,7 @@ export async function getPublishedScholarshipById(id: string) {
       universities (
         id,
         name,
+        slug,
         logo_url
       ),
       countries (

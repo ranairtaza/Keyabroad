@@ -68,6 +68,7 @@ export function ProgramCard({ program }: ProgramCardProps) {
                 id: program.id,
                 name: program.name,
                 slug: (program as any).slug,
+                university_slug: (program.universities as any)?.slug,
                 university_id: program.universities?.id,
                 type: 'program',
                 country: program.universities?.countries?.name,

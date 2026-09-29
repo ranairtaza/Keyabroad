@@ -73,6 +73,7 @@ export function UniversityCard({ university }: UniversityCardProps) {
               item={{
                 id: university.id,
                 name: university.name,
+                slug: (university as any).slug,
                 type: 'university',
                 country: university.countries?.name,
                 logo_url: university.logo_url || undefined,

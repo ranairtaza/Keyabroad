@@ -54,7 +54,7 @@ export default async function ScholarshipPage({ params }: PageProps) {
             <Link href="/scholarships" className="hover:text-emerald-100">Scholarships</Link>
             <span>/</span>
             {uni ? (
-              <Link href={`/universities/${uni.id}`} className="hover:text-emerald-100">
+              <Link href={`/universities/${uni.slug}`} className="hover:text-emerald-100">
                 {uni.name}
               </Link>
             ) : country ? (
@@ -121,7 +121,7 @@ export default async function ScholarshipPage({ params }: PageProps) {
                     </div>
                     <div>
                       <span className="text-sm font-semibold text-slate-900 block">{uni.name}</span>
-                      <Link href={`/universities/${uni.id}`} className="text-xs text-blue-600 hover:underline">
+                      <Link href={`/universities/${uni.slug}`} className="text-xs text-blue-600 hover:underline">
                         View University &rarr;
                       </Link>
                     </div>

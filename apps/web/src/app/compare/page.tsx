@@ -115,8 +115,8 @@ export default function ComparePage() {
                     <td key={item.id} className="p-6 text-center">
                       <Link href={
                         item.type === 'program' 
-                          ? (item.university_id && item.slug ? `/programs/${item.university_id}/${item.slug}` : `/programs/${item.id}`) 
-                          : `/universities/${item.id}`
+                          ? `/programs/${item.university_slug}/${item.slug}`
+                          : `/universities/${item.slug}`
                       }>
                         <Button className="w-full flex items-center justify-center gap-2">
                           View Details <ArrowRight className="h-4 w-4" />
