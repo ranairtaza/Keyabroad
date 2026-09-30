@@ -6,9 +6,14 @@ import { notFound } from 'next/navigation';
 export const dynamicParams = false;
 
 export async function generateStaticParams() {
-  const { data } = await supabase.from('blogs').select('slug').eq('status', 'published');
-  if (!data) return [];
-  return data.filter((b: any) => b.slug).map((b: any) => ({ slug: String(b.slug) }));
+  try {
+    const { data } = await supabase.from('blogs').select('slug').eq('status', 'published');
+    if (!data) return [];
+    return data.filter((b: any) => b.slug).map((b: any) => ({ slug: String(b.slug) }));
+  } catch (error) {
+    console.error("Error fetching blog slugs:", error);
+    return [];
+  }
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
