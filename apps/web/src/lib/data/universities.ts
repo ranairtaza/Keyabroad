@@ -146,7 +146,7 @@ export async function getAllUniversitySlugs() {
     .eq('verification_status', 'verified');
   if (error) {
     console.error('Error fetching university slugs:', error);
-    return [];
+    throw error;
   }
   return (data || []).filter((u: any) => u.slug).map((u: any) => ({ id: String(u.slug) }));
 }

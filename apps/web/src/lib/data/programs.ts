@@ -210,7 +210,7 @@ export async function getAllProgramSlugs() {
     
   if (error) {
     console.error('Error fetching program slugs:', error);
-    return [];
+    throw error;
   }
   
   return (data || [])

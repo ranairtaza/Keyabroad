@@ -3,15 +3,14 @@
 > next build
 
 ▲ Next.js 16.2.11 (Turbopack)
-- Environments: .env.local
 
 ⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
   Creating an optimized production build ...
-✓ Compiled successfully in 39.5s
+✓ Compiled successfully in 47s
   Running TypeScript ...
-  Finished TypeScript in 34.6s ...
+  Finished TypeScript in 22.7s ...
   Collecting page data using 7 workers ...
-Error fetching scholarship IDs: {
+Error fetching program slugs: {
   message: 'TypeError: fetch failed',
   details: 'TypeError: fetch failed\n' +
     '\n' +
@@ -31,7 +30,7 @@ Error fetching university slugs: {
   hint: '',
   code: ''
 }
-Error fetching program slugs: {
+Error fetching blog slugs: {
   message: 'TypeError: fetch failed',
   details: 'TypeError: fetch failed\n' +
     '\n' +
@@ -41,11 +40,7 @@ Error fetching program slugs: {
   hint: '',
   code: ''
 }
-  Generating static pages using 7 workers (0/58) ...
-  Generating static pages using 7 workers (14/58) 
-  Generating static pages using 7 workers (28/58) 
-  Generating static pages using 7 workers (43/58) 
-Error fetching blogs: {
+{
   message: 'TypeError: fetch failed',
   details: 'TypeError: fetch failed\n' +
     '\n' +
@@ -55,69 +50,36 @@ Error fetching blogs: {
   hint: '',
   code: ''
 }
-✓ Generating static pages using 7 workers (58/58) in 33.3s
-  Finalizing page optimization ...
+{
+  message: 'TypeError: fetch failed',
+  details: 'TypeError: fetch failed\n' +
+    '\n' +
+    'Caused by: Error: getaddrinfo ENOTFOUND mock.supabase.co (ENOTFOUND)\n' +
+    'Error: getaddrinfo ENOTFOUND mock.supabase.co\n' +
+    '    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)',
+  hint: '',
+  code: ''
+}
+{
+  message: 'TypeError: fetch failed',
+  details: 'TypeError: fetch failed\n' +
+    '\n' +
+    'Caused by: Error: getaddrinfo ENOTFOUND mock.supabase.co (ENOTFOUND)\n' +
+    'Error: getaddrinfo ENOTFOUND mock.supabase.co\n' +
+    '    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)',
+  hint: '',
+  code: ''
+}
 
-Route (app)
-┌ ○ /
-├ ○ /_not-found
-├ ○ /about
-├ ○ /ai-advisor
-├ ƒ /api/appointments
-├ ƒ /api/chat
-├ ƒ /api/contact
-├ ƒ /api/eligibility
-├ ƒ /api/enquiries
-├ ƒ /api/feedback
-├ ƒ /api/health
-├ ƒ /api/messages
-├ ƒ /api/notify
-├ ƒ /api/registrations
-├ ƒ /api/track
-├ ○ /blog
-├ ● /blog/[slug]
-├ ○ /book-appointment
-├ ƒ /careers
-├ ○ /compare
-├ ○ /contact
-├ ○ /cost-calculator
-├ ○ /counseling
-├ ○ /destinations
-├ ● /destinations/[country]
-│ ├ /destinations/united-kingdom
-│ ├ /destinations/united-states
-│ ├ /destinations/canada
-│ └ [+14 more paths]
-├ ○ /eligibility
-├ ○ /feedback
-├ ○ /icon.png
-├ ○ /language-tests
-├ ƒ /language-tests/[test]
-├ ○ /login
-├ ƒ /programs
-├ ● /programs/[universityId]/[programId]
-├ ○ /robots.txt
-├ ƒ /scholarships
-├ ● /scholarships/[id]
-├ ○ /services
-├ ○ /sitemap.xml
-├ ○ /student
-├ ○ /student/applications
-├ ○ /student/dashboard
-├ ○ /student/documents
-├ ƒ /student/finance
-├ ƒ /student/finance/receipt/[id]
-├ ○ /student/messages
-├ ○ /student/profile
-├ ○ /teams
-├ ƒ /universities
-├ ● /universities/[id]
-└ ○ /walk-in
-
-
-ƒ Proxy (Middleware)
-
-○  (Static)   prerendered as static content
-●  (SSG)      prerendered as static HTML (uses generateStaticParams)
-ƒ  (Dynamic)  server-rendered on demand
-
+> Build error occurred
+Error: Failed to collect page data for /programs/[universityId]/[programId]
+    at ignore-listed frames {
+  type: 'Error'
+}
+npm error Lifecycle script `build` failed with error:
+npm error code 1
+npm error path C:\Users\DeLL\OneDrive\Desktop\Keyabroad\apps\web
+npm error workspace web@0.1.0
+npm error location C:\Users\DeLL\OneDrive\Desktop\Keyabroad\apps\web
+npm error command failed
+npm error command C:\Windows\system32\cmd.exe /d /s /c next build

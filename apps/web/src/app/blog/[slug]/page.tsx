@@ -3,17 +3,13 @@ import { supabase } from '@keyabroad/auth/legacy';
 import { Calendar, User, ArrowLeft, FileText } from 'lucide-react';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-export const dynamicParams = false;
-
 export async function generateStaticParams() {
-  try {
-    const { data } = await supabase.from('blogs').select('slug').eq('status', 'published');
-    if (!data) return [];
-    return data.filter((b: any) => b.slug).map((b: any) => ({ slug: String(b.slug) }));
-  } catch (error) {
+  const { data, error } = await supabase.from('blogs').select('slug').eq('status', 'published');
+  if (error) {
     console.error("Error fetching blog slugs:", error);
-    return [];
+    throw error;
   }
+  return (data || []).filter((b: any) => b.slug).map((b: any) => ({ slug: String(b.slug) }));
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {

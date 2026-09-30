@@ -150,7 +150,7 @@ export async function getAllScholarshipIds() {
     .eq('verification_status', 'verified');
   if (error) {
     console.error('Error fetching scholarship IDs:', error);
-    return [];
+    throw error;
   }
   return (data || []).map((s: any) => ({ id: String(s.id) }));
 }
