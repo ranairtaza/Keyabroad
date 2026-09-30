@@ -1,10 +1,45 @@
 "use client";
 
+import { useState } from "react";
 import { MapPin, Mail, Phone, Clock, ArrowRight } from "lucide-react";
 import { Button } from "@keyabroad/ui/components/button";
 import { Input } from "@keyabroad/ui/components/input";
 
 export default function ContactPage() {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [success, setSuccess] = useState(false);
+
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setIsSubmitting(true);
+    const formData = new FormData(e.currentTarget);
+    const payload = {
+      firstName: formData.get('firstName'),
+      lastName: formData.get('lastName'),
+      email: formData.get('email'),
+      phone: formData.get('phone'),
+      message: formData.get('message')
+    };
+
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      if (res.ok) {
+        setSuccess(true);
+        e.currentTarget.reset();
+      } else {
+        alert("Failed to send message. Please try again.");
+      }
+    } catch (err) {
+      alert("An error occurred.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
+
   return (
     <div className="min-h-screen bg-slate-50 pt-24 pb-20">
       <div className="container mx-auto px-4 max-w-6xl">
@@ -78,41 +113,50 @@ export default function ContactPage() {
           {/* Contact Form */}
           <div className="bg-white p-8 md:p-10 rounded-3xl shadow-xl shadow-slate-200/50 border border-slate-100">
             <h2 className="text-2xl font-bold text-slate-900 mb-8 font-heading">Send us a Message</h2>
-            <form className="space-y-6" onSubmit={(e) => { e.preventDefault(); alert("Message sent successfully! We will get back to you soon."); }}>
-              <div className="grid md:grid-cols-2 gap-6">
-                <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-2">First Name</label>
-                  <Input placeholder="John" className="h-12 bg-slate-50 border-slate-200" required />
+            {success ? (
+              <div className="p-6 bg-green-50 text-green-700 rounded-xl border border-green-200 text-center">
+                <h3 className="font-bold text-lg mb-2">Message Sent!</h3>
+                <p>Thank you for getting in touch. We will get back to you as soon as possible.</p>
+                <Button className="mt-4" onClick={() => setSuccess(false)}>Send another message</Button>
+              </div>
+            ) : (
+              <form className="space-y-6" onSubmit={handleSubmit}>
+                <div className="grid md:grid-cols-2 gap-6">
+                  <div>
+                    <label className="block text-sm font-semibold text-slate-700 mb-2">First Name</label>
+                    <Input name="firstName" placeholder="John" className="h-12 bg-slate-50 border-slate-200" required />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-slate-700 mb-2">Last Name</label>
+                    <Input name="lastName" placeholder="Doe" className="h-12 bg-slate-50 border-slate-200" required />
+                  </div>
                 </div>
+                
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-2">Last Name</label>
-                  <Input placeholder="Doe" className="h-12 bg-slate-50 border-slate-200" required />
+                  <label className="block text-sm font-semibold text-slate-700 mb-2">Email Address</label>
+                  <Input name="email" type="email" placeholder="john@example.com" className="h-12 bg-slate-50 border-slate-200" required />
                 </div>
-              </div>
-              
-              <div>
-                <label className="block text-sm font-semibold text-slate-700 mb-2">Email Address</label>
-                <Input type="email" placeholder="john@example.com" className="h-12 bg-slate-50 border-slate-200" required />
-              </div>
-              
-              <div>
-                <label className="block text-sm font-semibold text-slate-700 mb-2">Phone Number</label>
-                <Input type="tel" placeholder="+92 300 0000000" className="h-12 bg-slate-50 border-slate-200" required />
-              </div>
-              
-              <div>
-                <label className="block text-sm font-semibold text-slate-700 mb-2">Your Message</label>
-                <textarea 
-                  className="w-full min-h-[150px] p-4 rounded-xl border border-slate-200 bg-slate-50 focus:ring-2 focus:ring-primary/20 outline-none transition-all"
-                  placeholder="How can we help you?"
-                  required
-                ></textarea>
-              </div>
-              
-              <Button type="submit" size="lg" className="w-full h-14 text-lg rounded-xl shadow-lg shadow-primary/25">
-                Send Message <ArrowRight className="ml-2 w-5 h-5" />
-              </Button>
-            </form>
+                
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-2">Phone Number</label>
+                  <Input name="phone" type="tel" placeholder="+92 300 0000000" className="h-12 bg-slate-50 border-slate-200" required />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-2">Your Message</label>
+                  <textarea 
+                    name="message"
+                    className="w-full min-h-[150px] p-4 rounded-xl border border-slate-200 bg-slate-50 focus:ring-2 focus:ring-primary/20 outline-none transition-all"
+                    placeholder="How can we help you?"
+                    required
+                  ></textarea>
+                </div>
+                
+                <Button type="submit" size="lg" className="w-full h-14 text-lg rounded-xl shadow-lg shadow-primary/25" disabled={isSubmitting}>
+                  {isSubmitting ? "Sending..." : "Send Message"} <ArrowRight className="ml-2 w-5 h-5" />
+                </Button>
+              </form>
+            )}
           </div>
         </div>
       </div>

@@ -21,7 +21,11 @@ export default function Sidebar() {
   const canManageBlogs = !isIntern;
   const isManager = currentUser?.designation?.toLowerCase().includes("manager");
   const canViewHROps = role === "owner" || isManager;
-  const isAdminOrOwner = role === "owner" || (currentUser?.designation?.toLowerCase().includes("admin"));
+  const isAdminOrOwner = role === "owner" || 
+    (currentUser?.designation?.toLowerCase().includes("admin")) ||
+    (currentUser?.designation?.toLowerCase().includes("ceo")) ||
+    (currentUser?.designation?.toLowerCase().includes("founder")) ||
+    (currentUser?.designation?.toLowerCase().includes("project head"));
 
   const analyticsSubLinks = [
     { name: "Overview", href: "/analytics" },

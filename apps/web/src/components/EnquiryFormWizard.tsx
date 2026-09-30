@@ -4,7 +4,6 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { User, Phone, CheckCircle2, Ticket, ChevronRight, ChevronLeft, Calendar, MapPin, Mail, Briefcase, GraduationCap, Globe, ShieldAlert, FileCheck } from "lucide-react";
 import Hover3DWrapper from "@/components/Hover3DWrapper";
-import { supabase } from "@keyabroad/auth/legacy";
 
 const destinationsList = ["UK", "USA", "Canada", "Australia", "Germany", "Ireland", "Italy", "France", "Cyprus", "Malta", "Turkey", "UAE (Dubai)", "Malaysia", "New Zealand"];
 const subjectsList = ["Business & Management", "Accounting & Finance", "Marketing", "Sports", "Information Technology", "Artificial Intelligence", "Data Science", "Engineering", "Education", "Law", "Social Sciences", "Medical & Health Sciences", "Hospitality & Tourism", "Media & Communication"];
@@ -96,23 +95,7 @@ export default function EnquiryFormWizard() {
       ? `${formData.language_other} Prep`
       : 'General Consultation';
 
-    // 2. Automated Lead Assignment: Randomly assign to an active counselor
-    let assignee = null;
-    let counselorData = null;
-    try {
-      const { data: profiles } = await supabase.from('profiles').select('id, name, full_name, email');
-      if (profiles && profiles.length > 0) {
-        const randomProfile = profiles[Math.floor(Math.random() * profiles.length)];
-        assignee = randomProfile.id;
-        counselorData = {
-          name: randomProfile.name || randomProfile.full_name || 'One of our expert counselors',
-          email: randomProfile.email
-        };
-        setAssignedCounselor(counselorData);
-      }
-    } catch (e) {
-      console.error("Could not fetch profiles for assignment", e);
-    }
+    // 2. Automated Lead Assignment is now handled securely on the backend
 
     // Construct final payload
     const payload = {
@@ -122,7 +105,6 @@ export default function EnquiryFormWizard() {
       email: formData.email,
       city: formData.city,
       inquiry_type: inquiry_type,
-      assignee: assignee,
       status: 'pending',
       source: 'online',
       
@@ -146,19 +128,21 @@ export default function EnquiryFormWizard() {
       visa_status: formData.visa_status,
       visa_refusal_reason: formData.visa_refusal_reason,
       documents: formData.documents_other ? [...formData.documents, formData.documents_other] : formData.documents,
-      ticket_number: `T-${Math.floor(Math.random() * 900) + 100}`
     };
 
-    const { error } = await supabase.from('enquiries').insert([payload]);
-
-    setIsSubmitting(false);
-
-    if (error) {
-      console.error("Supabase Error Object:", error);
-      console.error("Payload:", payload);
-      alert(`Error submitting form: ${error.message || JSON.stringify(error)}`);
-    } else {
-      setTicketNumber(payload.ticket_number);
+    try {
+      const res = await fetch('/api/enquiries', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed to submit');
+      
+      setTicketNumber(data.ticket_number);
+      if (data.counselor_name) {
+        setAssignedCounselor({ name: data.counselor_name });
+      }
       setIsSubmitted(true);
       
       // Send confirmation email to the student
@@ -168,9 +152,14 @@ export default function EnquiryFormWizard() {
         body: JSON.stringify({
           to_email: formData.email,
           subject: 'KeyAbroad: Inquiry Received',
-          message: `Dear ${formData.full_name},<br/><br/>Thank you for reaching out to KeyAbroad! We have received your inquiry.<br/><br/>Your Ticket Number is: <b>${payload.ticket_number}</b><br/><br/>${counselorData ? `Your dedicated counselor, <b>${counselorData.name}</b>, is already reviewing your profile and will be in touch shortly.` : 'One of our expert counselors is reviewing your profile.'}<br/><br/>Don't want to wait? You can <a href="https://www.keyabroad.com/book-appointment">book a quick consultation right now</a>.<br/><br/>Best,<br/>The KeyAbroad Team`
+          message: `Dear ${formData.full_name},<br/><br/>Thank you for reaching out to KeyAbroad! We have received your inquiry.<br/><br/>Your Ticket Number is: <b>${data.ticket_number}</b><br/><br/>${data.counselor_name ? `Your dedicated counselor, <b>${data.counselor_name}</b>, is already reviewing your profile and will be in touch shortly.` : 'One of our expert counselors is reviewing your profile.'}<br/><br/>Don't want to wait? You can <a href="https://www.keyabroad.com/book-appointment">book a quick consultation right now</a>.<br/><br/>Best,<br/>The KeyAbroad Team`
         })
       }).catch(e => console.log('Failed to send confirmation email', e));
+    } catch (error: any) {
+      console.error("Error submitting form:", error);
+      alert(`Error submitting form: ${error.message || JSON.stringify(error)}`);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 

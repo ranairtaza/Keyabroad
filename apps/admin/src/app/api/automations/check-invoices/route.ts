@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 
 // Verify secret token for cron job auth
-const CRON_SECRET = process.env.CRON_SECRET || 'dev_secret_key';
+const CRON_SECRET = process.env.CRON_SECRET;
 
 export async function POST(request: Request) {
   const startTime = Date.now();

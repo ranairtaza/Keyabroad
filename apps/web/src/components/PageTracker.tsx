@@ -15,13 +15,17 @@ export default function PageTracker() {
       try {
         const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
         
-        await supabase.from("website_visits").insert([{
-          page_url: pathname,
-          referrer: document.referrer || "direct",
-          device_type: isMobile ? "mobile" : "desktop"
-        }]);
+        await fetch('/api/track', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            page_url: pathname,
+            referrer: document.referrer || "direct",
+            device_type: isMobile ? "mobile" : "desktop"
+          })
+        });
       } catch (err) {
-        // Silently fail if table isn't created yet or network error
+        // Silently fail if network error
         console.error("Failed to track visit", err);
       }
     };

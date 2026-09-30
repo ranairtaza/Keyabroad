@@ -10,7 +10,7 @@ export async function POST(request: Request) {
     const { table = 'office_tasks', ...insertData } = body;
     
     // Allowed tables to prevent SQL injection
-    const allowedTables = ['office_tasks', 'registrations', 'enquiries', 'follow_ups'];
+    const allowedTables = ['tasks', 'office_tasks', 'crm_tasks'];
     if (!allowedTables.includes(table)) {
       return NextResponse.json({ error: 'Invalid table specified' }, { status: 400 });
     }

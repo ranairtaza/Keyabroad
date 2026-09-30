@@ -8,6 +8,11 @@ export async function POST(request: Request) {
   try {
     const { table, id, updateData } = await request.json();
 
+    const allowedTables = ['tasks'];
+    if (!allowedTables.includes(table)) {
+      return NextResponse.json({ error: 'Invalid table' }, { status: 400 });
+    }
+
     if (!supabaseServiceRoleKey) {
       return NextResponse.json(
         { error: 'Server configuration error: SUPABASE_SERVICE_ROLE_KEY is missing.' },

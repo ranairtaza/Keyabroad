@@ -18,18 +18,20 @@ export default function RegistrationForm() {
     const phone = formData.get('mobile') as string;
     const test = formData.get('languageTest') as string;
 
-    const { error } = await supabase
-      .from('registrations')
-      .insert([
-        {
+    try {
+      const res = await fetch('/api/registrations', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
           student_name: `${firstName} ${lastName}`.trim(),
           email,
           phone,
           test
-        }
-      ]);
-
-    if (error) {
+        })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed to submit');
+    } catch (error) {
       console.error(error);
       alert("Error submitting registration. Please try again.");
       return;

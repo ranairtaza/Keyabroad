@@ -103,8 +103,15 @@ interface AttendanceEvent {
 }
 
 export default function BiometricsAdminPage() {
-  const { role } = useRole();
-  const isAdmin = role === "owner" || (role && role.toLowerCase().includes("admin"));
+  const { role, currentUser } = useRole();
+  
+  const userDesig = (currentUser?.designation || "").toLowerCase();
+  const isAdmin = 
+    role === "owner" || 
+    userDesig.includes("admin") || 
+    userDesig.includes("ceo") || 
+    userDesig.includes("founder") ||
+    userDesig.includes("project head");
 
   const [activeTab, setActiveTab] = useState<string>("devices");
 

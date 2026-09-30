@@ -34,23 +34,27 @@ export default function LanguageTestDetailPage({ params }: Props) {
     const email = formData.get("email") as string;
     const targetScore = formData.get("targetScore") as string;
 
-    const { error } = await supabase.from("registrations").insert([
-      {
-        student_name: studentName,
-        phone,
-        email,
-        test: testData.name,
-        target_score: targetScore,
-        status: "pending"
-      }
-    ]);
-
-    setIsSubmitting(false);
-    if (error) {
+    try {
+      const res = await fetch('/api/registrations', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          student_name: studentName,
+          phone,
+          email,
+          test: testData.name,
+          target_score: targetScore,
+          status: "pending"
+        })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed to submit');
+      setIsSuccess(true);
+    } catch (error) {
       console.error(error);
       alert("Failed to submit registration. Please try again.");
-    } else {
-      setIsSuccess(true);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 

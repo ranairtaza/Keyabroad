@@ -32,24 +32,16 @@ export default function BookAppointmentPage() {
     setError(null);
 
     try {
-      const { error: insertError } = await supabase.from('appointments').insert([{
-        student_name: formData.student_name,
-        phone: formData.phone,
-        appointment_date: formData.appointment_date,
-        appointment_time: formData.appointment_time,
-        status: 'scheduled'
-      }]);
-
-      if (insertError) throw insertError;
+      const res = await fetch('/api/appointments', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData)
+      });
+      
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed to book appointment');
       
       setSuccess(true);
-      
-      // Also notify admins (simulated for now, would use real notify endpoint)
-      await supabase.from('notifications').insert([{
-        recipient: 'Admin',
-        message: `New appointment booked by ${formData.student_name} for ${formData.appointment_date}`
-      }]);
-
     } catch (err: any) {
       setError(err.message);
     } finally {

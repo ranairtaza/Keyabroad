@@ -6,7 +6,7 @@ export async function middleware(request: NextRequest) {
   const path = request.nextUrl.pathname
 
   // Protect student-specific private routes
-  if (!user && (path.startsWith('/student') || path.startsWith('/book-appointment'))) {
+  if (!user && path.startsWith('/student')) {
     if (path.startsWith('/api/')) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
@@ -22,7 +22,6 @@ export async function middleware(request: NextRequest) {
 export const config = {
   matcher: [
     '/student/:path*',
-    '/book-appointment/:path*',
     '/api/:path*',
   ],
 }

@@ -7,15 +7,55 @@
 
 ⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
   Creating an optimized production build ...
-✓ Compiled successfully in 14.4s
+✓ Compiled successfully in 39.5s
   Running TypeScript ...
-  Finished TypeScript in 14.6s ...
+  Finished TypeScript in 34.6s ...
   Collecting page data using 7 workers ...
-  Generating static pages using 7 workers (0/205) ...
-  Generating static pages using 7 workers (51/205) 
-  Generating static pages using 7 workers (102/205) 
-  Generating static pages using 7 workers (153/205) 
-✓ Generating static pages using 7 workers (205/205) in 22.2s
+Error fetching scholarship IDs: {
+  message: 'TypeError: fetch failed',
+  details: 'TypeError: fetch failed\n' +
+    '\n' +
+    'Caused by: Error: getaddrinfo ENOTFOUND mock.supabase.co (ENOTFOUND)\n' +
+    'Error: getaddrinfo ENOTFOUND mock.supabase.co\n' +
+    '    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)',
+  hint: '',
+  code: ''
+}
+Error fetching university slugs: {
+  message: 'TypeError: fetch failed',
+  details: 'TypeError: fetch failed\n' +
+    '\n' +
+    'Caused by: Error: getaddrinfo ENOTFOUND mock.supabase.co (ENOTFOUND)\n' +
+    'Error: getaddrinfo ENOTFOUND mock.supabase.co\n' +
+    '    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)',
+  hint: '',
+  code: ''
+}
+Error fetching program slugs: {
+  message: 'TypeError: fetch failed',
+  details: 'TypeError: fetch failed\n' +
+    '\n' +
+    'Caused by: Error: getaddrinfo ENOTFOUND mock.supabase.co (ENOTFOUND)\n' +
+    'Error: getaddrinfo ENOTFOUND mock.supabase.co\n' +
+    '    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)',
+  hint: '',
+  code: ''
+}
+  Generating static pages using 7 workers (0/58) ...
+  Generating static pages using 7 workers (14/58) 
+  Generating static pages using 7 workers (28/58) 
+  Generating static pages using 7 workers (43/58) 
+Error fetching blogs: {
+  message: 'TypeError: fetch failed',
+  details: 'TypeError: fetch failed\n' +
+    '\n' +
+    'Caused by: Error: getaddrinfo ENOTFOUND mock.supabase.co (ENOTFOUND)\n' +
+    'Error: getaddrinfo ENOTFOUND mock.supabase.co\n' +
+    '    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)',
+  hint: '',
+  code: ''
+}
+✓ Generating static pages using 7 workers (58/58) in 33.3s
   Finalizing page optimization ...
 
 Route (app)
@@ -23,11 +63,17 @@ Route (app)
 ├ ○ /_not-found
 ├ ○ /about
 ├ ○ /ai-advisor
+├ ƒ /api/appointments
 ├ ƒ /api/chat
-├ ƒ /api/debug-countries
+├ ƒ /api/contact
+├ ƒ /api/eligibility
+├ ƒ /api/enquiries
+├ ƒ /api/feedback
 ├ ƒ /api/health
 ├ ƒ /api/messages
 ├ ƒ /api/notify
+├ ƒ /api/registrations
+├ ƒ /api/track
 ├ ○ /blog
 ├ ● /blog/[slug]
 ├ ○ /book-appointment
@@ -66,10 +112,6 @@ Route (app)
 ├ ○ /teams
 ├ ƒ /universities
 ├ ● /universities/[id]
-│ ├ /universities/university-of-greater-manchester
-│ ├ /universities/birmingham-city-university
-│ ├ /universities/university-of-law
-│ └ [+151 more paths]
 └ ○ /walk-in
 
 

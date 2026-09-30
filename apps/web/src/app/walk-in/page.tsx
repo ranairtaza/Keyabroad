@@ -126,21 +126,25 @@ export default function CheckinPage() {
       visa_status: formData.visa_status,
       visa_refusal_reason: formData.visa_refusal_reason,
       documents: formData.documents_other ? [...formData.documents, formData.documents_other] : formData.documents,
-      ticket_number: `T-${Math.floor(Math.random() * 900) + 100}`
     };
 
-    const { error } = await supabase.from('enquiries').insert([payload]);
+    try {
+      const res = await fetch('/api/enquiries', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed to submit');
 
-    setIsSubmitting(false);
-
-    if (error) {
-      console.error("Supabase Error Object:", error);
+      setTicketNumber(data.ticket_number);
+      setIsSubmitted(true);
+    } catch (error: any) {
+      console.error("Error Object:", error);
       alert(`Database error: ${error.message || JSON.stringify(error)}`);
-      return;
+    } finally {
+      setIsSubmitting(false);
     }
-
-    setTicketNumber(payload.ticket_number);
-    setIsSubmitted(true);
   };
 
   return (

@@ -64,13 +64,19 @@ function FeedbackForm() {
       review_text: reviewText,
     };
 
-    const { error } = await supabase.from("student_feedbacks").insert([payload]);
+    try {
+      const res = await fetch('/api/feedback', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed to submit');
 
-    if (error) {
+      setStatus("success");
+    } catch (error: any) {
       setErrorMessage(error.message || "Failed to submit feedback. Please try again.");
       setStatus("error");
-    } else {
-      setStatus("success");
     }
   };
 

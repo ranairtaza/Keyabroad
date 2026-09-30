@@ -9,8 +9,28 @@ export async function updateSession(request: any) {
     const referer = request.headers.get('referer');
     const host = request.headers.get('host');
     
-    // Fallback comparison to ensure the request originated from the same host
-    if ((origin && !origin.includes(host)) || (referer && !referer.includes(host))) {
+    let isOriginValid = true;
+    let isRefererValid = true;
+
+    if (origin && host) {
+      try {
+        const originUrl = new URL(origin);
+        isOriginValid = originUrl.host === host;
+      } catch (e) {
+        isOriginValid = false;
+      }
+    }
+
+    if (referer && host) {
+      try {
+        const refererUrl = new URL(referer);
+        isRefererValid = refererUrl.host === host;
+      } catch (e) {
+        isRefererValid = false;
+      }
+    }
+
+    if (!isOriginValid || !isRefererValid) {
       return { 
         supabaseResponse: NextResponse.json({ error: 'CSRF Token Mismatch' }, { status: 403 }), 
         user: null, 

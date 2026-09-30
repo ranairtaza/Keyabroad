@@ -68,76 +68,20 @@ export function EligibilityWizard() {
   const handleSubmit = async () => {
     setIsSubmitting(true);
     try {
-      // 1. Submit lead securely via RPC (matching test suite signature)
-      const { data: leadId, error } = await supabase.rpc('submit_public_lead', {
-        p_first_name: formData.firstName,
-        p_last_name: formData.lastName,
-        p_email: formData.email,
-        p_phone: formData.phone || null,
-        p_cgpa: formData.cgpa,
-        p_ielts_score: formData.ieltsScore,
-        p_study_gap_years: formData.studyGapYears,
-        p_budget: formData.budget, // Matches the INT budget signature
-        p_preferred_country_id: formData.preferredCountryId || null,
+      const res = await fetch('/api/eligibility', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData)
       });
-
-      if (error) {
-        console.error("Failed to submit lead:", error);
-      }
-
-      // 2. Business Logic: Convert PKR budget to various currencies for matching
-      const budgetPKR = formData.budget;
-      const budgetUSD = budgetPKR / 278;
-      const budgetGBP = budgetPKR / 350;
-      const budgetEUR = budgetPKR / 300;
-      const budgetAUD = budgetPKR / 185;
-      const budgetCAD = budgetPKR / 205;
-
-      const currencyFilter = `and(currency.eq.USD,tuition_fee.lte.${budgetUSD}),and(currency.eq.GBP,tuition_fee.lte.${budgetGBP}),and(currency.eq.EUR,tuition_fee.lte.${budgetEUR}),and(currency.eq.AUD,tuition_fee.lte.${budgetAUD}),and(currency.eq.CAD,tuition_fee.lte.${budgetCAD})`;
-
-      const query = supabase
-        .from('programs')
-        .select('*', { count: 'exact', head: true })
-        .lte('minimum_cgpa', formData.cgpa)
-        .or(currencyFilter);
-        
-      if (formData.preferredCountryId) {
-         // Assuming we have a relation or we'd filter by university_id. 
-         // Since we don't join easily in head queries, let's leave country filter for future iteration, 
-         // or we can join universities!inner(country_id) 
-      }
-
-      const { count, error: qError } = await query;
-      if (qError) console.error(qError);
-
-      const matchedCount = count || 0;
-      let status: 'eligible' | 'likely_eligible' | 'needs_review' | 'not_met' = 'needs_review';
-      const suggestions: string[] = [];
-
-      if (matchedCount > 10) {
-        status = 'eligible';
-        suggestions.push("You have an extremely strong profile for your budget.");
-      } else if (matchedCount > 0) {
-        status = 'likely_eligible';
-        suggestions.push(`We found ${matchedCount} programs that perfectly fit your academic and financial profile.`);
-      } else {
-        status = 'not_met';
-        suggestions.push("We recommend increasing your budget or considering alternative destinations like Germany.");
-      }
-
-      if (formData.cgpa < 2.5) {
-        status = 'needs_review';
-        suggestions.push("Your CGPA may require you to consider pathway or foundation programs.");
-      }
-
-      setResult({
-        status,
-        matchedPrograms: matchedCount,
-        suggestions
-      });
+      const data = await res.json();
+      
+      if (!res.ok) throw new Error(data.error || 'Failed to submit');
+      
+      setResult(data.result);
       setStep(5);
     } catch (error) {
-      console.error(error);
+      console.error("Error checking eligibility:", error);
+      alert("Failed to submit eligibility check. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
