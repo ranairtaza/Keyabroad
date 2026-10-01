@@ -2,10 +2,24 @@
 > admin@0.1.0 build
 > next build
 
-▲ Next.js 16.2.11 (Turbopack)
-- Environments: .env.local
+⨯ Failed to load next.config.ts, see more info here https://nextjs.org/docs/messages/next-config-error
 
-⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
-  Creating an optimized production build ...
-✓ Compiled successfully in 55s
-  Running TypeScript ...
+> Build error occurred
+Error [ZodError]: [
+  {
+    "code": "invalid_format",
+    "format": "url",
+    "path": [
+      "NEXT_PUBLIC_SUPABASE_URL"
+    ],
+    "message": "Invalid URL"
+  }
+]
+    at Object.<anonymous> (C:\Users\DeLL\OneDrive\Desktop\Keyabroad\apps\admin\src\env.ts:21:23)
+npm error Lifecycle script `build` failed with error:
+npm error code 1
+npm error path C:\Users\DeLL\OneDrive\Desktop\Keyabroad\apps\admin
+npm error workspace admin@0.1.0
+npm error location C:\Users\DeLL\OneDrive\Desktop\Keyabroad\apps\admin
+npm error command failed
+npm error command C:\Windows\system32\cmd.exe /d /s /c next build

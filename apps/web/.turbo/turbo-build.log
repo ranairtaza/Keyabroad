@@ -3,76 +3,24 @@
 > next build
 
 ▲ Next.js 16.2.11 (Turbopack)
+- Environments: .env.local
 
 ⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
   Creating an optimized production build ...
-✓ Compiled successfully in 47s
+✓ Compiled successfully in 52s
   Running TypeScript ...
-  Finished TypeScript in 22.7s ...
+  Finished TypeScript in 30.6s ...
   Collecting page data using 7 workers ...
-Error fetching program slugs: {
-  message: 'TypeError: fetch failed',
-  details: 'TypeError: fetch failed\n' +
-    '\n' +
-    'Caused by: Error: getaddrinfo ENOTFOUND mock.supabase.co (ENOTFOUND)\n' +
-    'Error: getaddrinfo ENOTFOUND mock.supabase.co\n' +
-    '    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)',
-  hint: '',
-  code: ''
-}
-Error fetching university slugs: {
-  message: 'TypeError: fetch failed',
-  details: 'TypeError: fetch failed\n' +
-    '\n' +
-    'Caused by: Error: getaddrinfo ENOTFOUND mock.supabase.co (ENOTFOUND)\n' +
-    'Error: getaddrinfo ENOTFOUND mock.supabase.co\n' +
-    '    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)',
-  hint: '',
-  code: ''
-}
-Error fetching blog slugs: {
-  message: 'TypeError: fetch failed',
-  details: 'TypeError: fetch failed\n' +
-    '\n' +
-    'Caused by: Error: getaddrinfo ENOTFOUND mock.supabase.co (ENOTFOUND)\n' +
-    'Error: getaddrinfo ENOTFOUND mock.supabase.co\n' +
-    '    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)',
-  hint: '',
-  code: ''
-}
-{
-  message: 'TypeError: fetch failed',
-  details: 'TypeError: fetch failed\n' +
-    '\n' +
-    'Caused by: Error: getaddrinfo ENOTFOUND mock.supabase.co (ENOTFOUND)\n' +
-    'Error: getaddrinfo ENOTFOUND mock.supabase.co\n' +
-    '    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)',
-  hint: '',
-  code: ''
-}
-{
-  message: 'TypeError: fetch failed',
-  details: 'TypeError: fetch failed\n' +
-    '\n' +
-    'Caused by: Error: getaddrinfo ENOTFOUND mock.supabase.co (ENOTFOUND)\n' +
-    'Error: getaddrinfo ENOTFOUND mock.supabase.co\n' +
-    '    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)',
-  hint: '',
-  code: ''
-}
-{
-  message: 'TypeError: fetch failed',
-  details: 'TypeError: fetch failed\n' +
-    '\n' +
-    'Caused by: Error: getaddrinfo ENOTFOUND mock.supabase.co (ENOTFOUND)\n' +
-    'Error: getaddrinfo ENOTFOUND mock.supabase.co\n' +
-    '    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)',
-  hint: '',
-  code: ''
-}
+Error: Invalid supabaseUrl: Must be a valid HTTP or HTTPS URL.
+    at module evaluation (C:\Users\DeLL\OneDrive\Desktop\Keyabroad\apps\web\.next\server\chunks\0rrk_next_dist_esm_build_templates_app-route_0ao79ow.js:14:101846)
+    at instantiateModule (C:\Users\DeLL\OneDrive\Desktop\Keyabroad\apps\web\.next\server\chunks\[turbopack]_runtime.js:853:9)
+    at instantiateRuntimeModule (C:\Users\DeLL\OneDrive\Desktop\Keyabroad\apps\web\.next\server\chunks\[turbopack]_runtime.js:882:12)
+    at getOrInstantiateRuntimeModule (C:\Users\DeLL\OneDrive\Desktop\Keyabroad\apps\web\.next\server\chunks\[turbopack]_runtime.js:895:12)
+    at Object.m (C:\Users\DeLL\OneDrive\Desktop\Keyabroad\apps\web\.next\server\chunks\[turbopack]_runtime.js:898:18)
+    at Object.<anonymous> (C:\Users\DeLL\OneDrive\Desktop\Keyabroad\apps\web\.next\server\app\api\chat\route.js:7:3)
 
 > Build error occurred
-Error: Failed to collect page data for /programs/[universityId]/[programId]
+Error: Failed to collect page data for /api/chat
     at ignore-listed frames {
   type: 'Error'
 }
