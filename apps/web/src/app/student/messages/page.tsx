@@ -10,6 +10,7 @@ export default function StudentMessages() {
   const [conversation, setConversation] = useState<any | null>(null);
   const [messages, setMessages] = useState<any[]>([]);
   const [newMessage, setNewMessage] = useState("");
+  const [sendError, setSendError] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -110,6 +111,7 @@ export default function StudentMessages() {
     setNewMessage("");
 
     try {
+      setSendError(null);
       const res = await fetch("/api/messages", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -125,7 +127,7 @@ export default function StudentMessages() {
       }
     } catch (error) {
       console.error("Failed to send message", error);
-      alert("Failed to send message");
+      setSendError("Failed to send message. Please try again.");
       setMessages((prev) => prev.filter((m) => m.id !== tempMessage.id));
     }
   };
@@ -179,6 +181,11 @@ export default function StudentMessages() {
 
         {/* Input Area */}
         <div className="p-4 border-t border-gray-100 bg-white">
+          {sendError && (
+            <div className="mb-2 text-sm text-red-600 bg-red-50 p-2 rounded">
+              {sendError}
+            </div>
+          )}
           <form onSubmit={sendMessage} className="flex space-x-2">
             <input
               type="text"

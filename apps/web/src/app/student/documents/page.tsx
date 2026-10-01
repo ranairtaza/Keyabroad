@@ -5,17 +5,51 @@ import { createClient } from '@keyabroad/auth/client';
 import { uploadStudentDocument } from '@keyabroad/database';
 import { Card, CardHeader, CardTitle, CardContent } from '@keyabroad/ui/components/card';
 import { Button } from '@keyabroad/ui/components/button';
-import { FileUp, File, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { FileUp, File, AlertCircle, CheckCircle2, Trash2, Loader2, FileText } from 'lucide-react';
 
 export default function StudentDocumentsPage() {
   const [file, setFile] = useState<File | null>(null);
   const [docTypeId, setDocTypeId] = useState('');
   const [documentTypes, setDocumentTypes] = useState<any[]>([]);
+  const [myDocuments, setMyDocuments] = useState<any[]>([]);
+  
   const [uploading, setUploading] = useState(false);
+  const [loadingDocs, setLoadingDocs] = useState(true);
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
+  const [deleteError, setDeleteError] = useState('');
 
   const supabase = createClient();
+
+  const fetchMyDocuments = async () => {
+    const { data: userData } = await supabase.auth.getUser();
+    if (!userData.user) return;
+    
+    const { data: studentData } = await supabase
+      .from('students')
+      .select('id')
+      .eq('user_id', userData.user.id)
+      .single();
+      
+    if (studentData) {
+      const { data } = await supabase
+        .from('student_documents')
+        .select(`
+          id,
+          file_name,
+          file_type,
+          file_size,
+          status,
+          created_at,
+          document_types (name)
+        `)
+        .eq('student_id', studentData.id)
+        .order('created_at', { ascending: false });
+        
+      if (data) setMyDocuments(data);
+    }
+    setLoadingDocs(false);
+  };
 
   useEffect(() => {
     const fetchDocTypes = async () => {
@@ -26,6 +60,7 @@ export default function StudentDocumentsPage() {
       }
     };
     fetchDocTypes();
+    fetchMyDocuments();
   }, [supabase]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -47,7 +82,6 @@ export default function StudentDocumentsPage() {
       const { data: userData, error: userError } = await supabase.auth.getUser();
       if (userError || !userData.user) throw new Error('Not authenticated');
 
-      // Get internal student ID
       const { data: studentData, error: studentError } = await supabase
         .from('students')
         .select('id')
@@ -60,13 +94,31 @@ export default function StudentDocumentsPage() {
       
       setMessage('Document uploaded successfully. It is now pending verification.');
       setFile(null);
-      // Reset input
       const fileInput = document.getElementById('file-upload') as HTMLInputElement;
       if (fileInput) fileInput.value = '';
+      
+      // Refresh documents list
+      await fetchMyDocuments();
     } catch (err: any) {
       setError(err.message || 'Failed to upload document');
     } finally {
       setUploading(false);
+    }
+  };
+
+  const handleDelete = async (id: number) => {
+    const confirmDelete = window.confirm("Are you sure you want to delete this document?");
+    if (!confirmDelete) return;
+    
+    setDeleteError('');
+    // Deleting from DB will typically also mean you should delete from Storage, 
+    // assuming triggers or this route do so, but for now we delete from the DB.
+    const { error: delError } = await supabase.from('student_documents').delete().eq('id', id);
+    
+    if (delError) {
+      setDeleteError("Failed to delete document.");
+    } else {
+      setMyDocuments(myDocuments.filter(d => d.id !== id));
     }
   };
 
@@ -133,7 +185,9 @@ export default function StudentDocumentsPage() {
             disabled={!file || !docTypeId || uploading}
             className="w-full md:w-auto mt-4"
           >
-            {uploading ? 'Uploading securely...' : 'Upload Document'}
+            {uploading ? (
+              <span className="flex items-center gap-2"><Loader2 className="w-4 h-4 animate-spin"/> Uploading securely...</span>
+            ) : 'Upload Document'}
           </Button>
           
         </CardContent>
@@ -147,13 +201,51 @@ export default function StudentDocumentsPage() {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="text-center py-8 text-muted-foreground">
-            {/* We will fetch and display documents here in a complete implementation */}
-            Documents list will appear here once you upload them.
-          </div>
+          {deleteError && (
+            <div className="mb-4 text-sm text-red-600 bg-red-50 p-3 rounded flex items-center gap-2">
+              <AlertCircle className="w-4 h-4" />
+              {deleteError}
+            </div>
+          )}
+          {loadingDocs ? (
+            <div className="flex justify-center py-8">
+              <Loader2 className="w-6 h-6 animate-spin text-slate-400" />
+            </div>
+          ) : myDocuments.length === 0 ? (
+            <div className="text-center py-8 text-muted-foreground bg-slate-50 rounded-lg border border-dashed">
+              You haven't uploaded any documents yet.
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {myDocuments.map((doc) => (
+                <div key={doc.id} className="flex items-center justify-between p-4 bg-slate-50 rounded-lg border border-slate-100">
+                  <div className="flex items-center gap-4 overflow-hidden">
+                    <div className="p-2 bg-blue-100 text-blue-600 rounded-md">
+                      <FileText className="w-5 h-5" />
+                    </div>
+                    <div className="flex flex-col truncate">
+                      <span className="font-semibold text-slate-700 truncate">{doc.file_name}</span>
+                      <span className="text-xs text-slate-500">
+                        {doc.document_types?.name} • {doc.status} • {new Date(doc.created_at).toLocaleDateString()}
+                      </span>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center gap-2 ml-4">
+                    <button 
+                      onClick={() => handleDelete(doc.id)}
+                      className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-md transition-colors"
+                      title="Delete"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>
   );
 }
-

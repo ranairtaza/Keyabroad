@@ -2,22 +2,50 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Lock, Mail, ArrowRight, Loader2, GraduationCap } from "lucide-react";
+import { Lock, Mail, ArrowRight, Loader2, GraduationCap, AlertCircle } from "lucide-react";
+import { createClient } from "@keyabroad/auth/client";
 
 export default function StudentLoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const router = useRouter();
+  const supabase = createClient();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
+    setError(null);
     
-    // Mock login process for UI purposes
-    setTimeout(() => {
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (error) {
+        throw error;
+      }
+      
+      // Verify user is a student
+      const { data: studentData, error: studentError } = await supabase
+        .from('students')
+        .select('id')
+        .eq('user_id', data.user.id)
+        .single();
+        
+      if (studentError || !studentData) {
+        await supabase.auth.signOut();
+        throw new Error("Account not found or access denied.");
+      }
+
       router.push("/student/dashboard");
-    }, 1000);
+      router.refresh();
+    } catch (err: any) {
+      setError(err.message || "Failed to sign in");
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -37,6 +65,14 @@ export default function StudentLoginPage() {
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         <div className="bg-white py-8 px-4 shadow-xl sm:rounded-2xl sm:px-10 border border-slate-100">
           <form className="space-y-6" onSubmit={handleLogin}>
+            
+            {error && (
+              <div className="p-3 bg-red-50 text-red-700 rounded-md flex items-center gap-2 text-sm">
+                <AlertCircle className="w-4 h-4 flex-shrink-0" />
+                {error}
+              </div>
+            )}
+
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-1">
                 Student Email
