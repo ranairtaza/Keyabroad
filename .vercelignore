@@ -22,3 +22,5 @@ yarn-error.log*
 .pnpm-debug.log*
 *.tsbuildinfo
 next-env.d.ts
+packages/*/node_modules
+apps/*/node_modules

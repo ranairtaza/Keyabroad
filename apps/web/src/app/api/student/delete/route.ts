@@ -1,20 +1,15 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 
-// We need the service role key to delete a user from auth.users and bypass RLS to purge all their data
-const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!,
-  {
-    auth: {
-      autoRefreshToken: false,
-      persistSession: false
-    }
-  }
-);
+
 
 export async function POST(req: Request) {
   try {
+    const supabaseAdmin = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL || 'http://localhost',
+      process.env.SUPABASE_SERVICE_ROLE_KEY || 'dummy_key',
+      { auth: { autoRefreshToken: false, persistSession: false } }
+    );
     const authHeader = req.headers.get('Authorization');
     if (!authHeader) {
       return NextResponse.json({ error: 'Missing authorization header' }, { status: 401 });
