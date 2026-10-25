@@ -73,11 +73,13 @@ jobs:
       - name: Install Dependencies (Strict Lockfile)
         run: npm ci
 
-      - name: Workaround npm optional dependency bug (Tailwind on Linux)
+      - name: Workaround npm optional dependency bug (Tailwind & Rolldown on Linux)
         run: |
-          echo "Explicitly installing Linux Oxide bindings to bypass npm ci bug (https://github.com/npm/cli/issues/4828)..."
+          echo "Explicitly installing Linux native bindings to bypass npm ci bug (https://github.com/npm/cli/issues/4828)..."
           npm install --no-save @tailwindcss/oxide-linux-x64-gnu@4.3.3 -w admin
           npm install --no-save @tailwindcss/oxide-linux-x64-gnu@4.3.2 lightningcss-linux-x64-gnu@1.32.0 -w web
+          npm install --no-save @rolldown/binding-linux-x64-gnu@1.2.4 -w packages/validation
+          npm install --no-save @rolldown/binding-linux-x64-gnu@1.2.4
 
       - name: Typecheck
         run: npx turbo typecheck --force
