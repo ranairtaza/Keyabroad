@@ -4,6 +4,9 @@ import { EligibilityWizard } from '@/components/eligibility/EligibilityWizard';
 export const metadata: Metadata = {
   title: 'AI University Matcher | KeyAbroad',
   description: 'Find out which universities and programs you qualify for using our AI Matcher.',
+  alternates: {
+    canonical: '/ai-advisor',
+  },
 };
 
 export default function AIAdvisorPage() {

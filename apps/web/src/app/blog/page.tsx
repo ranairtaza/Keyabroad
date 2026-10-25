@@ -7,6 +7,9 @@ import { Calendar, User, BookOpen, FileText } from 'lucide-react';
 export const metadata = {
   title: 'Study Abroad Blog & Insights | KeyAbroad',
   description: 'Read the latest tips, guides, and news about studying abroad in the UK, USA, Australia, and Canada.',
+  alternates: {
+    canonical: '/blog',
+  },
 };
 
 export default async function BlogPage() {

@@ -4,6 +4,9 @@ import { EligibilityWizard } from '@/components/eligibility/EligibilityWizard';
 export const metadata: Metadata = {
   title: 'Check Your Eligibility | KeyAbroad',
   description: 'Find out which universities and programs you qualify for based on your academic profile, English scores, and budget.',
+  alternates: {
+    canonical: '/eligibility',
+  },
 };
 
 export default function EligibilityPage() {

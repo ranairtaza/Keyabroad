@@ -12,11 +12,18 @@ interface PageProps {
   }>;
 }
 
-export const dynamicParams = true;
+export const dynamicParams = false;
 
 export async function generateStaticParams() {
   return await getAllUniversitySlugs();
 }
+
+const CANONICAL_UNIVERSITY_SLUGS: Record<string, string> = {
+  'university-of-melbourne-1': 'university-of-melbourne',
+  'university-of-toronto-1': 'university-of-toronto',
+  'university-of-toronto-2': 'university-of-toronto',
+  'university-of-toronto-uoft': 'university-of-toronto',
+};
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { id } = await params;
@@ -30,16 +37,18 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     ? (university.countries[0] as any)
     : (university.countries as any);
 
+  const targetSlug = CANONICAL_UNIVERSITY_SLUGS[(university as any).slug] || (university as any).slug;
+
   return {
     alternates: {
-      canonical: `/universities/${(university as any).slug}`,
+      canonical: `/universities/${targetSlug}`,
     },
     title: `${university.name} - Admissions, Fees & Programs 2026 | KeyAbroad`,
     description: `Discover programs, scholarships, and admissions requirements for ${university.name} in ${country?.name}. Apply now for 2026 intakes.`,
     openGraph: {
       title: `${university.name} | Study in ${country?.name}`,
       description: `Explore programs, tuition fees, and scholarships at ${university.name}. Start your application with KeyAbroad.`,
-      url: `https://keyabroad.com/universities/${(university as any).slug}`,
+      url: `https://keyabroad.com/universities/${targetSlug}`,
       siteName: 'KeyAbroad',
       images: [
         {

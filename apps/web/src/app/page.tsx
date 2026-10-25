@@ -7,7 +7,6 @@ import { Input } from "@keyabroad/ui/components/input";
 import { Badge } from "@keyabroad/ui/components/badge";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@keyabroad/ui/components/card";
 import dynamic from 'next/dynamic';
-import { AnimatedCounter } from '@/components/shared/AnimatedCounter';
 
 
 const DestinationSlider = dynamic(() => import("@/components/DestinationSlider"), { ssr: true });
@@ -87,14 +86,14 @@ export default function Home() {
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 divide-x divide-slate-100">
             {[
-              { label: "Visa Success Rate", value: 98, suffix: "%" },
-              { label: "Major Universities", value: 100, suffix: "+" },
-              { label: "Students Placed", value: 5000, suffix: "+" },
-              { label: "Scholarships Secured", value: 5, prefix: "$", suffix: "M+" },
+              { title: "Expert", label: "Visa Assistance" },
+              { title: "Extensive", label: "Global Network" },
+              { title: "Proven", label: "Student Placements" },
+              { title: "Dedicated", label: "Scholarship Support" },
             ].map((stat, i) => (
               <div key={i} className="text-center px-4">
-                <div className="text-4xl md:text-5xl font-bold text-slate-900 mb-2 font-heading">
-                  <AnimatedCounter value={stat.value} prefix={stat.prefix} suffix={stat.suffix} />
+                <div className="text-3xl md:text-4xl font-bold text-slate-900 mb-2 font-heading">
+                  {stat.title}
                 </div>
                 <div className="text-slate-500 font-medium">{stat.label}</div>
               </div>

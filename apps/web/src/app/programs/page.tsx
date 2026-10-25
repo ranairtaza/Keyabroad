@@ -17,6 +17,9 @@ export async function generateMetadata({ searchParams }: PageProps): Promise<Met
   return {
     title: 'Find Programs | KeyAbroad',
     description: 'Search and compare university programs from our global network of verified institutions.',
+    alternates: {
+      canonical: '/programs',
+    },
     robots: {
       index: !hasFilters,
       follow: true,

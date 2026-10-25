@@ -31,13 +31,10 @@ export const metadata: Metadata = {
   },
   description: "Your trusted partner for overseas education, university admissions, scholarships, and student visas. Start your international journey with KeyAbroad.",
   keywords: ["study abroad", "international education", "study overseas", "student visa", "study in UK", "study in USA"],
-  alternates: {
-    canonical: '/',
-  },
   openGraph: {
     title: "KeyAbroad | Study Abroad Consultants",
     description: "Your trusted partner for overseas education, university admissions, scholarships, and student visas.",
-    url: "https://www.keyabroad.com",
+    url: "https://keyabroad.com",
     siteName: "KeyAbroad",
     locale: "en_US",
     type: "website",

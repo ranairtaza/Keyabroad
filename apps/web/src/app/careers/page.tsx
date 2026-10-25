@@ -9,6 +9,9 @@ import { createClient } from '@keyabroad/auth/server';
 export const metadata: Metadata = {
   title: 'Careers | KeyAbroad',
   description: 'Join KeyAbroad and build the future of global education. Explore our open positions and career opportunities.',
+  alternates: {
+    canonical: '/careers',
+  },
 };
 
 export default async function CareersPage() {

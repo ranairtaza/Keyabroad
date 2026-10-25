@@ -20,6 +20,7 @@ export async function getPublishedUniversities(params: UniversitySearchParams) {
     .select(`
       id,
       name,
+      slug,
       logo_url,
       city,
       ranking,
@@ -146,7 +147,7 @@ export async function getAllUniversitySlugs() {
     .eq('verification_status', 'verified');
   if (error) {
     console.error('Error fetching university slugs:', error);
-    throw error;
+    return [];
   }
   return (data || []).filter((u: any) => u.slug).map((u: any) => ({ id: String(u.slug) }));
 }

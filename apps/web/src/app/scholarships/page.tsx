@@ -13,6 +13,9 @@ export const revalidate = 0;
 export const metadata: Metadata = {
   title: 'Scholarships & Funding | KeyAbroad',
   description: 'Search for scholarships, grants, and financial aid options for international students.',
+  alternates: {
+    canonical: '/scholarships',
+  },
 };
 
 interface PageProps {

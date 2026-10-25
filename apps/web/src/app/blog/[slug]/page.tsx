@@ -3,13 +3,12 @@ import { supabase } from '@keyabroad/auth/legacy';
 import { Calendar, User, ArrowLeft, FileText } from 'lucide-react';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
+export const dynamicParams = false;
+
 export async function generateStaticParams() {
-  const { data, error } = await supabase.from('blogs').select('slug').eq('status', 'published');
-  if (error) {
-    console.error("Error fetching blog slugs:", error);
-    throw error;
-  }
-  return (data || []).filter((b: any) => b.slug).map((b: any) => ({ slug: String(b.slug) }));
+  const { data } = await supabase.from('blogs').select('slug').eq('status', 'published');
+  if (!data) return [];
+  return data.filter((b: any) => b.slug).map((b: any) => ({ slug: String(b.slug) }));
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
@@ -25,6 +24,9 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   return {
     title: blog.meta_title || `${blog.title} | KeyAbroad Blog`,
     description: blog.meta_description || blog.excerpt,
+    alternates: {
+      canonical: `/blog/${resolvedParams.slug}`,
+    },
     openGraph: {
       images: blog.image_url ? [blog.image_url] : [],
     }

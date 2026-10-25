@@ -17,6 +17,9 @@ export async function generateMetadata({ searchParams }: PageProps): Promise<Met
   return {
     title: 'Major Universities | KeyAbroad',
     description: 'Search and browse our global network of verified major universities.',
+    alternates: {
+      canonical: '/universities',
+    },
     robots: {
       index: !hasFilters,
       follow: true,
