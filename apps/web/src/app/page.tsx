@@ -200,7 +200,7 @@ export default function Home() {
                 Join our certified IELTS and PTE preparation classes to achieve your desired band score.
               </p>
               <Button variant="secondary" className="w-full sm:w-auto" asChild>
-                <Link href="/ielts">Explore Classes</Link>
+                <Link href="/language-tests/ielts">Explore Classes</Link>
               </Button>
             </Card>
           </div>
