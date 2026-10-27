@@ -15,53 +15,27 @@ interface StudentReview {
   review: string;
 }
 
-const DEFAULT_REVIEWS: StudentReview[] = [
+// Only authentic, verified student reviews from project records are included.
+// Unverified / invented placeholder testimonials are strictly omitted.
+const VERIFIED_REVIEWS: StudentReview[] = [
   {
-    id: "review-1",
+    id: "43ca4157-8dd9-4640-bf01-7313441c52e2",
     name: "Haidar Ali",
-    university: "IELTS & Language Center",
+    university: "Language Center",
     destination: "Visa Processing",
     rating: 5,
     review:
       "Excellent experience; well taught and helped me to secure the Bands I required. Special thanks to Sir Junaid. Much Recommended platform for Visa processing and language center.",
   },
-  {
-    id: "review-2",
-    name: "Ayesha Khan",
-    university: "University of Hertfordshire",
-    destination: "United Kingdom",
-    rating: 5,
-    review:
-      "KeyAbroad guided me step-by-step from university selection to visa approval. Their team made the entire study abroad journey stress-free and smooth!",
-  },
-  {
-    id: "review-3",
-    name: "Hamza Tariq",
-    university: "Deakin University",
-    destination: "Australia",
-    rating: 5,
-    review:
-      "Got my Australian student visa approved within weeks! The counselors provided clear documentation checklists and interview preparation that gave me immense confidence.",
-  },
-  {
-    id: "review-4",
-    name: "Fatima Zahra",
-    university: "University of Windsor",
-    destination: "Canada",
-    rating: 5,
-    review:
-      "From scholarship search to my Canadian study permit, KeyAbroad supported me at every single stage. I couldn't have achieved my dream without their expert team.",
-  },
 ];
 
 export default function Reviews() {
-  const [reviews, setReviews] = useState<StudentReview[]>(DEFAULT_REVIEWS);
+  const [reviews, setReviews] = useState<StudentReview[]>(VERIFIED_REVIEWS);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [direction, setDirection] = useState<1 | -1>(1);
   const [isPaused, setIsPaused] = useState(false);
 
   useEffect(() => {
-    // Optionally fetch live reviews from Supabase if configured
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
     const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
@@ -69,6 +43,8 @@ export default function Reviews() {
       const fetchLiveReviews = async () => {
         try {
           const supabase = createClient(supabaseUrl, supabaseAnonKey);
+          // Query verified feedbacks adhering strictly to the actual database schema:
+          // columns: id, student_id, rating, review_text, created_at
           const { data, error } = await supabase
             .from("student_feedbacks")
             .select("id, rating, review_text, created_at, students(name, university_applied, target_destination)")
@@ -79,23 +55,17 @@ export default function Reviews() {
           if (!error && data && data.length > 0) {
             const liveReviews: StudentReview[] = data.map((item: any) => ({
               id: item.id,
-              name: item.students?.name || "Verified Student",
+              name: item.students?.name || "Student",
               university: item.students?.university_applied || null,
               destination: item.students?.target_destination || null,
               rating: item.rating || 5,
               review: item.review_text,
             }));
 
-            // Merge live reviews with default reviews, ensuring no duplicates by name
-            const existingNames = new Set(liveReviews.map((r) => r.name.toLowerCase()));
-            const combined = [
-              ...liveReviews,
-              ...DEFAULT_REVIEWS.filter((r) => !existingNames.has(r.name.toLowerCase())),
-            ];
-            setReviews(combined);
+            setReviews(liveReviews);
           }
         } catch {
-          // Keep default reviews on network/fetch errors
+          // Keep verified default reviews on network/fetch errors
         }
       };
 
@@ -115,16 +85,18 @@ export default function Reviews() {
   }, [isPaused, reviews.length]);
 
   const handlePrev = () => {
+    if (reviews.length <= 1) return;
     setDirection(-1);
     setCurrentIndex((prev) => (prev - 1 + reviews.length) % reviews.length);
   };
 
   const handleNext = () => {
+    if (reviews.length <= 1) return;
     setDirection(1);
     setCurrentIndex((prev) => (prev + 1) % reviews.length);
   };
 
-  const currentReview = reviews[currentIndex] || DEFAULT_REVIEWS[0];
+  const currentReview = reviews[currentIndex] || VERIFIED_REVIEWS[0];
 
   return (
     <section className="py-24 bg-slate-50/50 relative overflow-hidden">
@@ -203,46 +175,48 @@ export default function Reviews() {
                 </motion.div>
               </AnimatePresence>
 
-              {/* Navigation Arrows */}
-              <div className="flex items-center justify-between pt-6 mt-4 border-t border-slate-100">
-                <button
-                  type="button"
-                  onClick={handlePrev}
-                  className="p-2.5 rounded-full hover:bg-slate-100 text-slate-600 hover:text-slate-900 transition-colors"
-                  aria-label="Previous review"
-                >
-                  <ChevronLeft size={20} />
-                </button>
+              {/* Navigation Controls (rendered only when multiple reviews exist) */}
+              {reviews.length > 1 && (
+                <div className="flex items-center justify-between pt-6 mt-4 border-t border-slate-100">
+                  <button
+                    type="button"
+                    onClick={handlePrev}
+                    className="p-2.5 rounded-full hover:bg-slate-100 text-slate-600 hover:text-slate-900 transition-colors"
+                    aria-label="Previous review"
+                  >
+                    <ChevronLeft size={20} />
+                  </button>
 
-                {/* Dots Indicator */}
-                <div className="flex justify-center gap-2">
-                  {reviews.map((_, idx) => (
-                    <button
-                      key={idx}
-                      type="button"
-                      onClick={() => {
-                        setDirection(idx > currentIndex ? 1 : -1);
-                        setCurrentIndex(idx);
-                      }}
-                      className={`h-2.5 rounded-full transition-all duration-300 ${
-                        idx === currentIndex
-                          ? "bg-primary w-7"
-                          : "bg-slate-200 hover:bg-slate-300 w-2.5"
-                      }`}
-                      aria-label={`Go to review ${idx + 1}`}
-                    />
-                  ))}
+                  {/* Dots Indicator */}
+                  <div className="flex justify-center gap-2">
+                    {reviews.map((_, idx) => (
+                      <button
+                        key={idx}
+                        type="button"
+                        onClick={() => {
+                          setDirection(idx > currentIndex ? 1 : -1);
+                          setCurrentIndex(idx);
+                        }}
+                        className={`h-2.5 rounded-full transition-all duration-300 ${
+                          idx === currentIndex
+                            ? "bg-primary w-7"
+                            : "bg-slate-200 hover:bg-slate-300 w-2.5"
+                        }`}
+                        aria-label={`Go to review ${idx + 1}`}
+                      />
+                    ))}
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={handleNext}
+                    className="p-2.5 rounded-full hover:bg-slate-100 text-slate-600 hover:text-slate-900 transition-colors"
+                    aria-label="Next review"
+                  >
+                    <ChevronRight size={20} />
+                  </button>
                 </div>
-
-                <button
-                  type="button"
-                  onClick={handleNext}
-                  className="p-2.5 rounded-full hover:bg-slate-100 text-slate-600 hover:text-slate-900 transition-colors"
-                  aria-label="Next review"
-                >
-                  <ChevronRight size={20} />
-                </button>
-              </div>
+              )}
             </div>
           </div>
         </AnimatedSection>

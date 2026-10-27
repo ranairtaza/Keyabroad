@@ -40,7 +40,7 @@ const nextConfig: NextConfig = {
         headers: [
           {
             key: 'Content-Security-Policy',
-            value: "frame-ancestors 'self' https://keyabroad.com https://www.keyabroad.com https://*.keyabroad.com https://*.vercel.app http://localhost:*",
+            value: "frame-ancestors 'self' https://keyabroad.com https://www.keyabroad.com https://*.keyabroad.com",
           },
           // Remove X-Frame-Options for embed routes (CSP takes over)
           { key: 'X-Frame-Options', value: 'ALLOWALL' },

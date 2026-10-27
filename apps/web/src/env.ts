@@ -1,9 +1,5 @@
 import { z } from "zod";
 
-console.log("[Diagnostic: Inside Next.js Build]", {
-  NEXT_PUBLIC_SUPABASE_URL: Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL),
-  NEXT_PUBLIC_SUPABASE_ANON_KEY: Boolean(process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY),
-});
 
 const envSchema = z.object({
   NEXT_PUBLIC_SUPABASE_URL: z.string().min(1),
