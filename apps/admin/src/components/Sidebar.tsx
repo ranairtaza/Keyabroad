@@ -201,6 +201,13 @@ export default function Sidebar() {
           badgeBg: "bg-indigo-50 dark:bg-indigo-950/50",
           badgeText: "text-indigo-600 dark:text-indigo-400"
         }] : []),
+        ...(canViewHROps ? [{ 
+          name: "HR Operations", 
+          href: "/hr-operations", 
+          icon: Activity,
+          badgeBg: "bg-fuchsia-50 dark:bg-fuchsia-950/50",
+          badgeText: "text-fuchsia-600 dark:text-fuchsia-400"
+        }] : []),
         { 
           name: "Reviews & Feedback", 
           href: "/reviews", 
