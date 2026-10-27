@@ -7,7 +7,6 @@ import { Lock, Plus, UserX, Shield, MoreVertical, Briefcase, Calendar, Mail, Map
 import Image from "next/image";
 import { useRole } from "@/components/RoleContext";
 import toast from "react-hot-toast";
-import { supabase } from "@/lib/auth/legacy";
 
 export default function TeamDirectoryPage() {
   const { role, currentUser } = useRole();
@@ -28,40 +27,48 @@ export default function TeamDirectoryPage() {
 
   const fetchTeam = async () => {
     setIsLoading(true);
-    const { data, error } = await supabase.from('team_members').select('*').order('id', { ascending: true });
-    
-    if (error) {
-      console.error(error);
-      toast.error("Failed to load team from database.");
-    } else if (data) {
-      const roleHierarchy = [
-        "ceo/founder",
-        "admin/ceo",
-        "system admin",
-        "admin",
-        "operations head",
-        "branch manager",
-        "lead educational counsellor",
-        "visa processing specialist",
-        "career guidance expert",
-        "student success coordinator",
-        "marketing executive",
-        "social media & marketing executive",
-        "social media manager",
-        "admission and marketing executive",
-        "internee"
-      ];
+    try {
+      const res = await fetch('/api/team', { cache: 'no-store' });
+      const json = await res.json();
       
-      const sortedData = [...data].sort((a, b) => {
-        const rankA = roleHierarchy.indexOf(a.role?.toLowerCase() || "");
-        const rankB = roleHierarchy.indexOf(b.role?.toLowerCase() || "");
-        return (rankA === -1 ? 99 : rankA) - (rankB === -1 ? 99 : rankB);
-      });
+      if (!res.ok) {
+        console.error(json.error);
+        toast.error("Failed to load team from database.");
+      } else if (json.data) {
+        const data = json.data;
+        const roleHierarchy = [
+          "ceo/founder",
+          "admin/ceo",
+          "system admin",
+          "admin",
+          "operations head",
+          "branch manager",
+          "lead educational counsellor",
+          "visa processing specialist",
+          "career guidance expert",
+          "student success coordinator",
+          "marketing executive",
+          "social media & marketing executive",
+          "social media manager",
+          "admission and marketing executive",
+          "internee"
+        ];
+        
+        const sortedData = [...data].sort((a: any, b: any) => {
+          const rankA = roleHierarchy.indexOf(a.role?.toLowerCase() || "");
+          const rankB = roleHierarchy.indexOf(b.role?.toLowerCase() || "");
+          return (rankA === -1 ? 99 : rankA) - (rankB === -1 ? 99 : rankB);
+        });
 
-      setActiveEmployees(sortedData.filter(emp => emp.status === 'active'));
-      setResignedEmployees(sortedData.filter(emp => emp.status === 'resigned'));
+        setActiveEmployees(sortedData.filter((emp: any) => emp.status === 'active'));
+        setResignedEmployees(sortedData.filter((emp: any) => emp.status === 'resigned'));
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error("Network error while loading team.");
+    } finally {
+      setIsLoading(false);
     }
-    setIsLoading(false);
   };
 
   useEffect(() => {
