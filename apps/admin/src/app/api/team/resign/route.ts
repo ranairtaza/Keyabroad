@@ -18,8 +18,8 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    if (authResult.role !== 'owner') {
-      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    if (authResult.role !== 'owner' && authResult.role !== 'admin') {
+      return NextResponse.json({ error: 'Forbidden: Owner or Admin role required.' }, { status: 403 });
     }
 
     const { error } = await supabaseAdmin

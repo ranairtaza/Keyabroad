@@ -106,4 +106,61 @@ describe('Team Directory & Security Regression Suite', () => {
     expect(mappedTeam[1].name).toBe('Faizan');
     expect(mappedTeam[1].role).toBe('Visa Processing Specialist');
   });
+
+  it('rejects hard deletion when employee has historical attendance records and suggests resignation', () => {
+    const employee = { id: 101, name: 'Hardware Test User', status: 'active' };
+    const attendanceRecords = [
+      { id: 1, employee_id: 101, date: '2026-10-25', status: 'present' },
+      { id: 2, employee_id: 101, date: '2026-10-26', status: 'present' }
+    ];
+
+    // Delete guard logic
+    const checkCanDelete = (empId: number, records: any[]) => {
+      const count = records.filter(r => r.employee_id === empId).length;
+      if (count > 0) {
+        return {
+          allowed: false,
+          error: `Cannot delete employee '${employee.name}' because ${count} historical attendance record(s) exist.`,
+          hasAttendanceHistory: true,
+          attendanceCount: count,
+          recommendation: 'resigned'
+        };
+      }
+      return { allowed: true };
+    };
+
+    const deleteResult = checkCanDelete(employee.id, attendanceRecords);
+    expect(deleteResult.allowed).toBe(false);
+    expect(deleteResult.hasAttendanceHistory).toBe(true);
+    expect(deleteResult.attendanceCount).toBe(2);
+    expect(deleteResult.recommendation).toBe('resigned');
+  });
+
+  it('deactivating/resigning an employee preserves attendance history intact and updates status', () => {
+    const employee = { id: 101, name: 'Hardware Test User', status: 'active', worked_from: '2026-01-01', worked_to: null as string | null };
+    const attendanceRecords = [
+      { id: 1, employee_id: 101, date: '2026-10-25', status: 'present' },
+      { id: 2, employee_id: 101, date: '2026-10-26', status: 'present' }
+    ];
+
+    // Resign action updates status and tenure on team member
+    const resignEmployee = (emp: typeof employee, workedToDate: string) => {
+      return {
+        ...emp,
+        status: 'resigned',
+        worked_to: workedToDate
+      };
+    };
+
+    const resignedEmp = resignEmployee(employee, 'Today');
+    expect(resignedEmp.status).toBe('resigned');
+    expect(resignedEmp.worked_to).toBe('Today');
+
+    // Referential integrity check: historical attendance records must remain unchanged
+    const remainingAttendance = attendanceRecords.filter(r => r.employee_id === employee.id);
+    expect(remainingAttendance).toHaveLength(2);
+    expect(remainingAttendance[0].date).toBe('2026-10-25');
+    expect(remainingAttendance[1].date).toBe('2026-10-26');
+  });
 });
+

@@ -3,10 +3,29 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Hover3DWrapper from "@/components/Hover3DWrapper";
-import { Lock, Plus, UserX, Shield, MoreVertical, Briefcase, Calendar, Mail, MapPin, Banknote, Edit, Check, Camera, Trash2, X, RefreshCw } from "lucide-react";
+import { Lock, Plus, UserX, Shield, MoreVertical, Briefcase, Calendar, Mail, MapPin, Banknote, Edit, Check, Camera, Trash2, X, RefreshCw, AlertTriangle } from "lucide-react";
 import Image from "next/image";
 import { useRole } from "@/components/RoleContext";
 import toast from "react-hot-toast";
+
+const ROLE_HIERARCHY_MAP = new Map<string, number>([
+  ["ceo/founder", 0],
+  ["admin/ceo", 1],
+  ["system admin", 2],
+  ["admin", 3],
+  ["operations head", 4],
+  ["branch manager", 5],
+  ["lead educational counsellor", 6],
+  ["visa processing specialist", 7],
+  ["language instructor", 8],
+  ["career guidance expert", 9],
+  ["student success coordinator", 10],
+  ["marketing executive", 11],
+  ["social media & marketing executive", 12],
+  ["social media manager", 13],
+  ["admission and marketing executive", 14],
+  ["internee", 15]
+]);
 
 export default function TeamDirectoryPage() {
   const { role, currentUser } = useRole();
@@ -25,6 +44,23 @@ export default function TeamDirectoryPage() {
   const [resignedEmployees, setResignedEmployees] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
+  // Non-blocking Delete / Audit Protection Modal State
+  const [deleteModalState, setDeleteModalState] = useState<{
+    isOpen: boolean;
+    employee: any | null;
+    blockedReason?: string | null;
+    hasAttendanceHistory?: boolean;
+    attendanceCount?: number;
+    isDeleting: boolean;
+  }>({
+    isOpen: false,
+    employee: null,
+    blockedReason: null,
+    hasAttendanceHistory: false,
+    attendanceCount: 0,
+    isDeleting: false
+  });
+
   const fetchTeam = async () => {
     setIsLoading(true);
     try {
@@ -36,32 +72,23 @@ export default function TeamDirectoryPage() {
         toast.error("Failed to load team from database.");
       } else if (json.data) {
         const data = json.data;
-        const roleHierarchy = [
-          "ceo/founder",
-          "admin/ceo",
-          "system admin",
-          "admin",
-          "operations head",
-          "branch manager",
-          "lead educational counsellor",
-          "visa processing specialist",
-          "career guidance expert",
-          "student success coordinator",
-          "marketing executive",
-          "social media & marketing executive",
-          "social media manager",
-          "admission and marketing executive",
-          "internee"
-        ];
-        
         const sortedData = [...data].sort((a: any, b: any) => {
-          const rankA = roleHierarchy.indexOf(a.role?.toLowerCase() || "");
-          const rankB = roleHierarchy.indexOf(b.role?.toLowerCase() || "");
-          return (rankA === -1 ? 99 : rankA) - (rankB === -1 ? 99 : rankB);
+          const rankA = ROLE_HIERARCHY_MAP.get(a.role?.toLowerCase() || "") ?? 99;
+          const rankB = ROLE_HIERARCHY_MAP.get(b.role?.toLowerCase() || "") ?? 99;
+          return rankA - rankB;
         });
 
-        setActiveEmployees(sortedData.filter((emp: any) => emp.status === 'active'));
-        setResignedEmployees(sortedData.filter((emp: any) => emp.status === 'resigned'));
+        const active: any[] = [];
+        const resigned: any[] = [];
+        for (const emp of sortedData) {
+          if (emp.status === 'resigned') {
+            resigned.push(emp);
+          } else {
+            active.push(emp);
+          }
+        }
+        setActiveEmployees(active);
+        setResignedEmployees(resigned);
       }
     } catch (err) {
       console.error(err);
@@ -127,19 +154,28 @@ export default function TeamDirectoryPage() {
   };
 
   /**
-   * Protected Employee Deletion with Historical Integrity Check
+   * Protected Non-blocking Employee Deletion with Historical Integrity Check
    */
-  const handleDelete = async (emp: any) => {
+  const promptDelete = (emp: any) => {
+    setOpenDropdownId(null);
     if (role !== "owner") {
       handleRestrictedAction("delete an employee");
-      setOpenDropdownId(null);
       return;
     }
+    setDeleteModalState({
+      isOpen: true,
+      employee: emp,
+      blockedReason: null,
+      hasAttendanceHistory: false,
+      attendanceCount: 0,
+      isDeleting: false
+    });
+  };
 
-    if (!confirm(`Are you sure you want to delete ${emp.name}? If attendance history exists, deletion will be rejected to protect legal audit records.`)) {
-      setOpenDropdownId(null);
-      return;
-    }
+  const executeDelete = async () => {
+    const emp = deleteModalState.employee;
+    if (!emp) return;
+    setDeleteModalState(prev => ({ ...prev, isDeleting: true, blockedReason: null }));
 
     try {
       const res = await fetch('/api/team/delete', {
@@ -151,15 +187,26 @@ export default function TeamDirectoryPage() {
       const data = await res.json();
 
       if (!res.ok) {
-        toast.error(data.error || "Cannot delete employee.", { duration: 6000 });
+        if (data.hasAttendanceHistory) {
+          setDeleteModalState(prev => ({
+            ...prev,
+            isDeleting: false,
+            hasAttendanceHistory: true,
+            attendanceCount: data.attendanceCount || 0,
+            blockedReason: data.error
+          }));
+        } else {
+          toast.error(data.error || "Cannot delete employee.", { duration: 6000 });
+          setDeleteModalState(prev => ({ ...prev, isDeleting: false, isOpen: false }));
+        }
       } else {
         toast.success(data.message || `${emp.name} deleted successfully.`);
+        setDeleteModalState(prev => ({ ...prev, isDeleting: false, isOpen: false }));
         fetchTeam();
       }
     } catch {
       toast.error("Network error during deletion request.");
-    } finally {
-      setOpenDropdownId(null);
+      setDeleteModalState(prev => ({ ...prev, isDeleting: false }));
     }
   };
 
@@ -299,7 +346,12 @@ export default function TeamDirectoryPage() {
 
   const container: any = { hidden: { opacity: 0 }, show: { opacity: 1, transition: { staggerChildren: 0.1 } } };
   const item: any = { hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 24 } } };
-  const closeAllDropdowns = () => { setOpenDropdownId(null); setAssignRoleDropdownId(null); };
+  const closeAllDropdowns = () => {
+    if (openDropdownId !== null || assignRoleDropdownId !== null) {
+      setOpenDropdownId(null);
+      setAssignRoleDropdownId(null);
+    }
+  };
 
   if (isLoading) {
     return <div className="flex justify-center items-center h-96"><RefreshCw className="animate-spin text-primary" size={32} /></div>;
@@ -353,7 +405,7 @@ export default function TeamDirectoryPage() {
                               </button>
                             )}
                             {role === "owner" && (
-                              <button onClick={(e) => { e.stopPropagation(); handleDelete(emp); }} className="w-full text-left px-4 py-3 flex items-center gap-2 text-sm font-medium text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors border-t border-slate-100 dark:border-slate-700">
+                              <button onClick={(e) => { e.stopPropagation(); promptDelete(emp); }} className="w-full text-left px-4 py-3 flex items-center gap-2 text-sm font-medium text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors border-t border-slate-100 dark:border-slate-700">
                                 <Trash2 size={16} /> Delete Profile
                               </button>
                             )}
@@ -438,7 +490,7 @@ export default function TeamDirectoryPage() {
                       <td className="p-4"><div className="text-sm font-medium text-slate-900 dark:text-white">{emp.worked_from || 'Unknown'} - {emp.worked_to || 'Unknown'}</div></td>
                       <td className="p-4 flex gap-2">
                         <span className="bg-red-50 text-red-600 px-3 py-1 rounded-full text-xs font-bold border border-red-100">Resigned</span>
-                        <button onClick={() => handleDelete(emp)} className="p-1 text-slate-400 hover:text-red-500 transition-colors" title="Delete permanently"><Trash2 size={16} /></button>
+                        <button onClick={() => promptDelete(emp)} className="p-1 text-slate-400 hover:text-red-500 transition-colors" title="Delete permanently"><Trash2 size={16} /></button>
                       </td>
                     </tr>
                   ))}
@@ -528,6 +580,90 @@ export default function TeamDirectoryPage() {
                   </button>
                 </div>
               </form>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* Non-blocking Delete / Audit Protection Modal */}
+      <AnimatePresence>
+        {deleteModalState.isOpen && deleteModalState.employee && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm">
+            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} className="bg-white dark:bg-slate-800 rounded-2xl shadow-xl w-full max-w-md overflow-hidden border border-slate-200 dark:border-slate-700">
+              <div className="p-5 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center bg-slate-50 dark:bg-slate-800 shrink-0">
+                <div className="flex items-center gap-2.5">
+                  {deleteModalState.hasAttendanceHistory ? (
+                    <div className="p-2 bg-amber-500/10 text-amber-600 dark:text-amber-400 rounded-lg">
+                      <AlertTriangle size={20} />
+                    </div>
+                  ) : (
+                    <div className="p-2 bg-red-500/10 text-red-600 dark:text-red-400 rounded-lg">
+                      <Trash2 size={20} />
+                    </div>
+                  )}
+                  <h3 className="text-lg font-bold text-slate-900 dark:text-white">
+                    {deleteModalState.hasAttendanceHistory ? "Historical Audit Protected" : "Delete Employee Profile"}
+                  </h3>
+                </div>
+                <button onClick={() => setDeleteModalState(prev => ({ ...prev, isOpen: false }))} className="text-slate-500 hover:text-slate-800 bg-slate-200 hover:bg-slate-300 dark:bg-slate-700 dark:hover:bg-slate-600 rounded-full p-2 transition-colors">
+                  <X size={18} />
+                </button>
+              </div>
+
+              <div className="p-6 space-y-4">
+                {deleteModalState.hasAttendanceHistory ? (
+                  <div className="space-y-3">
+                    <div className="p-3.5 bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/50 rounded-xl text-amber-900 dark:text-amber-200 text-sm leading-relaxed">
+                      <strong>Cannot permanently delete {deleteModalState.employee.name}</strong> because {deleteModalState.attendanceCount} historical attendance record(s) exist.
+                    </div>
+                    <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                      Historical attendance and biometric audit records are legally protected. To deactivate this employee without losing attendance history or corrupting operational reports, move them to the <strong>Resigned Record</strong>.
+                    </p>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    <p className="text-sm text-slate-700 dark:text-slate-300">
+                      Are you sure you want to permanently delete <strong>{deleteModalState.employee.name}</strong>?
+                    </p>
+                    <p className="text-xs text-slate-500 dark:text-slate-400 bg-slate-50 dark:bg-slate-700/50 p-3 rounded-lg border border-slate-200 dark:border-slate-600">
+                      If attendance history exists, deletion will be rejected to protect legal audit records.
+                    </p>
+                  </div>
+                )}
+              </div>
+
+              <div className="p-5 border-t border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 flex gap-3 justify-end">
+                <button
+                  type="button"
+                  onClick={() => setDeleteModalState(prev => ({ ...prev, isOpen: false }))}
+                  className="px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-600 text-sm font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
+                >
+                  Cancel
+                </button>
+                {deleteModalState.hasAttendanceHistory ? (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const emp = deleteModalState.employee;
+                      setDeleteModalState(prev => ({ ...prev, isOpen: false }));
+                      handleResign(emp);
+                    }}
+                    className="px-4 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-sm font-bold transition-all shadow-sm flex items-center gap-1.5"
+                  >
+                    <UserX size={16} /> Move to Resigned (Deactivate)
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    disabled={deleteModalState.isDeleting}
+                    onClick={executeDelete}
+                    className="px-4 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white text-sm font-bold transition-all shadow-sm disabled:opacity-70 flex items-center gap-1.5"
+                  >
+                    {deleteModalState.isDeleting ? <RefreshCw className="animate-spin" size={16} /> : <Trash2 size={16} />}
+                    {deleteModalState.isDeleting ? "Deleting..." : "Delete Permanently"}
+                  </button>
+                )}
+              </div>
             </motion.div>
           </div>
         )}

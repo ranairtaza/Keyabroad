@@ -75,7 +75,10 @@ export function RoleProvider({ children }: { children: React.ReactNode }) {
             tmRole === 'owner' || 
             tmRole === 'super_admin' || 
             tmRole === 'super admin' || 
-            tmRole === 'admin';
+            tmRole === 'admin' ||
+            profileRole === 'owner' ||
+            profileRole === 'admin' ||
+            profileRole === 'super_admin';
 
             setCurrentUser({
               id: session.user.id,
