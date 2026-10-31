@@ -40,17 +40,23 @@ export default function OperationsPage() {
   const fetchAttendance = async () => {
     const today = new Date().toISOString().split('T')[0];
 
-    const { data: teamMembers } = await supabase
-      .from('team_members')
-      .select('id, name')
-      .eq('status', 'active');
+    let teamMembers: Array<{ id: string | number; name: string }> = [];
+    try {
+      const res = await fetch('/api/team', { cache: 'no-store' });
+      if (res.ok) {
+        const json = await res.json();
+        teamMembers = (json.data || []).filter((m: any) => m.status === 'active');
+      }
+    } catch (e) {
+      console.error("Failed to fetch team members for attendance", e);
+    }
       
     const { data: todayAttendance } = await supabase
       .from('employee_attendance')
       .select('employee_id, created_at, status')
       .eq('date', today);
 
-    if (teamMembers) {
+    if (teamMembers && teamMembers.length > 0) {
       const attendanceData = teamMembers.map(member => {
         const record = todayAttendance?.find(a => String(a.employee_id) === String(member.id));
         return {

@@ -43,7 +43,103 @@ const nextConfig: NextConfig = {
         source: '/team',
         destination: '/teams',
         permanent: true,
-      }
+      },
+      // Phase 1 404 Remediation Redirects
+      {
+        source: '/home',
+        destination: '/',
+        permanent: true,
+      },
+      {
+        source: '/home-page',
+        destination: '/',
+        permanent: true,
+      },
+      {
+        source: '/contactus',
+        destination: '/contact',
+        permanent: true,
+      },
+      {
+        source: '/blogs',
+        destination: '/blog',
+        permanent: true,
+      },
+      {
+        source: '/team-1',
+        destination: '/teams',
+        permanent: true,
+      },
+      {
+        source: '/icef-agency-status',
+        destination: '/about',
+        permanent: true,
+      },
+      {
+        source: '/dubai',
+        destination: '/destinations/dubai',
+        permanent: true,
+      },
+      {
+        source: '/new-zealand',
+        destination: '/destinations/new-zealand',
+        permanent: true,
+      },
+      {
+        source: '/malta',
+        destination: '/destinations/malta',
+        permanent: true,
+      },
+      {
+        source: '/united-kingdom',
+        destination: '/destinations/united-kingdom',
+        permanent: true,
+      },
+      {
+        source: '/cyprus',
+        destination: '/destinations/cyprus',
+        permanent: true,
+      },
+      {
+        source: '/united-states',
+        destination: '/destinations/united-states',
+        permanent: true,
+      },
+      {
+        source: '/ireland',
+        destination: '/destinations/ireland',
+        permanent: true,
+      },
+      {
+        source: '/australia',
+        destination: '/destinations/australia',
+        permanent: true,
+      },
+      {
+        source: '/australia-1',
+        destination: '/destinations/australia',
+        permanent: true,
+      },
+      {
+        source: '/canada',
+        destination: '/destinations/canada',
+        permanent: true,
+      },
+      {
+        source: '/ielts',
+        destination: '/language-tests/ielts',
+        permanent: true,
+      },
+      {
+        source: '/pte-1',
+        destination: '/language-tests/pte',
+        permanent: true,
+      },
+      {
+        source: '/pte',
+        destination: '/language-tests/pte',
+        permanent: true,
+      },
     ];
   },
   async headers() {

@@ -13,41 +13,65 @@ export default function TeamsPage() {
   useEffect(() => {
     const fetchTeam = async () => {
       try {
+        let members: any[] = [];
         const { data, error } = await supabase
-        .from('team_members')
-        .select('*')
-        .eq('status', 'active');
-      
-      if (data) {
-        const roleHierarchy = [
-          "ceo/founder",
-          "admin/ceo",
-          "system admin",
-          "admin",
-          "operations head",
-          "branch manager",
-          "lead educational counsellor",
-          "visa processing specialist",
-          "language instructor",
-          "career guidance expert",
-          "student success coordinator",
-          "marketing executive",
-          "social media & marketing executive",
-          "social media manager",
-          "admission and marketing executive",
-          "internee"
-        ];
+          .from('team_members')
+          .select('id, name, role, location, image, description, email, status')
+          .eq('status', 'active');
         
-        const sortedData = [...data].sort((a, b) => {
-          const rankA = roleHierarchy.indexOf(a.role?.toLowerCase() || "");
-          const rankB = roleHierarchy.indexOf(b.role?.toLowerCase() || "");
-          return (rankA === -1 ? 99 : rankA) - (rankB === -1 ? 99 : rankB);
-        });
+        if (!error && data && data.length > 0) {
+          members = data;
+        } else {
+          // Graceful fallback to verified staff profiles if team_members is restricted by RLS
+          const { data: profileData } = await supabase
+            .from('profiles')
+            .select('id, full_name, role, designation, avatar_url, email, is_active')
+            .in('role', ['admin', 'staff', 'owner'])
+            .eq('is_active', true)
+            .not('full_name', 'is', null);
 
-        setTeamMembers(sortedData);
-      } else if (error) {
-        console.error("Error fetching team members:", error);
-      }
+          if (profileData && profileData.length > 0) {
+            members = profileData.map((p: any) => ({
+              id: p.id,
+              name: p.full_name,
+              role: p.designation || (p.role === 'owner' ? 'CEO/Founder' : p.role === 'admin' ? 'Admin' : 'Counselor'),
+              location: 'Head Office',
+              image: p.avatar_url,
+              description: `A vital part of our expert team, bringing invaluable experience to KeyAbroad.`,
+              email: p.email,
+              status: 'active'
+            }));
+          }
+        }
+
+        if (members.length > 0) {
+          const roleHierarchy = [
+            "ceo/founder",
+            "admin/ceo",
+            "system admin",
+            "admin",
+            "operations head",
+            "branch manager",
+            "lead educational counsellor",
+            "visa processing specialist",
+            "language instructor",
+            "career guidance expert",
+            "student success coordinator",
+            "marketing executive",
+            "social media & marketing executive",
+            "social media manager",
+            "admission and marketing executive",
+            "internee"
+          ];
+          
+          const sortedData = [...members].sort((a, b) => {
+            const rankA = roleHierarchy.indexOf(a.role?.toLowerCase() || "");
+            const rankB = roleHierarchy.indexOf(b.role?.toLowerCase() || "");
+            return (rankA === -1 ? 99 : rankA) - (rankB === -1 ? 99 : rankB);
+          });
+
+          setTeamMembers(sortedData);
+        }
       } catch (err) {
         console.error("Unexpected error:", err);
       } finally {

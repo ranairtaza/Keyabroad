@@ -69,23 +69,49 @@ export async function resolveCurrentEmployee(): Promise<AuthenticatedEmployee | 
 
   const supabaseAdmin = getAdminClient();
 
-  const { data: teamMember, error: empError } = await supabaseAdmin
+  let { data: teamMember } = await supabaseAdmin
     .from('team_members')
     .select('id, name, email, status, role, auth_user_id')
     .eq('auth_user_id', user.id)
-    .single();
+    .maybeSingle();
 
-  if (empError || !teamMember) {
+  if (!teamMember && user.email) {
+    const { data: byEmail } = await supabaseAdmin
+      .from('team_members')
+      .select('id, name, email, status, role, auth_user_id')
+      .eq('email', user.email)
+      .maybeSingle();
+
+    if (byEmail) {
+      teamMember = byEmail;
+      if (!byEmail.auth_user_id) {
+        await supabaseAdmin
+          .from('team_members')
+          .update({ auth_user_id: user.id })
+          .eq('id', byEmail.id);
+      }
+    }
+  }
+
+  const { data: profile } = await supabaseAdmin
+    .from('profiles')
+    .select('id, role, full_name, email')
+    .eq('id', user.id)
+    .maybeSingle();
+
+  if (!teamMember && !profile) {
     return null;
   }
 
+  const effectiveRole = teamMember?.role || profile?.role || 'employee';
+
   return {
     authUserId: user.id,
-    email: user.email || '',
-    teamMemberId: teamMember.id,
-    role: normalizeRole(teamMember.role),
-    status: teamMember.status,
-    name: teamMember.name
+    email: user.email || teamMember?.email || profile?.email || '',
+    teamMemberId: teamMember?.id || 0,
+    role: normalizeRole(effectiveRole),
+    status: teamMember?.status || 'active',
+    name: teamMember?.name || profile?.full_name || 'Staff Member'
   };
 }
 

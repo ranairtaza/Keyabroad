@@ -1,5 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { z } from 'zod';
+import fs from 'fs';
+import path from 'path';
 
 /**
  * Environment Boundary Tests
@@ -99,3 +101,18 @@ describe('Secret isolation: server secrets never use NEXT_PUBLIC_ prefix', () =>
     expect(publicServerKeys).toHaveLength(0);
   });
 });
+
+describe('Turbo build environment isolation and passthrough', () => {
+  it('declares NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY in turbo.json build task env', () => {
+    const turboJsonPath = path.resolve(__dirname, '../../../turbo.json');
+    const turboJson = JSON.parse(fs.readFileSync(turboJsonPath, 'utf-8'));
+    const buildEnv = turboJson.tasks?.build?.env ?? [];
+    const globalEnv = turboJson.globalEnv ?? [];
+    const allEnv = [...buildEnv, ...globalEnv];
+
+    expect(allEnv).toContain('NEXT_PUBLIC_SUPABASE_URL');
+    expect(allEnv).toContain('NEXT_PUBLIC_SUPABASE_ANON_KEY');
+    expect(allEnv).toContain('SUPABASE_SERVICE_ROLE_KEY');
+  });
+});
+
