@@ -1,10 +1,14 @@
 import { createClient } from '@supabase/supabase-js';
 
 const getSupabaseAdmin = () => {
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co';
-  const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder-key';
-  
-  return createClient(supabaseUrl, supabaseServiceKey, {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseSecretKey = process.env.SUPABASE_SECRET_KEY;
+
+  if (!supabaseUrl || !supabaseSecretKey) {
+    throw new Error('Server configuration error: SUPABASE_SECRET_KEY is required for telemetry logging.');
+  }
+
+  return createClient(supabaseUrl, supabaseSecretKey, {
     auth: {
       autoRefreshToken: false,
       persistSession: false,
@@ -43,15 +47,13 @@ export interface AITelemetry {
  */
 function redactContext(context?: Record<string, any>): Record<string, any> | undefined {
   if (!context) return undefined;
-  
+
   const redacted = { ...context };
   const sensitiveKeys = ['password', 'token', 'key', 'secret', 'authorization', 'cookie', 'prompt'];
-  
+
   for (const key of Object.keys(redacted)) {
-    if (sensitiveKeys.some(sk => key.toLowerCase().includes(sk))) {
+    if (sensitiveKeys.some(s => key.toLowerCase().includes(s))) {
       redacted[key] = '[REDACTED]';
-    } else if (typeof redacted[key] === 'object' && redacted[key] !== null) {
-      redacted[key] = redactContext(redacted[key]);
     }
   }
   return redacted;

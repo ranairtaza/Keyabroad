@@ -8,7 +8,7 @@ export async function updateSession(request: any) {
     const origin = request.headers.get('origin');
     const referer = request.headers.get('referer');
     const host = request.headers.get('host');
-    
+
     let isOriginValid = true;
     let isRefererValid = true;
 
@@ -31,10 +31,10 @@ export async function updateSession(request: any) {
     }
 
     if (!isOriginValid || !isRefererValid) {
-      return { 
-        supabaseResponse: NextResponse.json({ error: 'CSRF Token Mismatch' }, { status: 403 }), 
-        user: null, 
-        supabase: null 
+      return {
+        supabaseResponse: NextResponse.json({ error: 'CSRF Token Mismatch' }, { status: 403 }),
+        user: null,
+        supabase: null
       };
     }
   }
@@ -45,9 +45,13 @@ export async function updateSession(request: any) {
     },
   })
 
+  const publishableKey =
+    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ||
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+
   const supabase = createServerClient<Database>(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    publishableKey,
     {
       cookies: {
         getAll() {

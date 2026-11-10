@@ -4,19 +4,28 @@ import { createClient } from '@supabase/supabase-js';
 import { logSystemError, updateAITelemetry } from '../../../../../../packages/database/src/telemetry';
 import { v4 as uuidv4 } from 'uuid';
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
-const supabase = createClient(supabaseUrl, supabaseServiceKey);
+function getAdminClient() {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const secretKey = process.env.SUPABASE_SECRET_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!url || !secretKey) {
+    throw new Error('Server configuration error: SUPABASE_SECRET_KEY (or SUPABASE_SERVICE_ROLE_KEY) is required for privileged chat operations.');
+  }
+  return createClient(url, secretKey, {
+    auth: { autoRefreshToken: false, persistSession: false },
+  });
+}
 
 export async function POST(req: Request) {
   const startTime = performance.now();
-  
+
   try {
     const { message, history, sessionId } = await req.json();
 
     if (!message) {
       return NextResponse.json({ error: 'Message is required' }, { status: 400 });
     }
+
+    const supabase = getAdminClient();
 
     const { data: integration, error } = await supabase
       .from('integrations')
@@ -27,8 +36,8 @@ export async function POST(req: Request) {
     if (error || !integration?.is_active || !integration.api_key) {
       console.warn("OpenAI integration missing or disabled. Using mock response.");
       await new Promise(r => setTimeout(r, 1000));
-      return NextResponse.json({ 
-        reply: "Sorry, the AI Chatbot is currently offline because the OpenAI API key is not configured in the Admin Dashboard. Please contact support." 
+      return NextResponse.json({
+        reply: "Sorry, the AI Chatbot is currently offline because the OpenAI API key is not configured in the Admin Dashboard. Please contact support."
       });
     }
 
@@ -42,9 +51,9 @@ export async function POST(req: Request) {
     const response = await openai.chat.completions.create({
       model: "gpt-4o-mini",
       messages: [
-        { 
-          role: "system", 
-          content: "You are Keyabroad AI, a helpful, professional, and knowledgeable study abroad consultant. Answer queries regarding universities, visas, admissions, and scholarships briefly and accurately. If you don't know something, tell them to book a free consultation with our human experts." 
+        {
+          role: "system",
+          content: "You are Keyabroad AI, a helpful, professional, and knowledgeable study abroad consultant. Answer queries regarding universities, visas, admissions, and scholarships briefly and accurately. If you don't know something, tell them to book a free consultation with our human experts."
         },
         ...formattedHistory,
         { role: "user", content: message }
@@ -61,7 +70,7 @@ export async function POST(req: Request) {
     // Optional telemetry logging if a sessionId is supplied, avoiding blocking response
     if (sessionId) {
       const messageId = uuidv4();
-      
+
       const logTelemetry = async () => {
         try {
           // Log user message (Redacted for privacy)
@@ -88,7 +97,7 @@ export async function POST(req: Request) {
           console.error("Failed to log AI message to database", e);
         }
       };
-      
+
       // non-blocking
       logTelemetry();
     }
@@ -97,7 +106,7 @@ export async function POST(req: Request) {
   } catch (error: any) {
     const latencyMs = Math.round(performance.now() - startTime);
     console.error('Chat API Error:', error);
-    
+
     // non-blocking
     logSystemError({
       errorSource: 'api',

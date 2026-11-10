@@ -2,19 +2,25 @@ import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import crypto from 'crypto';
 
-// We use the service role key to bypass RLS when creating tasks from a backend webhook
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
+// Privileged Supabase client to process automated workflow tasks. Requires SUPABASE_SECRET_KEY.
+function getAdminClient() {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const secretKey = process.env.SUPABASE_SECRET_KEY;
+  if (!url || !secretKey) {
+    throw new Error('Server configuration error: SUPABASE_SECRET_KEY is required for privileged automation operations.');
+  }
+  return createClient(url, secretKey, {
+    auth: { autoRefreshToken: false, persistSession: false },
+  });
+}
 
 export async function POST(req: Request) {
   try {
-    const configuredSecret = process.env.SUPABASE_WEBHOOK_SECRET;
+    const configuredSecret = process.env.SUPABASE_WEBHOOK_SECRET || process.env.WEBHOOK_SECRET;
     
     // Fail closed if the secret is missing from the environment
     if (!configuredSecret) {
-      console.error("CRITICAL: SUPABASE_WEBHOOK_SECRET is not configured.");
+      console.error("CRITICAL: SUPABASE_WEBHOOK_SECRET (or WEBHOOK_SECRET) is not configured.");
       return NextResponse.json({ error: 'Service Unavailable' }, { status: 503 });
     }
 
@@ -31,6 +37,8 @@ export async function POST(req: Request) {
     if (configuredBuffer.length !== providedBuffer.length || !crypto.timingSafeEqual(configuredBuffer, providedBuffer)) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+
+    const supabase = getAdminClient();
 
     const payload = await req.json();
 

@@ -3,12 +3,18 @@ import { createClient } from '@supabase/supabase-js';
 import { rateLimit } from '@keyabroad/auth/rate-limit';
 import crypto from 'crypto';
 
-// Initialize Supabase with service role key to bypass RLS for this specific server-to-server read-only integration.
-// IMPORTANT: This client must ONLY be used for SELECT queries in this endpoint.
-const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
+// Initialize Supabase with secret key to access records for this server-to-server read-only integration.
+// IMPORTANT: Requires SUPABASE_SECRET_KEY. Never falls back to legacy or anon keys.
+function getAdminClient() {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const secretKey = process.env.SUPABASE_SECRET_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!url || !secretKey) {
+    throw new Error('Server configuration error: SUPABASE_SECRET_KEY (or SUPABASE_SERVICE_ROLE_KEY) is required for privileged integration operations.');
+  }
+  return createClient(url, secretKey, {
+    auth: { autoRefreshToken: false, persistSession: false },
+  });
+}
 
 function verifyBearerToken(req: Request): boolean {
   const authHeader = req.headers.get('Authorization');
@@ -41,6 +47,8 @@ export async function GET(req: Request) {
     if (!verifyBearerToken(req)) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+
+    const supabaseAdmin = getAdminClient();
 
     const { searchParams } = new URL(req.url);
     

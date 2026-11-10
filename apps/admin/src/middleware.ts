@@ -1,5 +1,6 @@
 import { NextResponse, type NextRequest } from 'next/server'
 import { updateSession } from '@keyabroad/auth/middleware'
+import { STAFF_ROLES, type StaffRole } from '@keyabroad/database'
 
 export async function middleware(request: NextRequest) {
   const { supabaseResponse, user, supabase } = await updateSession(request)
@@ -29,16 +30,24 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(url)
   }
 
-  // 3. RBAC Shield: Block Students
-  // Fetch role from profiles (Safe in Edge via REST)
+  // 3. Strict RBAC Shield: Allowlist Authorized Staff Only
+  // Fetch role and staff_role from profiles
   const { data: profile } = await supabase
     .from('profiles')
-    .select('role')
+    .select('role, staff_role')
     .eq('id', user.id)
     .single()
 
-  if (profile?.role === 'student') {
-    // Hard block at the edge
+  const candidateRole = (profile?.staff_role || profile?.role) as StaffRole | undefined
+
+  // Strict allowlist: reject null, unknown, student, and unauthorized roles
+  if (!candidateRole || !STAFF_ROLES.includes(candidateRole)) {
+    if (path.startsWith('/api/')) {
+      return NextResponse.json(
+        { error: 'Forbidden: Authorized staff role required.' },
+        { status: 403 }
+      )
+    }
     return new NextResponse('Forbidden: You do not have permission to access the admin portal.', {
       status: 403,
     })

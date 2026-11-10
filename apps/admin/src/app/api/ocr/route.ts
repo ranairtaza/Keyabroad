@@ -27,11 +27,17 @@ function checkRateLimit(userId: string): boolean {
   return true;
 }
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
-
-// Service role client needed *only* to read the secure integrations table
-const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey);
+// Privileged Supabase client needed *only* to read the secure integrations table. Requires SUPABASE_SECRET_KEY.
+function getAdminClient() {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const secretKey = process.env.SUPABASE_SECRET_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!url || !secretKey) {
+    throw new Error('Server configuration error: SUPABASE_SECRET_KEY (or SUPABASE_SERVICE_ROLE_KEY) is required for privileged OCR operations.');
+  }
+  return createClient(url, secretKey, {
+    auth: { autoRefreshToken: false, persistSession: false },
+  });
+}
 
 export async function POST(req: Request) {
   try {
@@ -66,6 +72,8 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Invalid input: ' + parseResult.error.message }, { status: 400 });
     }
     const { url } = parseResult.data;
+
+    const supabaseAdmin = getAdminClient();
 
     // 5. Fetch OpenAI key (Using Service Role because 'integrations' is locked down)
     const { data: integration, error } = await supabaseAdmin

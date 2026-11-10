@@ -89,6 +89,7 @@ export type Permission = (typeof PERMISSIONS)[keyof typeof PERMISSIONS];
 // ---------------------------------------------------------------------------
 
 const ROLE_PERMISSIONS: Record<StaffRole, Permission[]> = {
+  owner: Object.values(PERMISSIONS), // Full access
   super_admin: Object.values(PERMISSIONS), // Full access
 
   admin: Object.values(PERMISSIONS).filter(
@@ -262,7 +263,7 @@ export function getPermissions(role: StaffRole): Permission[] {
  */
 export function isAdminRole(role: StaffRole | null | undefined): boolean {
   if (!role) return false;
-  return role === 'super_admin' || role === 'admin';
+  return role === 'owner' || role === 'super_admin' || role === 'admin';
 }
 
 /**
@@ -270,7 +271,7 @@ export function isAdminRole(role: StaffRole | null | undefined): boolean {
  */
 export function isManagerRole(role: StaffRole | null | undefined): boolean {
   if (!role) return false;
-  return role === 'super_admin' || role === 'admin' || role === 'branch_manager';
+  return role === 'owner' || role === 'super_admin' || role === 'admin' || role === 'branch_manager';
 }
 
 /**
@@ -278,6 +279,7 @@ export function isManagerRole(role: StaffRole | null | undefined): boolean {
  */
 export function getRoleLabel(role: StaffRole): string {
   const labels: Record<StaffRole, string> = {
+    owner: 'Owner',
     super_admin: 'Super Admin',
     admin: 'Admin',
     branch_manager: 'Branch Manager',

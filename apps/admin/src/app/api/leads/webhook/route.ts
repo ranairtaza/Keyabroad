@@ -3,20 +3,19 @@ import { createClient } from '@supabase/supabase-js';
 import { enquiryFormSchema } from '@keyabroad/validation';
 import { rateLimit } from '@keyabroad/auth/rate-limit';
 import crypto from 'crypto';
+import { verifySignature } from '@/lib/webhook';
+export { verifySignature };
 
-// Use service role key to bypass RLS for external ingest
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
-
-function verifySignature(payload: string, signature: string | null): boolean {
-  const secret = process.env.WEBHOOK_SECRET;
-  if (!secret || !signature) return false;
-  
-  const hmac = crypto.createHmac('sha256', secret);
-  const digest = hmac.update(payload).digest('hex');
-  return signature === digest;
+// Use secret key to bypass RLS for external ingest. Requires SUPABASE_SECRET_KEY.
+function getAdminClient() {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const secretKey = process.env.SUPABASE_SECRET_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!url || !secretKey) {
+    throw new Error('Server configuration error: SUPABASE_SECRET_KEY (or SUPABASE_SERVICE_ROLE_KEY) is required for privileged webhook operations.');
+  }
+  return createClient(url, secretKey, {
+    auth: { autoRefreshToken: false, persistSession: false },
+  });
 }
 
 export async function POST(req: Request) {
@@ -39,6 +38,8 @@ export async function POST(req: Request) {
     if (!verifySignature(rawBody, signature)) {
       return NextResponse.json({ error: 'Unauthorized: Invalid signature' }, { status: 401 });
     }
+
+    const supabase = getAdminClient();
 
     const payload = JSON.parse(rawBody);
 

@@ -10,6 +10,7 @@
 // ---------------------------------------------------------------------------
 
 export const STAFF_ROLES = [
+  'owner',
   'super_admin',
   'admin',
   'branch_manager',
