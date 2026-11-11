@@ -36,8 +36,14 @@ describe('SEC-06: Leads Webhook HMAC Signature Verification', () => {
       .update(TEST_PAYLOAD)
       .digest('hex');
 
-    const corruptedDigest = validDigest.slice(0, -2) + 'aa';
-    expect(verifySignature(TEST_PAYLOAD, corruptedDigest)).toBe(false);
+    // Use a deterministic corruption that cannot accidentally collide with the valid digest.
+    // Flip every hex character: 0↔f, 1↔e, …, 7↔8 — guarantees every char differs.
+    const invertedDigest = validDigest
+      .split('')
+      .map((c) => (0xf - parseInt(c, 16)).toString(16))
+      .join('');
+    expect(invertedDigest).not.toBe(validDigest); // sanity check
+    expect(verifySignature(TEST_PAYLOAD, invertedDigest)).toBe(false);
   });
 
   it('rejects a signature when payload has been tampered with', () => {
@@ -83,4 +89,3 @@ describe('SEC-06: Leads Webhook HMAC Signature Verification', () => {
     expect(verifySignature(TEST_PAYLOAD, validDigest)).toBe(false);
   });
 });
-

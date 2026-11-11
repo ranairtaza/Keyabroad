@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import Script from "next/script";
-import { Inter } from "next/font/google";
 import "./globals.css";
 import Sidebar from "@/components/Sidebar";
 
@@ -13,7 +12,12 @@ import { RoleProvider } from "@/components/RoleContext";
 import { ThemeProvider } from "@/components/ThemeContext";
 import { SidebarProvider } from "@/components/SidebarContext";
 
-const inter = Inter({ subsets: ["latin"] });
+/**
+ * System-font fallback stack replacing Google Fonts (Inter).
+ * Applied directly via className on <body> to preserve existing behavior.
+ * No outbound network requests at build or runtime.
+ */
+const systemFontClassName = 'font-sans';
 
 export const metadata: Metadata = {
   title: "Keyabroad Admin",
@@ -46,7 +50,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body suppressHydrationWarning className={`${inter.className} bg-slate-50 dark:bg-slate-900 flex h-screen overflow-hidden text-slate-900 dark:text-slate-50 transition-colors duration-300`}>
+      <body suppressHydrationWarning className={`${systemFontClassName} bg-slate-50 dark:bg-slate-900 flex h-screen overflow-hidden text-slate-900 dark:text-slate-50 transition-colors duration-300`}>
         <ThemeProvider>
           <RoleProvider>
             <SidebarProvider>

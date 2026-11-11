@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { Inter, Outfit } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -11,17 +10,15 @@ import { ThemeProvider } from "next-themes";
 import { Toaster } from "@keyabroad/ui/components/sonner";
 import GoogleTagManager from "@/components/analytics/GoogleTagManager";
 
-const inter = Inter({
-  variable: "--font-sans",
-  subsets: ["latin"],
-  display: 'swap',
-});
-
-const outfit = Outfit({
-  variable: "--font-heading",
-  subsets: ["latin"],
-  display: 'swap',
-});
+/**
+ * System-font fallback stacks replacing Google Fonts (Inter, Outfit).
+ * Preserves --font-sans and --font-heading CSS variables via inline style.
+ * No outbound network requests at build or runtime.
+ */
+const systemFontSans =
+  '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji"';
+const systemFontHeading =
+  '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif';
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://keyabroad.com'),
@@ -54,7 +51,11 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${inter.variable} ${outfit.variable} h-full antialiased`}
+      className="h-full antialiased"
+      style={{
+        '--font-sans': systemFontSans,
+        '--font-heading': systemFontHeading,
+      } as React.CSSProperties}
       suppressHydrationWarning
     >
       <head>

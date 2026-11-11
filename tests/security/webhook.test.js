@@ -3,6 +3,10 @@
  *
  * Verifies signature verification, replay protection, and tampered payloads.
  *
+ * Signature contract: the production webhook (apps/admin/src/lib/webhook.ts)
+ * expects the x-webhook-signature header to contain a raw hex HMAC-SHA256 digest,
+ * NOT a "sha256=" prefixed value.
+ *
  * GO/NO-GO:
  *   ❌ NO-GO — No-signature webhook accepted
  *   ❌ NO-GO — Wrong-signature webhook accepted
@@ -46,9 +50,13 @@ async function run() {
   console.log('\n🪝 Webhook Security Tests\n');
 
   const payload = JSON.stringify({
-    first_name: 'Webhook',
-    last_name: 'Test',
+    full_name: 'Webhook Security Test',
+    mobile: '+923001234567',
     email: `webhook-test-${Date.now()}@test.com`,
+    city: 'Lahore',
+    passport_available: true,
+    destinations: ['United Kingdom'],
+    preferred_subjects: ['Computer Science'],
   });
 
   // Test 1: No signature header → must reject
@@ -59,14 +67,14 @@ async function run() {
   );
   assert('Webhook without signature → 401', noSig.status === 401, noSig.status);
 
-  // Test 2: Wrong signature → must reject
+  // Test 2: Wrong signature (raw hex, no prefix) → must reject
   const wrongSig = await request(
     `${ADMIN_URL}${WEBHOOK_PATH}`,
     {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'x-webhook-signature': 'sha256=completely_wrong_signature',
+        'x-webhook-signature': 'completely_wrong_signature',
       },
     },
     payload
@@ -76,7 +84,13 @@ async function run() {
   // Test 3: Tampered payload (signature doesn't match body) → must reject
   if (WEBHOOK_SECRET) {
     const validSig = hmacSign(payload, WEBHOOK_SECRET);
-    const tamperedPayload = JSON.stringify({ first_name: 'Tampered', email: 'tampered@test.com' });
+    const tamperedPayload = JSON.stringify({
+      full_name: 'Tampered Attacker',
+      mobile: '+923009999999',
+      email: 'tampered@test.com',
+      destinations: ['United States'],
+      preferred_subjects: ['Business'],
+    });
 
     const tampered = await request(
       `${ADMIN_URL}${WEBHOOK_PATH}`,
@@ -84,18 +98,22 @@ async function run() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'x-webhook-signature': `sha256=${validSig}`, // valid sig, wrong body
+          'x-webhook-signature': validSig, // valid sig for original payload, wrong body
         },
       },
       tamperedPayload
     );
     assert('Tampered payload (sig mismatch) → 401', tampered.status === 401, tampered.status);
 
-    // Test 4: Valid signature → should succeed
+    // Test 4: Valid signature with schema-valid payload
     const validPayload = JSON.stringify({
-      first_name: 'Valid',
-      last_name: 'WebhookTest',
+      full_name: 'Valid Webhook Candidate',
+      mobile: '+923007654321',
       email: `valid-webhook-${Date.now()}@test.com`,
+      city: 'Islamabad',
+      passport_available: true,
+      destinations: ['Canada'],
+      preferred_subjects: ['Data Science'],
     });
     const validPayloadSig = hmacSign(validPayload, WEBHOOK_SECRET);
     const valid = await request(
@@ -104,7 +122,7 @@ async function run() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'x-webhook-signature': `sha256=${validPayloadSig}`,
+          'x-webhook-signature': validPayloadSig,
         },
       },
       validPayload
